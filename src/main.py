@@ -40,9 +40,13 @@ YELLOW_CELL = pygame.image.load(os.path.join("assets/cells", "yellow.png"))
 BLUE_CELL = pygame.image.load(os.path.join("assets/cells", "blue.png"))
 
 # FUNCTIONS
+# Game states
+def gameOver():
+    pass
+
 # Board
 def createBoard():
-    return [[0] * BOARD_WIDTH for row in range(BOARD_HEIGHT)] # 2D array, where "0" represents empty cell
+    return [[0]*BOARD_WIDTH for row in range(BOARD_HEIGHT)] # 2D array, where "0" represents empty cell
 
 def printBoard(board):
     for row in range(BOARD_HEIGHT):
@@ -62,6 +66,17 @@ def copyBoard(src, dest = 0):
 
     return dest
 
+def clearFullRows(board):
+    # Go trough every board row and check if row is full
+    for row in range(BOARD_HEIGHT):
+        for col in range(BOARD_WIDTH):
+            if board[row][col] == 0:
+                break # Row isn't full
+
+            if col == BOARD_WIDTH - 1: # Last column has been checked and row is full
+                board.pop(row)
+                board.insert(0, [0]*BOARD_WIDTH)
+
 # Block
 class Block:
     def __init__(self, shape, board):
@@ -73,7 +88,9 @@ class Block:
 
         self.used_board_cells = [] # [(row, col), (row, col) etc]
 
-        self.updateBoard(board)
+        if self.updateBoard(board) == False: # No room for new block, so game over
+            gameOver()
+
 
     def move(self, board, x_step = 0, y_step = 0):
         self.x += x_step;
@@ -110,6 +127,8 @@ class Block:
                             new_board[row][col] = block_cell
                             temp_used_board_cells.append((row, col))
                         else:
+                            clearFullRows(board) # Block has collided with another one, so it's placed. Now, check every row and clear full ones  
+
                             return False  # Error: block can't overlap
                     else:
                         return False  # Error: block would be out of bounds
@@ -125,32 +144,29 @@ def updateScreen(board):
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
             if board[row][col] == 0:
-                SCREEN.blit(EMPTY_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(EMPTY_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 1:
-                SCREEN.blit(GREEN_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(GREEN_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 2:
-                SCREEN.blit(INDIGO_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(INDIGO_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 3:
-                SCREEN.blit(ORANGE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(ORANGE_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 4:
-                SCREEN.blit(PINK_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(PINK_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 5:
-                SCREEN.blit(RED_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(RED_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 6:
-                SCREEN.blit(YELLOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(YELLOW_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
             elif board[row][col] == 7:
-                SCREEN.blit(BLUE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                SCREEN.blit(BLUE_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
 
     pygame.display.update()
 
 # MAIN
 def main():
     board = createBoard() # 2D array, where "0" represents empty cell
-    
-    block = Block(SHAPE_S, board)
 
-    block2 = Block(SHAPE_O, board)
-    block2.move(board, 3, 6)
+    block = Block(SHAPE_S, board)
 
     run = True
     while run:
@@ -171,7 +187,7 @@ def main():
                     block.move(board, 1, 0)
                 elif event.key == pygame.K_LEFT:
                     block.move(board, -1, 0)
-
+        
         # UI
         updateScreen(board)
 
