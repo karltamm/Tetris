@@ -149,7 +149,7 @@ def main():
     
     block = Block(SHAPE_S, board)
 
-    block2 = Block(SHAPE_SQUARE, board)
+    block2 = Block(SHAPE_O, board)
     block2.move(board, 3, 6)
 
     run = True
