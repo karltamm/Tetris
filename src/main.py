@@ -19,7 +19,7 @@ BOARD_CELL = 20  # 20 px square
 BOARD_X = 50 # Number of px from left edge of the screen
 BOARD_Y = 50 # Number of px from top of the screen
 
-BLOCK_WIDTH = BLOCK_HEIGHT = 4  # Block is made of 4x4 cells
+BLOCK_WIDTH = BLOCK_HEIGHT = 4  # Block is made of 4x4 board cells
 
 # INITIALIZE
 pygame.init()
@@ -146,7 +146,7 @@ def updateScreen(board):
 # MAIN
 def main():
     board = createBoard() # 2D array, where "0" represents empty cell
-
+    
     block = Block(SHAPE_S, board)
 
     block2 = Block(SHAPE_SQUARE, board)
