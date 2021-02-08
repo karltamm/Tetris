@@ -70,21 +70,19 @@ class Block:
 
         self.x = 0  # In which board column is top-left block cell?
         self.y = 0  # In which board row is top-left block cell?
-        self.new_x = 0
-        self.new_y = 0
 
         self.used_board_cells = [] # [(row, col), (row, col) etc]
 
         self.updateBoard(board)
 
     def move(self, board, x_step = 0, y_step = 0):
-        self.new_x = self.x + x_step;
-        self.new_y = self.y + y_step;
+        self.x += x_step;
+        self.y += y_step;
 
-        if self.updateBoard(board) == True:
-            # Block was moved successfully
-            self.x = self.new_x
-            self.y = self.new_y
+        if self.updateBoard(board) == False:
+            # Error: block couldn't be moved
+            self.x -= x_step
+            self.y -= y_step
 
 
     def rotate(self):
@@ -101,9 +99,9 @@ class Block:
         temp_used_board_cells = []
 
         # Check whether block can be placed on board area (4x4 cells)
-        for row in range(self.new_y, self.new_y + BLOCK_HEIGHT):
-            for col in range(self.new_x, self.new_x + BLOCK_WIDTH):
-                block_cell = self.shape[self.rotation][row - self.new_y][col - self.new_x]
+        for row in range(self.y, self.y + BLOCK_HEIGHT):
+            for col in range(self.x, self.x + BLOCK_WIDTH):
+                block_cell = self.shape[self.rotation][row - self.y][col - self.x]
 
                 if block_cell != 0:
                     if row < BOARD_HEIGHT and col < BOARD_WIDTH and col > -1:
@@ -150,6 +148,9 @@ def main():
     board = createBoard() # 2D array, where "0" represents empty cell
 
     block = Block(SHAPE_S, board)
+
+    block2 = Block(SHAPE_SQUARE, board)
+    block2.move(board, 3, 6)
 
     run = True
     while run:
