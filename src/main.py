@@ -7,19 +7,9 @@ from screen import *
 def main():
     pygame.init()
     CLOCK = pygame.time.Clock()
+
     board = createBoard() # 2D array, where "0" represents empty cell
-
-    downPressed = False # For holding down "DOWN" key
-    leftPressed = False
-    rightPressed = False
-    keyPress_timer = 0
-
     current_block = randomBlock(board)
-    changeBlock = False
-    fall_timer = 0
-    FALL_SPEED = 25 # Lower value -> Faster drop speed
-    
-
 
     # Block automatic falling
     fall_time = 0
@@ -41,9 +31,10 @@ def main():
             # Close game
             if event.type == pygame.QUIT:
                 run = False
-                exit()
+                pygame.quit()
             
-            if event.type == pygame.KEYDOWN: # If a key is pressed down
+            # Move block
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     current_block.rotate(board)
                 if event.key == pygame.K_DOWN:
