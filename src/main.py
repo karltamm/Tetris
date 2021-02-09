@@ -175,21 +175,25 @@ def updateScreen(board):
 def main():
     board = createBoard() # 2D array, where "0" represents empty cell
 
-    currentBlock = randomBlock(board) # Generates random shape into currentBlock
+    downPressed = False # For holding down "DOWN" key
+    leftPressed = False
+    rightPressed = False
+    keyPress_timer = 0
 
+    currentBlock = randomBlock(board) # Generates random shape into currentBlock
     changeBlock = False
-    fall_time = 0
+    fall_timer = 0
     fall_speed = 25 # Lower value -> Faster drop speed
 
     run = True
     while run:
         CLOCK.tick(FPS)
-
+        
+        keyPress_timer += 1 # For block moving "speed" when holding down a key
         # Block automatic dropping
-        fall_time += 1
-
-        if fall_time > fall_speed:
-            fall_time = 0
+        fall_timer += 1
+        if fall_timer > fall_speed:
+            fall_timer = 0
             changeBlock = currentBlock.move(board, 0, 1)
 
         # Input
@@ -197,19 +201,35 @@ def main():
             # Close game
             if event.type == pygame.QUIT:
                 run = False
-                pygame.quit()
+                exit()
             
             # Move block
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     currentBlock.rotate(board)
-                elif event.key == pygame.K_DOWN:
-                    changeBlock = currentBlock.move(board, 0, 1)
+                elif event.key == pygame.K_DOWN: # If a key is pressed down
+                    downPressed = True
                 elif event.key == pygame.K_RIGHT:
-                    currentBlock.move(board, 1, 0)
+                    rightPressed = True
+                    keyPress_timer = 0
                 elif event.key == pygame.K_LEFT:
-                    currentBlock.move(board, -1, 0)
-        
+                    leftPressed = True
+                    keyPress_timer = 0
+                    
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_DOWN: # If a key is released
+                    downPressed = False
+                elif event.key == pygame.K_RIGHT:
+                    rightPressed = False
+                elif event.key == pygame.K_LEFT:
+                    leftPressed = False
+                    
+        if downPressed and keyPress_timer % 3 == 0:
+                changeBlock = currentBlock.move(board, 0, 1)
+        if rightPressed and keyPress_timer % 10 == 0:
+                currentBlock.move(board, 1, 0)
+        if leftPressed and keyPress_timer % 10 == 0:
+                currentBlock.move(board, -1, 0)
         if changeBlock:
             clearFullRows(board)
             currentBlock = randomBlock(board)
