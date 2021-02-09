@@ -139,7 +139,13 @@ SHAPE_S = [[[0, 0, 0, 0],
 
            [[0, 7, 0, 0],
             [0, 7, 7, 0],
+<<<<<<< HEAD
             [0, 0, 7, 0],
             [0, 0, 0, 0]]]
 
 shapes = [SHAPE_I, SHAPE_O, SHAPE_L, SHAPE_J, SHAPE_T, SHAPE_Z, SHAPE_S]
+=======
+            [7, 7, 0, 0]]]
+
+SHAPES = [SHAPE_I, SHAPE_O, SHAPE_L, SHAPE_J, SHAPE_T, SHAPE_Z, SHAPE_S]
+>>>>>>> main
