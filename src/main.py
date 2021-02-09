@@ -85,8 +85,14 @@ class Block:
             self.y -= y_step
 
 
-    def rotate(self):
-        pass
+    def rotate(self, board):
+        if(self.rotation == 3):
+            self.rotation = -1
+        self.rotation += 1
+        print(self.rotation)
+        if self.updateBoard(board) == False:
+            self.rotation -= 1
+
 
     def removeOldCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
@@ -147,7 +153,7 @@ def updateScreen(board):
 def main():
     board = createBoard() # 2D array, where "0" represents empty cell
     
-    block = Block(SHAPE_S, board)
+    block = Block(SHAPE_J, board)
 
     block2 = Block(SHAPE_O, board)
     block2.move(board, 3, 6)
@@ -165,6 +171,8 @@ def main():
             
             # Move block
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    block.rotate(board)
                 if event.key == pygame.K_DOWN:
                     block.move(board, 0, 1)
                 elif event.key == pygame.K_RIGHT:
