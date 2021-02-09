@@ -20,7 +20,7 @@ BOARD_X = 50 # Number of px from left edge of the screen
 BOARD_Y = 50 # Number of px from top of the screen
 BLOCK_WIDTH = BLOCK_HEIGHT = 4  # Block is made of 4x4 board cells
 
-# ASSETS
+""" ASSETS """
 # Cells
 EMPTY_CELL = pygame.image.load(os.path.join("assets/cells", "empty.png"))
 GREEN_CELL = pygame.image.load(os.path.join("assets/cells", "green.png"))
@@ -30,3 +30,6 @@ PINK_CELL = pygame.image.load(os.path.join("assets/cells", "pink.png"))
 RED_CELL = pygame.image.load(os.path.join("assets/cells", "red.png"))
 YELLOW_CELL = pygame.image.load(os.path.join("assets/cells", "yellow.png"))
 BLUE_CELL = pygame.image.load(os.path.join("assets/cells", "blue.png"))
+
+# Shapes
+# ? ilmselt oma failis m6tekam sest p2ris mahukas..

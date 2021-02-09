@@ -1,8 +1,11 @@
 import pygame
-from settings import *
+import random
+
+from shapes import *
+from blockClass import *
 from functions import *
 
-# FUNCTIONS
+""" FUNCTIONS """
 # board
 def createBoard():
     return [[0] * BOARD_WIDTH for row in range(BOARD_HEIGHT)] # 2D array, where "0" represents empty cell
@@ -12,7 +15,6 @@ def printBoard(board):
         print()
         for col in range(BOARD_WIDTH):
             print(board[row][col], end = " ")
-
     print()
     
 def copyBoard(src, dest = 0):

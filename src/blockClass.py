@@ -51,3 +51,6 @@ class Block:
         self.used_board_cells = temp_used_board_cells
         copyBoard(new_board, board)
         return True  # Block placement was successful
+
+def randomShape(board):
+    return Block(random.choice(shapes), board)
