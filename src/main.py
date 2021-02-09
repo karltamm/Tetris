@@ -69,8 +69,8 @@ def main():
 
         # Is current block placed?
         if current_block.is_placed == True:
-                clearFullRows(board)
-                current_block = randomBlock(board)
+            clearFullRows(board)
+            current_block = randomBlock(board)
 
         # Screen
         updateScreen(board)

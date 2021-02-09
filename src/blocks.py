@@ -26,7 +26,11 @@ class Block:
         if self.updateBoard(board, y_step) == False:
             # Error: block couldn't be moved
             self.x -= x_step
-            self.y -= y_step
+            self.y -= y_step 
+
+            if x_step == 0: # Block didn't side collide with any other block
+                self.is_placed = True # Block can't go any lower, so it's placed
+
 
     def rotate(self, board):
         if self.rotation == 3:

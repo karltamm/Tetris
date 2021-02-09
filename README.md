@@ -2,7 +2,7 @@
 Projekti eesmärgiks on hiljemalt 12.04.2021 valmis saada tetriselaadne arvutimäng, mis vastab projektitiimi poolt kokkulepitud funktsionaalsusele.
 
 # Mõõdikud
-1.	Arvutimäng vastab täielikult kokkulepitud funktsionaalsusele.
-2.	Projekt valmib hiljemalt tähtajaks.
-3.	Arvutimäng töötab opsüsteemil Windows 10.
-4.	Arvutimängus on teadaolevalt vähem kui 3 programmiviga (bug).
+1.	Arvutimängus on täielikult implementeeritud baasfunktsionaalsus.
+2.	Arvutimängus on täielikult implementeeritud lisafunktsionaalsus.
+3.	Projekt valmib hiljemalt tähtajaks.
+4.	Arvutimäng töötab opsüsteemil Windows 10.
