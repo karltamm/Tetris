@@ -14,7 +14,13 @@ def main():
     current_block = activeBlock(0, board)
     next_block = randomBlock(small_board,0,1)
     third_block = randomBlock(small_board,0,6)
-
+    
+    # For holding down keys
+    down_pressed = False
+    left_pressed = False
+    right_pressed = False
+    key_timer = 0
+    
     # Block automatic falling
     fall_time = 0
     FALL_SPEED = 25 # Lower value -> Faster drop speed
