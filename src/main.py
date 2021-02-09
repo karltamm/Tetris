@@ -68,7 +68,7 @@ def copyBoard(src, dest = 0):
     return dest
 
 def clearFullRows(board):
-    # Go trough every board row and check if row is full
+    # Go through every board row and check if row is full
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
             if board[row][col] == 0:
@@ -96,11 +96,12 @@ class Block:
     def move(self, board, x_step = 0, y_step = 0):
         self.x += x_step;
         self.y += y_step;
-
         if self.updateBoard(board) == False:
             # Error: block couldn't be moved
             self.x -= x_step
             self.y -= y_step
+            return True
+        return False
 
 
     def rotate(self, board):
@@ -134,8 +135,6 @@ class Block:
                             new_board[row][col] = block_cell
                             temp_used_board_cells.append((row, col))
                         else:
-                            clearFullRows(board) # Block has collided with another one, so it's placed. Now, check every row and clear full ones  
-
                             return False  # Error: block can't overlap
                     else:
                         return False  # Error: block would be out of bounds
@@ -177,7 +176,6 @@ def main():
     board = createBoard() # 2D array, where "0" represents empty cell
 
     currentBlock = randomBlock(board) # Generates random shape into currentBlock
-    nextBlock = randomBlock(board)
 
     changeBlock = False
     fall_time = 0
@@ -192,7 +190,7 @@ def main():
 
         if fall_time > fall_speed:
             fall_time = 0
-            currentBlock.move(board, 0, 1)
+            changeBlock = currentBlock.move(board, 0, 1)
 
         # Input
         for event in pygame.event.get():
@@ -205,19 +203,17 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     currentBlock.rotate(board)
-                
-                if event.key == pygame.K_DOWN:
-                    currentBlock.move(board, 0, 1)
+                elif event.key == pygame.K_DOWN:
+                    changeBlock = currentBlock.move(board, 0, 1)
                 elif event.key == pygame.K_RIGHT:
                     currentBlock.move(board, 1, 0)
                 elif event.key == pygame.K_LEFT:
                     currentBlock.move(board, -1, 0)
         
-            # if changeBlock:
-            #     lockedBlocks[p] = currentBlock
-            #     currentBlock = nextBlock
-            #     nextBlock = randomBlock(board)
-            #     changeBlock = False
+        if changeBlock:
+            clearFullRows(board)
+            currentBlock = randomBlock(board)
+            changeBlock = False
 
         # UI
         updateScreen(board)
