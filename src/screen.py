@@ -66,4 +66,3 @@ def updateSmallBoard(small_board):
                 SCREEN.blit(BLUE_CELL, (SMALLBOARD_X + col*BOARD_CELL, SMALLBOARD_Y + row*BOARD_CELL))
 
     pygame.display.update()
-

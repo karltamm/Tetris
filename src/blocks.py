@@ -26,7 +26,11 @@ class Block:
         if self.updateBoard(board) == False:
             # Error: block couldn't be moved
             self.x -= x_step
-            self.y -= y_step
+            self.y -= y_step 
+
+            if x_step == 0: # Block didn't side collide with any other block
+                self.is_placed = True # Block can't go any lower, so it's placed
+
 
     def rotate(self, board):
         if self.rotation == 3:
@@ -53,19 +57,13 @@ class Block:
                 block_cell = self.shape[self.rotation][row - self.y][col - self.x]
 
                 if block_cell != 0:
-                    if row == BOARD_HEIGHT:
-                        # Block has fallen to bottom, so it's placed
-                        self.is_placed = True
-                        return False  # Error: block can't go any lower
-                    elif col < BOARD_WIDTH and col > -1:
+                    if col < BOARD_WIDTH and col > -1 and row < BOARD_HEIGHT:
                         if new_board[row][col] == 0:
                             # Cell isn't occupied by another block
                             new_board[row][col] = block_cell
                             temp_used_board_cells.append((row, col))
                         else:
-                            # Block has collided with another one, so it's placed
-                            self.is_placed = True
-                            return False  # Error: block can't overlap
+                            return False  # Error: blocks can't overlap
                     else:
                         return False  # Error: block would be out of bounds
 
@@ -75,9 +73,9 @@ class Block:
         return True  # Block placement was successful
 
 # FUNCTIONS
-
 def activeBlock(next_block, board):
     if next_block == 0:
         return Block(random.choice(SHAPES), board)
     else:
         return Block(next_block, board)
+
