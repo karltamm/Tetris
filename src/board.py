@@ -36,4 +36,3 @@ def clearFullRows(board):
             if col == BOARD_WIDTH - 1: # Last column has been checked and row is full
                 board.pop(row)
                 board.insert(0, [0]*BOARD_WIDTH)
-
