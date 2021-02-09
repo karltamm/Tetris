@@ -32,10 +32,6 @@ def main():
         if fall_timer > FALL_SPEED:
             fall_timer = 0
             current_block.move(board, 0, 1)
-            # Is current block placed?
-            if current_block.is_placed == True:
-                clearFullRows(board)
-                current_block = randomBlock(board)
 
         # Input
         for event in pygame.event.get():
@@ -70,6 +66,11 @@ def main():
                 current_block.move(board, 1, 0)
         if left_pressed and key_timer % 10 == 0:
                 current_block.move(board, -1, 0)
+
+        # Is current block placed?
+        if current_block.is_placed == True:
+                clearFullRows(board)
+                current_block = randomBlock(board)
 
         # Screen
         updateScreen(board)
