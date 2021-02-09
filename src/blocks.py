@@ -57,11 +57,7 @@ class Block:
                 block_cell = self.shape[self.rotation][row - self.y][col - self.x]
 
                 if block_cell != 0:
-                    if row == BOARD_HEIGHT:
-                        # Block has fallen to bottom, so it's placed
-                        self.is_placed = True
-                        return False  # Error: block can't go any lower
-                    elif col < BOARD_WIDTH and col > -1:
+                    if col < BOARD_WIDTH and col > -1 and row < BOARD_HEIGHT:
                         if new_board[row][col] == 0:
                             # Cell isn't occupied by another block
                             new_board[row][col] = block_cell
