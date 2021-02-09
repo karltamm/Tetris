@@ -1,10 +1,4 @@
 import pygame
-<<<<<<< HEAD
-
-from shapes import *
-from blockClass import *
-from functions import *
-=======
 import os
 import random
 
@@ -177,15 +171,10 @@ def updateScreen(board):
                 SCREEN.blit(BLUE_CELL, (BOARD_X + col*BOARD_CELL, BOARD_Y + row*BOARD_CELL))
 
     pygame.display.update()
->>>>>>> main
 
 # MAIN
 def main():
     board = createBoard() # 2D array, where "0" represents empty cell
-<<<<<<< HEAD
-    currentBlock = randomShape(board) # Generates random shape into currentBlock
-    nextBlock = randomShape(board)
-=======
 
     currentBlock = randomBlock(board) # Generates random shape into currentBlock
     nextBlock = randomBlock(board)
@@ -194,20 +183,9 @@ def main():
     fall_time = 0
     fall_speed = 25 # Lower value -> Faster drop speed
 
->>>>>>> main
     run = True
-    changeBlock = False
-    fall_time = 0
-    fall_speed = 25 # Lower value -> Faster drop speed
     while run:
         CLOCK.tick(FPS)
-<<<<<<< HEAD
-        # Block automatic dropping
-        fall_time += 1
-        if fall_time > fall_speed:
-            fall_time = 0
-            currentBlock.move(board, 0, 1)
-=======
 
         # Block automatic dropping
         fall_time += 1
@@ -216,36 +194,24 @@ def main():
             fall_time = 0
             currentBlock.move(board, 0, 1)
 
->>>>>>> main
         # Input
         for event in pygame.event.get():
             # Close game
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+            
             # Move block
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     currentBlock.rotate(board)
-<<<<<<< HEAD
-=======
                 
->>>>>>> main
                 if event.key == pygame.K_DOWN:
                     currentBlock.move(board, 0, 1)
                 elif event.key == pygame.K_RIGHT:
                     currentBlock.move(board, 1, 0)
                 elif event.key == pygame.K_LEFT:
                     currentBlock.move(board, -1, 0)
-<<<<<<< HEAD
-            ''' TODO
-            if changeBlock:
-                lockedBlocks[p] = currentBlock
-                currentBlock = nextBlock
-                nextBlock = randomShape(board)
-                changeBlock = False
-            '''
-=======
         
             # if changeBlock:
             #     lockedBlocks[p] = currentBlock
@@ -253,7 +219,7 @@ def main():
             #     nextBlock = randomBlock(board)
             #     changeBlock = False
 
->>>>>>> main
         # UI
         updateScreen(board)
+
 main()
