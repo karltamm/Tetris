@@ -62,8 +62,8 @@ def main():
                 elif event.key == pygame.K_LEFT:
                     left_pressed = False
                     
-        if down_pressed and key_timer % 3 == 0:
-                current_block.move(board, 0, 1)
+        if down_pressed:
+                fall_timer += 8
         if right_pressed and key_timer % 10 == 0:
                 current_block.move(board, 1, 0)
         if left_pressed and key_timer % 10 == 0:
