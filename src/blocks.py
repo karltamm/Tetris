@@ -26,7 +26,11 @@ class Block:
         if self.updateBoard(board) == False:
             # Error: block couldn't be moved
             self.x -= x_step
-            self.y -= y_step
+            self.y -= y_step 
+
+            if x_step == 0: # Block didn't side collide with any other block
+                self.is_placed = True # Block can't go any lower, so it's placed
+
 
     def rotate(self, board):
         if self.rotation == 3:
@@ -63,9 +67,7 @@ class Block:
                             new_board[row][col] = block_cell
                             temp_used_board_cells.append((row, col))
                         else:
-                            # Block has collided with another one, so it's placed
-                            self.is_placed = True
-                            return False  # Error: block can't overlap
+                            return False  # Error: blocks can't overlap
                     else:
                         return False  # Error: block would be out of bounds
 
