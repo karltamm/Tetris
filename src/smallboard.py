@@ -11,8 +11,8 @@ class NextBlocks:
     def __init__(self, shape, small_board, x=0, y=0):
         self.shape = shape
 
-        self.x = x  # In which board column is top-left block cell?
-        self.y = y  # In which board row is top-left block cell?
+        self.x = x
+        self.y = y
 
         self.updateBoard(small_board)
 
