@@ -86,10 +86,9 @@ class Block:
 
 
     def rotate(self, board):
-        if(self.rotation == 3):
+        if self.rotation == 3:
             self.rotation = -1
         self.rotation += 1
-        print(self.rotation)
         if self.updateBoard(board) == False:
             self.rotation -= 1
 
