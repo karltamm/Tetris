@@ -3,41 +3,41 @@ from shapes import *
 from board import *
 from screen import *
 
+
 # CLASS
 class Block:
     def __init__(self, shape, board):
         self.shape = shape
         self.rotation = 0
 
-        self.x = 0  # In which board column is top-left block cell?
+        self.x = 4  # In which board column is top-left block cell?
         self.y = 0  # In which board row is top-left block cell?
 
-        self.used_board_cells = [] # [(row, col), (row, col) etc]
+        self.used_board_cells = []  # [(row, col), (row, col) etc]
 
         self.is_placed = False
 
-        if self.updateBoard(board) == False: # No room for new block, so game over
-            pass # TODO: pygame custom event: game_over
+        if self.updateBoard(board) == False:  # No room for new block, so game over
+            pass  # TODO: pygame custom event: game_over
 
-    def move(self, board, x_step = 0, y_step = 0):
-        self.x += x_step;
-        self.y += y_step;
+    def move(self, board, x_step=0, y_step=0):
+        self.x += x_step
+        self.y += y_step
 
         if self.updateBoard(board) == False:
             # Error: block couldn't be moved
             self.x -= x_step
-            self.y -= y_step 
+            self.y -= y_step
 
-            if x_step == 0: # Block didn't side collide with any other block
-                self.is_placed = True # Block can't go any lower, so it's placed
-
+            if x_step == 0:  # Block didn't side collide with any other block
+                self.is_placed = True  # Block can't go any lower, so it's placed
 
     def rotate(self, board):
         if self.rotation == 3:
             self.rotation = -1
-        
+
         self.rotation += 1
-        
+
         if self.updateBoard(board) == False:
             self.rotation -= 1
 
@@ -48,7 +48,7 @@ class Block:
     def updateBoard(self, board):
         new_board = copyBoard(board)
         self.removeOldCellsFromBoard(new_board)
-        
+
         temp_used_board_cells = []
 
         # Check whether block can be placed on board area (4x4 cells)
@@ -72,6 +72,10 @@ class Block:
         copyBoard(new_board, board)
         return True  # Block placement was successful
 
+
 # FUNCTIONS
-def randomBlock(board):
-    return Block(random.choice(SHAPES), board)
+def activeBlock(next_block, board):
+    if next_block == 0:
+        return Block(random.choice(SHAPES), board)
+    else:
+        return Block(next_block, board)
