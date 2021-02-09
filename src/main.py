@@ -203,12 +203,12 @@ def main():
                 run = False
                 exit()
             
-            # Move block
-            if event.type == pygame.KEYDOWN:
+            if event.type == pygame.KEYDOWN: # If a key is pressed down
                 if event.key == pygame.K_UP:
                     currentBlock.rotate(board)
-                elif event.key == pygame.K_DOWN: # If a key is pressed down
+                elif event.key == pygame.K_DOWN:
                     downPressed = True
+                    keyPress_timer = 0
                 elif event.key == pygame.K_RIGHT:
                     rightPressed = True
                     keyPress_timer = 0
@@ -216,8 +216,8 @@ def main():
                     leftPressed = True
                     keyPress_timer = 0
                     
-            elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_DOWN: # If a key is released
+            elif event.type == pygame.KEYUP: # If a key is released
+                if event.key == pygame.K_DOWN:
                     downPressed = False
                 elif event.key == pygame.K_RIGHT:
                     rightPressed = False
