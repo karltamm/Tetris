@@ -23,7 +23,7 @@ class Block:
         self.x += x_step;
         self.y += y_step;
 
-        if self.updateBoard(board) == False:
+        if self.updateBoard(board, y_step) == False:
             # Error: block couldn't be moved
             self.x -= x_step
             self.y -= y_step
@@ -41,7 +41,7 @@ class Block:
         for row, col in self.used_board_cells:
             board[row][col] = 0
 
-    def updateBoard(self, board):
+    def updateBoard(self, board, y_step = 0):
         new_board = copyBoard(board)
         self.removeOldCellsFromBoard(new_board)
         
@@ -64,7 +64,8 @@ class Block:
                             temp_used_board_cells.append((row, col))
                         else:
                             # Block has collided with another one, so it's placed
-                            self.is_placed = True
+                            if y_step == 1: # Only on vertical collision
+                                self.is_placed = True
                             return False  # Error: block can't overlap
                     else:
                         return False  # Error: block would be out of bounds
