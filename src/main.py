@@ -16,6 +16,7 @@ def main():
     left_pressed = False
     right_pressed = False
     key_timer = 0
+    
     # Block automatic falling
     fall_timer = 0
     FALL_SPEED = 25 # Lower value -> Faster drop speed
@@ -26,6 +27,7 @@ def main():
         
         # For holding down keys
         key_timer += 1
+        
         # Block automatic falling
         fall_timer += 1
 
@@ -61,7 +63,7 @@ def main():
                     left_pressed = False
                     
         if down_pressed and key_timer % 3 == 0:
-                changeBlock = current_block.move(board, 0, 1)
+                current_block.move(board, 0, 1)
         if right_pressed and key_timer % 10 == 0:
                 current_block.move(board, 1, 0)
         if left_pressed and key_timer % 10 == 0:
