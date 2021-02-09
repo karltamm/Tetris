@@ -9,11 +9,16 @@ def main():
     CLOCK = pygame.time.Clock()
 
     board = createBoard() # 2D array, where "0" represents empty cell
-    current_block = randomBlock(board)
+    small_board = createSmallBoard()
+
+    current_block = activeBlock(0, board)
+    next_block = randomBlock(small_board,0,1)
+    third_block = randomBlock(small_board,0,6)
 
     # Block automatic falling
     fall_time = 0
     FALL_SPEED = 25 # Lower value -> Faster drop speed
+    updateSmallBoard(small_board)
 
     run = True
     while run:
@@ -47,9 +52,14 @@ def main():
         # Is current block placed?
         if current_block.is_placed == True:
             clearFullRows(board)
-            current_block = randomBlock(board)
+            current_block = activeBlock(next_block, board)
+            next_block = third_block
+            NextBlocks(next_block, small_board, 0, 1)
+            third_block = randomBlock(small_board, 0, 6)
+
+            updateSmallBoard(small_board)
 
         # Screen
-        updateScreen(board)
+        updateMainBoard(board)
 
 main()

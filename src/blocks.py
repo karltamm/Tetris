@@ -9,7 +9,7 @@ class Block:
         self.shape = shape
         self.rotation = 0
 
-        self.x = 0  # In which board column is top-left block cell?
+        self.x = 4  # In which board column is top-left block cell?
         self.y = 0  # In which board row is top-left block cell?
 
         self.used_board_cells = [] # [(row, col), (row, col) etc]
@@ -20,8 +20,8 @@ class Block:
             pass # TODO: pygame custom event: game_over
 
     def move(self, board, x_step = 0, y_step = 0):
-        self.x += x_step;
-        self.y += y_step;
+        self.x += x_step
+        self.y += y_step
 
         if self.updateBoard(board) == False:
             # Error: block couldn't be moved
@@ -44,7 +44,7 @@ class Block:
     def updateBoard(self, board):
         new_board = copyBoard(board)
         self.removeOldCellsFromBoard(new_board)
-        
+
         temp_used_board_cells = []
 
         # Check whether block can be placed on board area (4x4 cells)
@@ -75,5 +75,9 @@ class Block:
         return True  # Block placement was successful
 
 # FUNCTIONS
-def randomBlock(board):
-    return Block(random.choice(SHAPES), board)
+
+def activeBlock(next_block, board):
+    if next_block == 0:
+        return Block(random.choice(SHAPES), board)
+    else:
+        return Block(next_block, board)
