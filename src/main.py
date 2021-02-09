@@ -145,7 +145,7 @@ class Block:
         copyBoard(new_board, board)
         return True  # Block placement was successful
 
-def randomShape(board):
+def randomBlock(board):
     return Block(random.choice(SHAPES), board)
 
 # UI
@@ -176,8 +176,8 @@ def updateScreen(board):
 def main():
     board = createBoard() # 2D array, where "0" represents empty cell
 
-    currentBlock = randomShape(board) # Generates random shape into currentBlock
-    nextBlock = randomShape(board)
+    currentBlock = randomBlock(board) # Generates random shape into currentBlock
+    nextBlock = randomBlock(board)
 
     changeBlock = False
     fall_time = 0
@@ -216,7 +216,7 @@ def main():
             # if changeBlock:
             #     lockedBlocks[p] = currentBlock
             #     currentBlock = nextBlock
-            #     nextBlock = randomShape(board)
+            #     nextBlock = randomBlock(board)
             #     changeBlock = False
 
         # UI
