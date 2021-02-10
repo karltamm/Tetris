@@ -1,21 +1,22 @@
 import pygame
 from board import *
-from smallboard import *
+from nextblock import *
 from blocks import *
 from screen import *
 
 
 # MAIN
 def main():
+    # Initialize
     pygame.init()
     CLOCK = pygame.time.Clock()
-
     board = createBoard()  # 2D array, where "0" represents empty cell
-    small_board = createSmallBoard()
+    next_block_area = createNextBlockArea()
 
+    # Blocks
     current_block = activeBlock(0, board)
-    next_block = randomBlock(small_board, 0, 1)
-    third_block = randomBlock(small_board, 0, 6)
+    next_block = randomBlock(next_block_area, 0, 1)
+    third_block = randomBlock(next_block_area, 0, 6)
 
     # For holding down keys
     down_pressed = False
@@ -26,18 +27,21 @@ def main():
     # Block automatic falling
     fall_timer = 0
     FALL_SPEED = 25  # Lower value -> Faster drop speed
-    updateSmallBoard(small_board)
 
     run = True
     while run:
+        # Screen
         CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)  # Background color
+        updateBoard(board)
+        updateNextBlockArea(next_block_area)
+        pygame.display.update()
 
         # For holding down keys
         key_timer += 1
 
         # Block automatic falling
         fall_timer += 1
-
         if fall_timer > FALL_SPEED:
             fall_timer = 0
             current_block.move(board, 0, 1)
@@ -81,13 +85,8 @@ def main():
             clearFullRows(board)
             current_block = activeBlock(next_block, board)
             next_block = third_block
-            NextBlocks(next_block, small_board, 0, 1)
-            third_block = randomBlock(small_board, 0, 6)
-
-            updateSmallBoard(small_board)
-
-        # Screen
-        updateMainBoard(board)
+            NextBlock(next_block, next_block_area, 0, 1)
+            third_block = randomBlock(next_block_area, 0, 6)
 
 
 main()
