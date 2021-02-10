@@ -70,7 +70,7 @@ class Block:
 
 
 # FUNCTIONS
-def activeBlock(next_block, board):
+def generateActiveBlock(board, next_block=0):
     if next_block == 0:
         return Block(random.choice(SHAPES), board)
     else:
