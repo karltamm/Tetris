@@ -4,12 +4,12 @@ from board import *
 
 # CONSTANTS
 NEXT_BLOCK_AREA_WIDTH = 4  # Number of board cells in a row
-NEXT_BLOCK_AREA_HEIGHT = 11  # Number of board cells in a column
+NEXT_BLOCK_AREA_HEIGHT = 5  # Number of board cells in a column
 
 
 # CLASS
 class NextBlock:
-    def __init__(self, shape, next_block_area, x=0, y=0):
+    def __init__(self, shape, next_block_area, x=0, y=1):
         self.shape = shape
         self.x = x
         self.y = y
@@ -42,7 +42,7 @@ def copyNextBlockArea(src, dest=0):
     return dest
 
 
-def randomBlock(next_block_area, x, y):
+def generateNextBlock(next_block_area):
     block = random.choice(SHAPES)
-    NextBlock(block, next_block_area, x, y)
+    NextBlock(block, next_block_area)
     return block
