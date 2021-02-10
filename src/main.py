@@ -44,28 +44,19 @@ def main():
             updateScore(score)
             updateGameButtons()
 
-        if pause_menu_open == True:
-            updatePauseMenu()
+            if pause_menu_open == True:
+                updatePauseMenu()
 
         pygame.display.update()
 
-        # Block movement
-        if game_window_open == True and pause_menu_open == False:
-            # For holding down keys
-            key_timer += 1
-
-        # Block automatic falling
-        fall_timer += 1
-        if fall_timer > FALL_SPEED:
-            fall_timer = 0
-            current_block.move(board, 0, 1)
-
-        # User input
+        # UI control
         events = pygame.event.get()
         for event in events:
+            # Close program
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+<<<<<<< HEAD
 <<<<<<< HEAD
             # MOUSE CLICK
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -111,6 +102,21 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:  # ONLY FOR TESTING!
                     pause_menu_open = not pause_menu_open  # Invert the boolean value
+=======
+
+            # Pause game
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:  # ONLY FOR TESTING!
+                    pause_menu_open = not pause_menu_open  # Invert the boolean value
+            
+            if event.type == pygame.MOUSEBUTTONDOWN: # If mouse click
+                if event.button == 1: # If left click
+                    click = True
+                    
+        if button_1.collidepoint((mouse_x, mouse_y)):
+            if click:
+                pause_menu_open = not pause_menu_open
+>>>>>>> parent of 098ab1a (Fixed formatting)
 
         # Block movement
         if game_window_open == True and pause_menu_open == False:
@@ -156,7 +162,10 @@ def main():
                 clearFullRows(board)
                 current_block = generateActiveBlock(board, next_block)
                 next_block = generateNextBlock(next_block_area)
+<<<<<<< HEAD
 >>>>>>> parent of c959aae (Clickable pause button)
+=======
+>>>>>>> parent of 098ab1a (Fixed formatting)
 
 
 main()
