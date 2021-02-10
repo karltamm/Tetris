@@ -71,10 +71,12 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN: # If mouse click
+            # MOUSE CLICK
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: # If left click
                     click = True
-            if event.type == pygame.KEYDOWN:  # If a key is pressed down
+            # KEY PRESS
+            if event.type == pygame.KEYDOWN:
                 key_timer = 0
                 if event.key == pygame.K_UP:
                     current_block.rotate(board)
@@ -86,7 +88,8 @@ def main():
                     left_pressed = True
                 elif event.key == pygame.K_p:  # ONLY FOR TESTING!
                     pause_menu_open = not pause_menu_open  # Invert the boolean value
-            elif event.type == pygame.KEYUP:  # If a key is released
+            # KEY RELEASE
+            elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_DOWN:
                     down_pressed = False
                 elif event.key == pygame.K_RIGHT:
