@@ -38,6 +38,11 @@ def main():
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
 
+        # MOUSE
+        mouse_x, mouse_y = pygame.mouse.get_pos() # Get mouse location
+        click = False
+        button_1 = pygame.Rect(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y, 150, 70)
+        
         if game_window_open == True:
             updateBoard(board)
             updateNextBlockArea(next_block_area)
@@ -61,6 +66,14 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:  # ONLY FOR TESTING!
                     pause_menu_open = not pause_menu_open  # Invert the boolean value
+            
+            if event.type == pygame.MOUSEBUTTONDOWN: # If mouse click
+                if event.button == 1: # If left click
+                    click = True
+                    
+        if button_1.collidepoint((mouse_x, mouse_y)):
+            if click:
+                pause_menu_open = not pause_menu_open
 
         # Block movement
         if game_window_open == True and pause_menu_open == False:
