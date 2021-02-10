@@ -20,7 +20,15 @@ DARK_GREY = (43, 43, 43)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+BLUE = (18, 71, 219)
+NEON_BLUE = (78, 250, 252)
 
 # Fonts
 ARIAL = pygame.font.SysFont('arial', 45)
 CHATHURA_RG = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-regular.ttf"))
+CHATHURA_LIGHT = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-light.ttf"))
+
+# Buttons
+RESUME_BTN = pygame.image.load(os.path.join("assets/buttons", "Resume.png"))
+PAUSE_BTN = pygame.image.load(os.path.join("assets/buttons", "Pause.png"))
+END_BTN = pygame.image.load(os.path.join("assets/buttons", "End.png"))

@@ -5,17 +5,37 @@ from nextblock import *
 from assets import *
 
 # CONSTANTS
-SCREEN_WIDTH = 570  # px
+# Screen
+SCREEN_WIDTH = 600  # px
 SCREEN_HEIGHT = 700  # px
 FPS = 60
 
-BOARD_CELL = 30  # 20 px square
-BOARD_X = 50  # Number of px from left edge of the screen
-BOARD_Y = 50  # Number of px from top of the screen
+# Whitespace
+PADDING = 50
+NEAR = 10
+FAR = 30
 
-NEXT_BLOCK_AREA_X = 400  # Number of px from left edge of the screen
-NEXT_BLOCK_TEXT_AREA_Y = 50
-NEXT_BLOCK_AREA_Y = NEXT_BLOCK_TEXT_AREA_Y + 50  # Number of px from top of the screen
+# Text
+TXT_HEIGHT = 50
+
+# Board
+BOARD_CELL = 30  # 30 px square
+BOARD_X = PADDING
+BOARD_Y = PADDING
+
+# Next block area
+NEXT_BLOCK_AREA_X = BOARD_X + BOARD_WIDTH * BOARD_CELL + PADDING
+NEXT_BLOCK_TEXT_AREA_Y = PADDING
+NEXT_BLOCK_AREA_Y = NEXT_BLOCK_TEXT_AREA_Y + TXT_HEIGHT + NEAR
+
+# Score
+SCORE_AREA_X = NEXT_BLOCK_AREA_X
+SCORE_AREA_Y = NEXT_BLOCK_AREA_Y + NEXT_BLOCK_AREA_HEIGHT * BOARD_CELL + FAR
+
+# In-game buttons
+BTN_HEIGHT = 68
+GAME_BTNS_ARENA_X = NEXT_BLOCK_AREA_X
+GAME_BTNS_ARENA_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
 
 # INITIALIZE
 pygame.init()
@@ -24,6 +44,16 @@ pygame.display.set_caption("Tetris")
 
 
 # FUNCTIONS
+# General
+def drawText(text, x, y, size=100, color=WHITE, font=CHATHURA_RG):
+    font.render_to(SCREEN, (x, y), text, color, size=size)
+
+
+def drawButton(button, x, y):
+    SCREEN.blit(button, (x, y))
+
+
+# Game UI
 def updateBoard(board):
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
@@ -65,8 +95,25 @@ def updateNextBlockArea(next_block_area):
             elif next_block_area[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
 
-    drawText("Next", WHITE, 100, CHATHURA_RG, NEXT_BLOCK_AREA_X, NEXT_BLOCK_TEXT_AREA_Y)
+    drawText("Next", NEXT_BLOCK_AREA_X, NEXT_BLOCK_TEXT_AREA_Y)
 
 
-def drawText(text, color, size, font, x, y):
-    font.render_to(SCREEN, (x, y), text, color, size=size)
+def updateScore(score):
+    drawText("Score", SCORE_AREA_X, SCORE_AREA_Y)
+    drawText(str(score), SCORE_AREA_X, SCORE_AREA_Y + TXT_HEIGHT + NEAR, color=NEON_BLUE)
+
+
+def updateGameButtons():
+    drawButton(PAUSE_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y)
+    drawButton(END_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y + BTN_HEIGHT + NEAR)
+
+
+def updatePauseMenu():
+    # Background
+    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    transparent_bg.fill((0, 0, 0, 175))  # 150 represents opacitiy [0 = no opacity]
+    SCREEN.blit(transparent_bg, (0, 0))
+
+    # Game buttons
+    drawButton(RESUME_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y)
+    drawButton(END_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y + BTN_HEIGHT + NEAR)
