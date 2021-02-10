@@ -9,12 +9,9 @@ class Block:
     def __init__(self, shape, board):
         self.shape = shape
         self.rotation = 0
-
         self.x = 4  # In which board column is top-left block cell?
         self.y = 0  # In which board row is top-left block cell?
-
         self.used_board_cells = []  # [(row, col), (row, col) etc]
-
         self.is_placed = False
 
         if self.updateBoard(board) == False:  # No room for new block, so game over
@@ -48,7 +45,6 @@ class Block:
     def updateBoard(self, board):
         new_board = copyBoard(board)
         self.removeOldCellsFromBoard(new_board)
-
         temp_used_board_cells = []
 
         # Check whether block can be placed on board area (4x4 cells)

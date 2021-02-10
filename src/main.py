@@ -1,23 +1,22 @@
 import pygame
 from board import *
-from smallboard import *
+from nextblock import *
 from blocks import *
 from screen import *
-from assets import *
 
 
 # MAIN
-pygame.init()
-CLOCK = pygame.time.Clock()
-
-def game():
-    SCREEN.fill(BLACK)
+def main():
+    # Initialize
+    pygame.init()
+    CLOCK = pygame.time.Clock()
     board = createBoard()  # 2D array, where "0" represents empty cell
-    small_board = createSmallBoard()
+    next_block_area = createNextBlockArea()
 
+    # Blocks
     current_block = activeBlock(0, board)
-    next_block = randomBlock(small_board, 0, 1)
-    third_block = randomBlock(small_board, 0, 6)
+    next_block = randomBlock(next_block_area, 0, 1)
+    third_block = randomBlock(next_block_area, 0, 6)
 
     # For holding down keys
     down_pressed = False
@@ -31,14 +30,18 @@ def game():
 
     run = True
     while run:
+        # Screen
         CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)  # Background color
+        updateBoard(board)
+        updateNextBlockArea(next_block_area)
+        pygame.display.update()
 
         # For holding down keys
         key_timer += 1
 
         # Block automatic falling
         fall_timer += 1
-
         if fall_timer > FALL_SPEED:
             fall_timer = 0
             current_block.move(board, 0, 1)
@@ -47,14 +50,12 @@ def game():
         for event in pygame.event.get():
             # Close game
             if event.type == pygame.QUIT:
+                run = False
                 pygame.quit()
-                exit()
 
             # Move block
             if event.type == pygame.KEYDOWN:  # If a key is pressed down
                 key_timer = 0
-                if event.key == pygame.K_ESCAPE:
-                    run = False
                 if event.key == pygame.K_UP:
                     current_block.rotate(board)
                 elif event.key == pygame.K_DOWN:
@@ -84,70 +85,8 @@ def game():
             clearFullRows(board)
             current_block = activeBlock(next_block, board)
             next_block = third_block
-            NextBlocks(next_block, small_board, 0, 1)
-            third_block = randomBlock(small_board, 0, 6)
+            NextBlock(next_block, next_block_area, 0, 1)
+            third_block = randomBlock(next_block_area, 0, 6)
 
 
-        # Screen
-        updateSmallBoard(small_board)
-        updateMainBoard(board)
-
-
-def options():
-    run = True
-    while run:
-        SCREEN.fill((BLACK))
-        
-        draw_text('OPTIONS', font1, WHITE, SCREEN, 210, 30)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    run = False
-        
-        pygame.display.update()
-        CLOCK.tick(FPS)
-
-
-def main_menu():
-    while True:
-        SCREEN.fill((0,0,0))
-
-        mouse_x, mouse_y = pygame.mouse.get_pos() # Get mouse location
-        click = False
- 
-        button_1 = pygame.Rect(150, 200, 200, 50)
-        button_2 = pygame.Rect(150, 300, 200, 50)
-
-        pygame.draw.rect(SCREEN, RED, button_1)
-        pygame.draw.rect(SCREEN, RED, button_2)
-        draw_text('TETRIS', font2, (100, 255, 255), SCREEN, 190, 45)
-        draw_text('MAIN MENU', font1, WHITE, SCREEN, 200, 115)
-        draw_text('NEW GAME', font1, WHITE, SCREEN, 205, 215)
-        draw_text('OPTIONS', font1, WHITE, SCREEN, 205, 315)
- 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.quit()
-                    exit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
-        
-        if button_1.collidepoint((mouse_x, mouse_y)):
-            if click:
-                game()
-        if button_2.collidepoint((mouse_x, mouse_y)):
-            if click:
-                options()
- 
-        pygame.display.update()
-        CLOCK.tick(FPS)
-
-main_menu()
+main()
