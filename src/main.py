@@ -49,76 +49,63 @@ def main():
             updateScore(score)
             updateGameButtons()
 
-            if pause_menu_open == True:
-                updatePauseMenu()
+        if pause_menu_open == True:
+            updatePauseMenu()
 
         pygame.display.update()
-
-        # UI control
-        events = pygame.event.get()
-        for event in events:
-            # Close program
-            if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
-
-            # Pause game
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:  # ONLY FOR TESTING!
-                    pause_menu_open = not pause_menu_open  # Invert the boolean value
-            
-            if event.type == pygame.MOUSEBUTTONDOWN: # If mouse click
-                if event.button == 1: # If left click
-                    click = True
-                    
-        if button_1.collidepoint((mouse_x, mouse_y)):
-            if click:
-                pause_menu_open = not pause_menu_open
 
         # Block movement
         if game_window_open == True and pause_menu_open == False:
             # For holding down keys
             key_timer += 1
 
-            # Block automatic falling
-            fall_timer += 1
-            if fall_timer > FALL_SPEED:
-                fall_timer = 0
-                current_block.move(board, 0, 1)
+        # Block automatic falling
+        fall_timer += 1
+        if fall_timer > FALL_SPEED:
+            fall_timer = 0
+            current_block.move(board, 0, 1)
 
-            # User input
-            for event in events:
-                if event.type == pygame.KEYDOWN:  # If a key is pressed down
-                    key_timer = 0
-                    if event.key == pygame.K_UP:
-                        current_block.rotate(board)
-                    elif event.key == pygame.K_DOWN:
-                        down_pressed = True
-                    elif event.key == pygame.K_RIGHT:
-                        right_pressed = True
-                    elif event.key == pygame.K_LEFT:
-                        left_pressed = True
+        # User input
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN: # If mouse click
+                if event.button == 1: # If left click
+                    click = True
+            if event.type == pygame.KEYDOWN:  # If a key is pressed down
+                key_timer = 0
+                if event.key == pygame.K_UP:
+                    current_block.rotate(board)
+                elif event.key == pygame.K_DOWN:
+                    down_pressed = True
+                elif event.key == pygame.K_RIGHT:
+                    right_pressed = True
+                elif event.key == pygame.K_LEFT:
+                    left_pressed = True
+                elif event.key == pygame.K_p:  # ONLY FOR TESTING!
+                    pause_menu_open = not pause_menu_open  # Invert the boolean value
+            elif event.type == pygame.KEYUP:  # If a key is released
+                if event.key == pygame.K_DOWN:
+                    down_pressed = False
+                elif event.key == pygame.K_RIGHT:
+                    right_pressed = False
+                elif event.key == pygame.K_LEFT:
+                    left_pressed = False
 
-                elif event.type == pygame.KEYUP:  # If a key is released
-                    if event.key == pygame.K_DOWN:
-                        down_pressed = False
-                    elif event.key == pygame.K_RIGHT:
-                        right_pressed = False
-                    elif event.key == pygame.K_LEFT:
-                        left_pressed = False
+        if down_pressed:
+            fall_timer += 8
+        if right_pressed and key_timer % 10 == 0:
+            current_block.move(board, 1, 0)
+        if left_pressed and key_timer % 10 == 0:
+            current_block.move(board, -1, 0)
 
-            if down_pressed:
-                fall_timer += 8
-            if right_pressed and key_timer % 10 == 0:
-                current_block.move(board, 1, 0)
-            if left_pressed and key_timer % 10 == 0:
-                current_block.move(board, -1, 0)
-
-            # Is current block placed?
-            if current_block.is_placed == True:
-                clearFullRows(board)
-                current_block = generateActiveBlock(board, next_block)
-                next_block = generateNextBlock(next_block_area)
+        # Is current block placed?
+        if current_block.is_placed == True:
+            clearFullRows(board)
+            current_block = generateActiveBlock(board, next_block)
+            next_block = generateNextBlock(next_block_area)
 
 
 main()
