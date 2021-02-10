@@ -8,6 +8,7 @@ CELL_SIZE = (20, 20)
 CELL_OUTLINE = (100, 100, 100) # Grey
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+RED = (255, 0, 0)
 
 # White outline for big box
 BIG_BACKGROUND = pygame.Surface((200, 400), pygame.SRCALPHA) 
@@ -49,7 +50,7 @@ pygame.draw.rect(YELLOW_CELL, CELL_OUTLINE, (0, 0, 20, 20), 1)
 
 # RED_CELL
 RED_CELL = pygame.Surface(CELL_SIZE)
-pygame.draw.rect(RED_CELL, (255, 0, 0), (0, 0, 20, 20))
+pygame.draw.rect(RED_CELL, RED, (0, 0, 20, 20))
 pygame.draw.rect(RED_CELL, CELL_OUTLINE, (0, 0, 20, 20), 1)
 
 # BLUE_CELL
