@@ -52,7 +52,7 @@ def main():
         # Mouse
         mouse_x, mouse_y = pygame.mouse.get_pos()
         click = False
-        button_pause_resume = pygame.Rect(GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y, 150, 70) # Define button area
+        button_pause_resume = pygame.Rect(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y, 150, 70) # Define button area
 
         # UI control
         events = pygame.event.get()
