@@ -4,16 +4,16 @@ from smallboard import *
 from assets import *
 
 # CONSTANTS
-SCREEN_WIDTH = 400  # px
+SCREEN_WIDTH = 500  # px
 SCREEN_HEIGHT = 500  # px
 FPS = 60
 
 # Board UI
 BOARD_CELL = 20  # 20 px square
-BOARD_X = 50  # Number of px from left edge of the screen
+BOARD_X = 100  # Number of px from left edge of the screen
 BOARD_Y = 50  # Number of px from top of the screen
 
-SMALLBOARD_X = 280  # Number of px from left edge of the screen
+SMALLBOARD_X = 330  # Number of px from left edge of the screen
 SMALLBOARD_Y = 50  # Number of px from top of the screen
 
 # INITIALIZE
@@ -42,17 +42,17 @@ def updateMainBoard(board):
                 SCREEN.blit(YELLOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
             elif board[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
-
+    SCREEN.blit(BIG_BACKGROUND, (BOARD_X, BOARD_Y)) # White outline
     pygame.display.update()
-
 
 def updateSmallBoard(small_board):
     # Update board
+    draw_text('NEXT:', font1, (100, 255, 255), SCREEN, 330, 24)
     for row in range(SMALLBOARD_HEIGHT):
         for col in range(SMALLBOARD_WIDTH):
             if small_board[row][col] == 0:
                 SCREEN.blit(EMPTY_CELL, (SMALLBOARD_X + col * BOARD_CELL, SMALLBOARD_Y + row * BOARD_CELL))
-            elif small_board[row][col] == 1:
+            if small_board[row][col] == 1:
                 SCREEN.blit(GREEN_CELL, (SMALLBOARD_X + col * BOARD_CELL, SMALLBOARD_Y + row * BOARD_CELL))
             elif small_board[row][col] == 2:
                 SCREEN.blit(INDIGO_CELL, (SMALLBOARD_X + col * BOARD_CELL, SMALLBOARD_Y + row * BOARD_CELL))
@@ -66,5 +66,6 @@ def updateSmallBoard(small_board):
                 SCREEN.blit(YELLOW_CELL, (SMALLBOARD_X + col * BOARD_CELL, SMALLBOARD_Y + row * BOARD_CELL))
             elif small_board[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (SMALLBOARD_X + col * BOARD_CELL, SMALLBOARD_Y + row * BOARD_CELL))
+    SCREEN.blit(SMALL_BACKGROUND, (SMALLBOARD_X, SMALLBOARD_Y)) # White outline
 
     pygame.display.update()
