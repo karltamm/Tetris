@@ -21,7 +21,6 @@ def main():
     # Blocks
     current_block = generateActiveBlock(board)
     next_block = generateNextBlock(next_block_area)
-    button_pause_resume = pygame.Rect(GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y, 150, 70)
 
     # For holding down keys
     down_pressed = False
