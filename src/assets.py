@@ -19,6 +19,7 @@ pygame.draw.rect(SMALL_BACKGROUND,(WHITE), (0, 0, 80, 220), 3)
 
 # EMPTY CELL
 EMPTY_CELL = pygame.Surface(CELL_SIZE)
+pygame.draw.rect(EMPTY_CELL, (10, 10, 10), (0, 0, 20, 20)) # Very light grey in empty cells
 pygame.draw.rect(EMPTY_CELL, CELL_OUTLINE, (0, 0, 20, 20), 1)
 
 # GREEN_CELL
