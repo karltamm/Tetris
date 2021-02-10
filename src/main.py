@@ -48,6 +48,11 @@ def main():
                 updatePauseMenu()
 
         pygame.display.update()
+        
+        # Mouse
+        mouse_x, mouse_y = pygame.mouse.get_pos()
+        click = False
+        button_pause_resume = pygame.Rect(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y, 150, 70) # Define button area
 
         # UI control
         events = pygame.event.get()
@@ -56,11 +61,21 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+            
+            # Mouse click
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    click = True
 
             # Pause game
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_p:  # ONLY FOR TESTING!
                     pause_menu_open = not pause_menu_open  # Invert the boolean value
+        
+        # If mouse clicks button
+        if button_pause_resume.collidepoint((mouse_x, mouse_y)):
+            if click:
+                pause_menu_open = not pause_menu_open
 
         # Block movement
         if game_window_open == True and pause_menu_open == False:
