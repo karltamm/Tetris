@@ -54,6 +54,10 @@ def drawButton(button, x, y):
     SCREEN.blit(button, (x, y))
 
 
+def buttonClickBox(x,y):
+    button = pygame.Rect(x, y+6, BTN_WIDTH, BTN_HEIGHT - 6)
+    return button
+
 # Game UI
 def updateBoard(board):
     for row in range(BOARD_HEIGHT):
