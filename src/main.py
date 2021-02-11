@@ -64,7 +64,8 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     game_paused = not game_paused  # Invert the boolean value
-            elif event.type == pygame.MOUSEBUTTONUP:
+                    
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if pause_button.collidepoint(mouse_pos):
                         game_paused = not game_paused  # Invert the boolean value
