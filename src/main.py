@@ -40,7 +40,6 @@ def main():
         # Screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
-        mouse_pos = pygame.mouse.get_pos()
 
         updateBoard(board)
         updateNextBlockArea(next_block_area)
@@ -53,9 +52,7 @@ def main():
         pygame.display.update()
         
         # Mouse
-        mouse_x, mouse_y = pygame.mouse.get_pos()
-        click = False
-        button_pause_resume = pygame.Rect(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y, 150, 70) # Define button area
+        mouse_pos = pygame.mouse.get_pos()
 
         # UI control
         events = pygame.event.get()
@@ -64,11 +61,6 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-            
-            # Mouse click
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    click = True
 
             # Pause game
             if event.type == pygame.KEYDOWN:
