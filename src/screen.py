@@ -109,8 +109,8 @@ def updateScore(score):
 
 
 def updateGameButtons():
-    drawButton(PAUSE_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y)
-    drawButton(END_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y + BTN_HEIGHT + NEAR)
+    drawButton(PAUSE_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y)
+    drawButton(END_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y + BTN_HEIGHT + NEAR)
 
 
 def updatePauseMenu():
@@ -120,5 +120,5 @@ def updatePauseMenu():
     SCREEN.blit(transparent_bg, (0, 0))
 
     # Game buttons
-    drawButton(RESUME_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y)
-    drawButton(END_BTN, GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y + BTN_HEIGHT + NEAR)
+    drawButton(RESUME_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y)
+    drawButton(END_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y + BTN_HEIGHT + NEAR)
