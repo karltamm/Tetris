@@ -14,9 +14,12 @@ def main():
     next_block_area = createNextBlockArea()
     score = 0
 
-    # Which UI window is shown? (main menu, game UI, in-game menu etc)
-    game_window_open = True
-    pause_menu_open = False
+    # Which UI window is shown?
+    game_paused = False
+
+    # Buttons
+    pause_button = buttonClickBox(GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y)
+    end_button = buttonClickBox(GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y + BTN_HEIGHT + NEAR)
 
     # Blocks
     current_block = generateActiveBlock(board)
@@ -37,15 +40,15 @@ def main():
         # Screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
+        mouse_pos = pygame.mouse.get_pos()
 
-        if game_window_open == True:
-            updateBoard(board)
-            updateNextBlockArea(next_block_area)
-            updateScore(score)
-            updateGameButtons()
+        updateBoard(board)
+        updateNextBlockArea(next_block_area)
+        updateScore(score)
+        updateGameButtons()
 
-            if pause_menu_open == True:
-                updatePauseMenu()
+        if game_paused:
+            updatePauseMenu()
 
         pygame.display.update()
         
@@ -69,16 +72,19 @@ def main():
 
             # Pause game
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_p:  # ONLY FOR TESTING!
-                    pause_menu_open = not pause_menu_open  # Invert the boolean value
-        
-        # If mouse clicks button
-        if button_pause_resume.collidepoint((mouse_x, mouse_y)):
-            if click:
-                pause_menu_open = not pause_menu_open
+                if event.key == pygame.K_ESCAPE:
+                    game_paused = not game_paused  # Invert the boolean value
+                    
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if pause_button.collidepoint(mouse_pos):
+                        game_paused = not game_paused  # Invert the boolean value
+                    elif end_button.collidepoint(mouse_pos):
+                        run = False
+                        pygame.quit()
 
         # Block movement
-        if game_window_open == True and pause_menu_open == False:
+        if game_paused == False:
             # For holding down keys
             key_timer += 1
 
@@ -87,6 +93,8 @@ def main():
             if fall_timer > FALL_SPEED:
                 fall_timer = 0
                 current_block.move(board, 0, 1)
+                if down_pressed:
+                    score += 1
 
             # User input
             for event in events:
@@ -118,9 +126,12 @@ def main():
 
             # Is current block placed?
             if current_block.is_placed == True:
-                clearFullRows(board)
+                full_rows = clearFullRows(board)
+                if full_rows > 0:
+                    score += 100 + (full_rows-1)*200
                 current_block = generateActiveBlock(board, next_block)
                 next_block = generateNextBlock(next_block_area)
 
 
 main()
+

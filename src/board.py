@@ -30,6 +30,7 @@ def copyBoard(src, dest=0):
 
 
 def clearFullRows(board):
+    full_rows = 0
     # Go trough every board row and check if row is full
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
@@ -37,5 +38,8 @@ def clearFullRows(board):
                 break  # Row isn't full
 
             if col == BOARD_WIDTH - 1:  # Last column has been checked and row is full
+                full_rows += 1  # Number of full rows
                 board.pop(row)
                 board.insert(0, [0] * BOARD_WIDTH)
+
+    return full_rows

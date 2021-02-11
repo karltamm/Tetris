@@ -34,8 +34,9 @@ SCORE_AREA_Y = NEXT_BLOCK_AREA_Y + NEXT_BLOCK_AREA_HEIGHT * BOARD_CELL + FAR
 
 # In-game buttons
 BTN_HEIGHT = 68
-GAME_BTNS_AREA_X = NEXT_BLOCK_AREA_X
-GAME_BTNS_AREA_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
+BTN_WIDTH = 150
+GAME_BTNS_ARENA_X = NEXT_BLOCK_AREA_X
+GAME_BTNS_ARENA_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
 
 # INITIALIZE
 pygame.init()
@@ -52,6 +53,10 @@ def drawText(text, x, y, size=100, color=WHITE, font=CHATHURA_RG):
 def drawButton(button, x, y):
     SCREEN.blit(button, (x, y))
 
+
+def buttonClickBox(x,y):
+    button = pygame.Rect(x, y+6, BTN_WIDTH, BTN_HEIGHT - 6)
+    return button
 
 # Game UI
 def updateBoard(board):
