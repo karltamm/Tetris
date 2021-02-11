@@ -18,8 +18,8 @@ def main():
     game_paused = False
 
     # Buttons
-    pause_button = buttonClickBox(GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y)
-    end_button = buttonClickBox(GAME_BTNS_ARENA_X, GAME_BTNS_ARENA_Y + BTN_HEIGHT + NEAR)
+    pause_button = buttonClickBox(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y)
+    end_button = buttonClickBox(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y + BTN_HEIGHT + NEAR)
 
     # Blocks
     current_block = generateActiveBlock(board)
