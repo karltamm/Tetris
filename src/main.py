@@ -4,24 +4,18 @@ from nextblock import *
 from blocks import *
 from screen import *
 
+# Important initializing
+pygame.init()
+CLOCK = pygame.time.Clock()
 
-# MAIN
-def main():
-    # Initialize pygame
-    pygame.init()
-    CLOCK = pygame.time.Clock()
-
-    # Which UI window is shown?
-    main_menu_open = True
-    game_window_open = False
-    game_running = False
+# IN GAME
+def game():
+    # Is game running (unpaused)?
+    game_running = True
 
     # Create button click areas
-    start_button = buttonClickBox(START_BTN_X, START_BTN_Y)  # New game
-    quit_button = buttonClickBox(QUIT_BTN_X, QUIT_BTN_Y)  # Quit program, not game
-
     pause_button = buttonClickBox(PAUSE_BTN_X, PAUSE_BTN_Y)
-    end_button = buttonClickBox(END_BTN_X, END_BTN_Y)  # End game, not program
+    end_button = buttonClickBox(END_BTN_X, END_BTN_Y) # End game
 
     # Initialize first game
     board = createBoard()
@@ -29,7 +23,6 @@ def main():
     current_block = generateActiveBlock(board)
     next_block = generateNextBlock(next_block_area)
     score = 0
-    start_new_game = False
 
     # Block movement control
     down_pressed = False
@@ -43,30 +36,16 @@ def main():
 
     run = True
     while run:
-        # Initialize new game if needed 
-        if start_new_game:
-            board = createBoard()
-            next_block_area = createNextBlockArea()
-            current_block = generateActiveBlock(board)
-            next_block = generateNextBlock(next_block_area)
-            score = 0
-            start_new_game = False
-
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
+        updateBoard(board)
+        updateNextBlockArea(next_block_area)
+        updateScore(score)
+        updateGameButtons()
 
-        if main_menu_open:
-            updateMainMenu()
-
-        if game_window_open:
-            updateBoard(board)
-            updateNextBlockArea(next_block_area)
-            updateScore(score)
-            updateGameButtons()
-
-            if not game_running:
-                updatePauseMenu()
+        if not game_running:
+            updatePauseMenu()
 
         pygame.display.update()
 
@@ -88,24 +67,12 @@ def main():
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if start_button.collidepoint(mouse_pos):
-                        # Start new game
-                        start_new_game = True
-                        game_running = True
-                        game_window_open = True
-                        main_menu_open = False
-                    elif pause_button.collidepoint(mouse_pos):
+                    if pause_button.collidepoint(mouse_pos):
                         # Pause or unpause game
                         game_running = not game_running
                     elif end_button.collidepoint(mouse_pos):
                         # End game
-                        game_running = False
-                        game_window_open = False
-                        main_menu_open = True
-                    elif quit_button.collidepoint(mouse_pos):
-                        # Quit program
                         run = False
-                        pygame.quit()
 
         # Block movement control
         if game_running:
@@ -161,5 +128,37 @@ def main():
                 if full_rows > 0:
                     score += 100 + (full_rows - 1) * 200
 
+# MENU WINDOW
+def main_menu():
+    # Create button click areas
+    start_button = buttonClickBox(START_BTN_X, START_BTN_Y)  # New game
+    quit_button = buttonClickBox(QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
+    run = True
+    while run:
+        # Update screen
+        CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)
+        updateMainMenu()
+        pygame.display.update()
+        
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
+        events = pygame.event.get()
+        for event in events:
+            # Close program
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
 
-main()
+            # Buttons clicks
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if start_button.collidepoint(mouse_pos):
+                        # Start new game
+                        game()
+                    elif quit_button.collidepoint(mouse_pos):
+                        # Quit program
+                        run = False
+                        pygame.quit()
+    
+main_menu()
