@@ -3,6 +3,9 @@ from shapes import *
 from board import *
 from screen import *
 
+# EVENTS
+GAME_OVER = pygame.USEREVENT + 1
+
 
 # CLASS
 class Block:
@@ -15,7 +18,9 @@ class Block:
         self.is_placed = False
 
         if self.updateBoard(board) == False:  # No room for new block, so game over
-            pass  # TODO: pygame custom event: game_over
+            # Notify program that game is over
+            pygame.event.post(pygame.event.Event(GAME_OVER))
+            GAME_OVER_SOUND.play()
 
     def move(self, board, x_step=0, y_step=0):
         self.x += x_step

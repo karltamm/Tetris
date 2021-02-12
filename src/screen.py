@@ -68,10 +68,16 @@ PAUSE_BTN_X = NEXT_BLOCK_TEXT_X
 PAUSE_BTN_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
 
 RESUME_BTN_X = PAUSE_BTN_X
-RESUME_BTN_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
+RESUME_BTN_Y = PAUSE_BTN_Y
 
 END_BTN_X = PAUSE_BTN_X
 END_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
+
+# Game over screen
+GAME_OVER_TEXT_X = (SCREEN_WIDTH - 235) / 2
+GAME_OVER_TEXT_Y = 300
+NEW_GAME_BTN_X = PAUSE_BTN_X
+NEW_GAME_BTN_Y = PAUSE_BTN_Y
 
 # INITIALIZE
 pygame.init()
@@ -152,11 +158,25 @@ def updateGameButtons():
 def updatePauseMenu():
     # Background
     transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    transparent_bg.fill((0, 0, 0, 175))  # 150 represents opacitiy [0 = no opacity]
+    transparent_bg.fill((0, 0, 0, 200))  # Last number represents opacitiy [0 = no opacity]
     SCREEN.blit(transparent_bg, (0, 0))
 
-    # Game buttons
+    # Buttons
     drawButton(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
+    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+
+
+def updateGameOverScreen():
+    # Background
+    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    transparent_bg.fill((0, 0, 0, 200))  # Last number represents opacitiy [0 = no opacity]
+    SCREEN.blit(transparent_bg, (0, 0))
+
+    # Message
+    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, font=CHATHURA_XBOLD)
+
+    # Buttons
+    drawButton(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
     drawButton(END_BTN, END_BTN_X, END_BTN_Y)
 
 
