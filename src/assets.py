@@ -22,6 +22,7 @@ BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 BLUE = (18, 71, 219)
 NEON_BLUE = (78, 250, 252)
+LIGHT_ORANGE = (252, 144, 78)
 
 # Fonts
 CHATHURA_RG = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-regular.ttf"))

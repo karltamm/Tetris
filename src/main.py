@@ -3,10 +3,19 @@ from board import *
 from nextblock import *
 from blocks import *
 from screen import *
+from stats import *
 
 # Initialize pygame
 pygame.init()
 CLOCK = pygame.time.Clock()
+
+
+# FUNCTIONS
+# Close program
+def closeProgram():
+    closeDatabase()
+    pygame.quit()
+    return False  # Return False to assign it to "run" variable
 
 
 # Playing the game
@@ -25,7 +34,8 @@ def startNewGame():
     next_block_area = createNextBlockArea()
     current_block = generateActiveBlock(board)
     next_block = generateNextBlock(next_block_area)
-    score = 0
+    current_score = 0
+    high_score = getHighScore()
 
     # Block movement control
     down_pressed = False
@@ -45,7 +55,7 @@ def startNewGame():
 
         updateBoard(board)
         updateNextBlockArea(next_block_area)
-        updateScore(score)
+        updateScore(current_score, high_score)
         updateGameButtons()
 
         if game_over:
@@ -62,13 +72,13 @@ def startNewGame():
         for event in events:
             # Close program
             if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
+                run = closeProgram()
 
-            # Check if game is over
+            # If game is over
             if event.type == GAME_OVER:
                 game_running = False
                 game_over = True
+                saveHighScore(current_score, high_score)
 
             # Pause or unpause game
             if event.type == pygame.KEYDOWN:
@@ -90,7 +100,7 @@ def startNewGame():
                         # Pause or unpause game
                         game_running = not game_running
                     elif end_button.collidepoint(mouse_pos):
-                        # End game
+                        # End game and go to the main menu
                         run = False
 
         # Block movement control
@@ -106,7 +116,7 @@ def startNewGame():
 
                 # Give points for faster drops
                 if down_pressed:
-                    score += 1
+                    current_score = increaseScore(current_score, FAST_DROP_POINTS)
 
             # Check if user wants to move a block
             for event in events:
@@ -151,13 +161,13 @@ def startNewGame():
 
                 # Give points for cleared rows
                 if full_rows > 0:
-                    score += 100 + (full_rows - 1) * 200
+                    current_score = increaseScore(current_score, FULL_ROW_POINTS, full_rows)
 
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
 
 
-# Main menu/splash screen
+# Main menu
 def main_menu():
     # Create button click areas
     start_button = buttonClickBox(START_BTN_X, START_BTN_Y)  # New game
@@ -175,10 +185,9 @@ def main_menu():
         mouse_pos = pygame.mouse.get_pos()
         events = pygame.event.get()
         for event in events:
-            # Close program
             if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
+                # Close program
+                run = closeProgram()
 
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -188,9 +197,7 @@ def main_menu():
                         startNewGame()
                     elif quit_button.collidepoint(mouse_pos):
                         # Quit program
-                        run = False
-                        pygame.quit()
+                        run = closeProgram()
 
 
-# Launch main menu if program is opened
-main_menu()
+main_menu()  # Launch main menu when program is opened
