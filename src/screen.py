@@ -108,25 +108,26 @@ def drawButton(button, x, y):
 def checkButtonPress(mouse_pos, button_pos):
     mouse_x, mouse_y = mouse_pos
     button_x, button_y = button_pos
-    height_box = pygame.Rect(button_x+11, button_y, BTN_WIDTH-22, BTN_HEIGHT)  # Rect with correct height, without left and right edge
-    width_box = pygame.Rect(button_x, button_y+11, BTN_WIDTH, BTN_HEIGHT-22)  # Rect with correct width, without top and bottom
+
+    height_box = pygame.Rect(button_x + 11, button_y, BTN_WIDTH - 22, BTN_HEIGHT)  # Rect with correct height, without left and right edge
+    width_box = pygame.Rect(button_x, button_y + 11, BTN_WIDTH, BTN_HEIGHT - 22)  # Rect with correct width, without top and bottom
+
     top_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + 11, button_y + 11)
-    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH-11, button_y + 11)
-    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + 11, button_y + BTN_HEIGHT-11)
-    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH-11, button_y + BTN_HEIGHT-11)
+    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - 11, button_y + 11)
+    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + 11, button_y + BTN_HEIGHT - 11)
+    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - 11, button_y + BTN_HEIGHT - 11)
+
     if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
         return True
     elif top_left_corner or top_right_corner or bottom_left_corner or bottom_right_corner:
         return True
 
 
-def checkButtonCorner(mouse_x, mouse_y, button_x, button_y): # Checks if mouse is inside rounded corner
+def checkButtonCorner(mouse_x, mouse_y, button_x, button_y):  # Checks if mouse is inside rounded corner
     xsq = math.pow(mouse_x - button_x, 2)
     ysq = math.pow(mouse_y - button_y, 2)
     if math.sqrt(xsq + ysq) < 10:
         return True
-
-
 
 
 # Game UI

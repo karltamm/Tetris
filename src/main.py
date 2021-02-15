@@ -1,5 +1,4 @@
 import pygame
-import sys
 from board import *
 from nextblock import *
 from blocks import *
@@ -25,16 +24,19 @@ def startNewGame():
     game_running = True  # unpaused or not
     game_over = False
 
-    # Button positions
-    pause_button = [PAUSE_BTN_X, PAUSE_BTN_Y]
-    end_button = [END_BTN_X, END_BTN_Y]  # End game
-    new_game_button = [NEW_GAME_BTN_X, NEW_GAME_BTN_Y]  # If game is over, this button will be shown
+    # Buttons position
+    pause_button = (PAUSE_BTN_X, PAUSE_BTN_Y)
+    end_button = (END_BTN_X, END_BTN_Y)  # End game
+    new_game_button = (NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
 
     # Initialize game
     board = createBoard()
     next_block_area = createNextBlockArea()
-    current_block = generateActiveBlock(board)
-    next_block = generateNextBlock(next_block_area)
+
+    batch = BlocksBatch()
+    current_block = Block(batch.getBlock(), board)
+    next_block = getNextBlock(batch.getBlock(), next_block_area)
+
     current_score = 0
     high_score = getHighScore()
 
@@ -153,8 +155,9 @@ def startNewGame():
             # Is current block placed?
             if current_block.is_placed:
                 full_rows = clearFullRows(board)
-                current_block = generateActiveBlock(board, next_block)
-                next_block = generateNextBlock(next_block_area)
+
+                current_block = Block(next_block, board)
+                next_block = getNextBlock(batch.getBlock(), next_block_area)
 
                 # Give points for cleared rows
                 if full_rows > 0:
@@ -162,7 +165,6 @@ def startNewGame():
 
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
-    sys.exit()
 
 
 # Main menu
