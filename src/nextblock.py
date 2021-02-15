@@ -18,11 +18,13 @@ class NextBlock:
 
     def updateBlockPreview(self, next_block_area):
         new_area = copyNextBlockArea(next_block_area)
+
         for row in range(self.y, self.y + BLOCK_HEIGHT):
             for col in range(self.x, self.x + BLOCK_WIDTH):
                 block_cell = self.shape[1][row - self.y][col - self.x]
-                copyNextBlockArea(new_area, next_block_area)
                 new_area[row][col] = block_cell
+
+        copyNextBlockArea(new_area, next_block_area)
 
 
 # FUNCTIONS
@@ -42,7 +44,6 @@ def copyNextBlockArea(src, dest=0):
     return dest
 
 
-def generateNextBlock(next_block_area):
-    block = random.choice(SHAPES)
+def getNextBlock(block, next_block_area):
     NextBlock(block, next_block_area)
     return block

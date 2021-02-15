@@ -22,7 +22,7 @@ class Block:
             pygame.event.post(pygame.event.Event(GAME_OVER))
             GAME_OVER_SOUND.play()
 
-    def move(self, board, x_step=0, y_step=0, autofall = False):
+    def move(self, board, x_step=0, y_step=0, autofall=False):
         move_success = False
         self.x += x_step
         self.y += y_step
@@ -48,7 +48,7 @@ class Block:
 
         self.rotation += 1
 
-        if self.updateBoard(board) == False: # Rotate failed
+        if self.updateBoard(board) == False:  # Rotate failed
             # If block on the leftmost side (means rotate was out of bounds)
             if self.x == -1:
                 self.x += 1
@@ -107,9 +107,28 @@ class Block:
         return True  # Block placement was successful
 
 
-# FUNCTIONS
-def generateActiveBlock(board, next_block=0):
-    if next_block == 0:
-        return Block(random.choice(SHAPES), board)
-    else:
-        return Block(next_block, board)
+class BlocksBatch:
+    def __init__(self):
+        self.blocks = []
+        self.newBatch()
+
+    def newBatch(self):
+        # Generate generic batch
+        for index, shape in enumerate(SHAPES):
+            self.blocks.append(shape)
+
+        # Shuffle/randomize the order of shapes
+        for i in range(50):
+            block_1 = random.randint(0, len(SHAPES) - 1)
+            block_2 = random.randint(0, len(SHAPES) - 1)
+
+            temp = self.blocks[block_1]
+            self.blocks[block_1] = self.blocks[block_2]
+            self.blocks[block_2] = temp
+
+    def getBlock(self):
+        if len(self.blocks) > 0:
+            return self.blocks.pop()
+        else:
+            self.newBatch()
+            return self.blocks.pop()
