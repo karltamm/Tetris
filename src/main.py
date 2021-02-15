@@ -1,4 +1,5 @@
 import pygame
+import sys
 from board import *
 from nextblock import *
 from blocks import *
@@ -24,10 +25,10 @@ def startNewGame():
     game_running = True  # unpaused or not
     game_over = False
 
-    # Create button click areas
-    pause_button = buttonClickBox(PAUSE_BTN_X, PAUSE_BTN_Y)
-    end_button = buttonClickBox(END_BTN_X, END_BTN_Y)  # End game
-    new_game_button = buttonClickBox(NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
+    # Button positions
+    pause_button = [PAUSE_BTN_X, PAUSE_BTN_Y]
+    end_button = [END_BTN_X, END_BTN_Y]  # End game
+    new_game_button = [NEW_GAME_BTN_X, NEW_GAME_BTN_Y]  # If game is over, this button will be shown
 
     # Initialize game
     board = createBoard()
@@ -88,7 +89,7 @@ def startNewGame():
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if new_game_button.collidepoint(mouse_pos) and game_over:
+                    if checkButtonPress(mouse_pos, new_game_button) and game_over:
                         # Run following code only if game is over
                         # new_game_button is shown when game is over
                         # new_game_button is at the same place, where pause/unpause button (click areas overlap)
@@ -96,10 +97,10 @@ def startNewGame():
                         # Start new game
                         run = False  # End current game process!
                         startNewGame()
-                    elif pause_button.collidepoint(mouse_pos):
+                    elif checkButtonPress(mouse_pos, pause_button):
                         # Pause or unpause game
                         game_running = not game_running
-                    elif end_button.collidepoint(mouse_pos):
+                    elif checkButtonPress(mouse_pos, end_button):
                         # End game and go to the main menu
                         run = False
 
@@ -163,13 +164,14 @@ def startNewGame():
 
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
+    sys.exit()
 
 
 # Main menu
 def main_menu():
-    # Create button click areas
-    start_button = buttonClickBox(START_BTN_X, START_BTN_Y)  # New game
-    quit_button = buttonClickBox(QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
+    # Button positions
+    start_button = [START_BTN_X, START_BTN_Y]  # New game
+    quit_button = [QUIT_BTN_X, QUIT_BTN_Y]  # Quit program
 
     run = True
     while run:
@@ -190,10 +192,10 @@ def main_menu():
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if start_button.collidepoint(mouse_pos):
+                    if checkButtonPress(mouse_pos, start_button):
                         # Start new game
                         startNewGame()
-                    elif quit_button.collidepoint(mouse_pos):
+                    elif checkButtonPress(mouse_pos, quit_button):
                         # Quit program
                         run = closeProgram()
 
