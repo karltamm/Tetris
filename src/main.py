@@ -112,11 +112,13 @@ def startNewGame():
             fall_timer += 1
             if fall_timer > FALL_SPEED:
                 fall_timer = 0
-                current_block.move(board, 0, 1)
 
                 # Give points for faster drops
                 if down_pressed:
+                    current_block.move(board, 0, 1)
                     current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                else:
+                    current_block.move(board, 0, 1, True)
 
             # Check if user wants to move a block
             for event in events:
@@ -146,10 +148,6 @@ def startNewGame():
                 current_block.move(board, 1, 0)
             if left_pressed and key_timer % 10 == 0:
                 current_block.move(board, -1, 0)
-
-            # Sound effect if moving a block
-            if (right_pressed or left_pressed or down_pressed) and key_timer % 10 == 0:
-                MOVE_SOUND.play()
 
             # Is current block placed?
             if current_block.is_placed:

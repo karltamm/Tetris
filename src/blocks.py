@@ -22,7 +22,8 @@ class Block:
             pygame.event.post(pygame.event.Event(GAME_OVER))
             GAME_OVER_SOUND.play()
 
-    def move(self, board, x_step=0, y_step=0):
+    def move(self, board, x_step=0, y_step=0, autofall = False):
+        move_success = False
         self.x += x_step
         self.y += y_step
 
@@ -33,6 +34,12 @@ class Block:
 
             if x_step == 0:  # Block didn't side collide with any other block
                 self.is_placed = True  # Block can't go any lower, so it's placed
+                move_success = True
+        # Move was successful so play sound
+        else:
+            move_success = True
+        if move_success and not autofall:
+            MOVE_SOUND.play()
 
     def rotate(self, board):
         rotate_success = False
