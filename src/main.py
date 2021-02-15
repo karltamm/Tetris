@@ -124,8 +124,6 @@ def startNewGame():
                     key_timer = 0
                     if event.key == pygame.K_UP:
                         current_block.rotate(board)
-                        # Sound effect for rotating
-                        ROTATE_SOUND.play()
                     elif event.key == pygame.K_DOWN:
                         down_pressed = True
                     elif event.key == pygame.K_RIGHT:
