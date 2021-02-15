@@ -7,7 +7,7 @@ from assets import *
 # CONSTANTS
 # Screen
 SCREEN_WIDTH = 600  # px
-SCREEN_HEIGHT = 700  # px
+SCREEN_HEIGHT = 790  # px
 FPS = 60
 
 # Whitespace
@@ -17,26 +17,76 @@ FAR = 30
 
 # Text
 TXT_HEIGHT = 50
+TXT_HEIGHT2 = 25
+
+# Buttons
+BTN_HEIGHT = 60
+BTN_WIDTH = 150
+
+# Main menu
+LOGO_HEIGHT = 100
+LOGO_WIDTH = 420
+LOGO_X = (SCREEN_WIDTH - LOGO_WIDTH) / 2
+LOGO_Y = PADDING
+
+START_BTN_X = PADDING
+START_BTN_Y = LOGO_Y + LOGO_HEIGHT + 2 * FAR
+
+OPTIONS_BTN_X = PADDING
+OPTIONS_BTN_Y = START_BTN_Y + BTN_HEIGHT + NEAR
+
+STATS_BTN_X = PADDING
+STATS_BTN_Y = OPTIONS_BTN_Y + BTN_HEIGHT + NEAR
+
+QUIT_BTN_X = PADDING
+QUIT_BTN_Y = STATS_BTN_Y + BTN_HEIGHT + 2 * FAR
+
+INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 2 * FAR
+INSTRUCTION_Y = LOGO_Y + LOGO_HEIGHT + 2 * FAR
+
+# Score
+SCORE_SIZE = 50
+
+SCORE_TEXT_X = PADDING
+SCORE_TEXT_Y = PADDING
+
+SCORE_VAL_X = SCORE_TEXT_X + 70
+SCORE_VAL_Y = SCORE_TEXT_Y
+
+HIGH_SCORE_TEXT_X = SCORE_TEXT_X
+HIGH_SCORE_TEXT_Y = SCORE_TEXT_Y + TXT_HEIGHT2 + NEAR
+
+HIGH_SCORE_VAL_X = HIGH_SCORE_TEXT_X + 70
+HIGH_SCORE_VAL_Y = HIGH_SCORE_TEXT_Y
 
 # Board
 BOARD_CELL = 30  # 30 px square
+
 BOARD_X = PADDING
-BOARD_Y = PADDING
+BOARD_Y = HIGH_SCORE_VAL_Y + TXT_HEIGHT2 + FAR
 
 # Next block area
-NEXT_BLOCK_AREA_X = BOARD_X + BOARD_WIDTH * BOARD_CELL + PADDING
-NEXT_BLOCK_TEXT_AREA_Y = PADDING
-NEXT_BLOCK_AREA_Y = NEXT_BLOCK_TEXT_AREA_Y + TXT_HEIGHT + NEAR
+NEXT_BLOCK_TEXT_X = BOARD_X + BOARD_WIDTH * BOARD_CELL + PADDING
+NEXT_BLOCK_TEXT_Y = BOARD_Y - (TXT_HEIGHT + NEAR)
 
-# Score
-SCORE_AREA_X = NEXT_BLOCK_AREA_X
-SCORE_AREA_Y = NEXT_BLOCK_AREA_Y + NEXT_BLOCK_AREA_HEIGHT * BOARD_CELL + FAR
+NEXT_BLOCK_AREA_X = NEXT_BLOCK_TEXT_X
+NEXT_BLOCK_AREA_Y = BOARD_Y
 
 # In-game buttons
-BTN_HEIGHT = 68
-BTN_WIDTH = 150
-GAME_BTNS_AREA_X = NEXT_BLOCK_AREA_X
-GAME_BTNS_AREA_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
+PAUSE_BTN_X = NEXT_BLOCK_TEXT_X
+PAUSE_BTN_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
+
+RESUME_BTN_X = PAUSE_BTN_X
+RESUME_BTN_Y = PAUSE_BTN_Y
+
+END_BTN_X = PAUSE_BTN_X
+END_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
+
+# Game over screen
+GAME_OVER_TEXT_X = (SCREEN_WIDTH - 235) / 2
+GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - TXT_HEIGHT) / 2
+NEW_GAME_BTN_X = PAUSE_BTN_X
+NEW_GAME_BTN_Y = PAUSE_BTN_Y
 
 # INITIALIZE
 pygame.init()
@@ -54,9 +104,10 @@ def drawButton(button, x, y):
     SCREEN.blit(button, (x, y))
 
 
-def buttonClickBox(x,y):
-    button = pygame.Rect(x, y+6, BTN_WIDTH, BTN_HEIGHT - 6)
+def buttonClickBox(x, y):
+    button = pygame.Rect(x, y + 6, BTN_WIDTH, BTN_HEIGHT - 6)
     return button
+
 
 # Game UI
 def updateBoard(board):
@@ -100,25 +151,55 @@ def updateNextBlockArea(next_block_area):
             elif next_block_area[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
 
-    drawText("Next", NEXT_BLOCK_AREA_X, NEXT_BLOCK_TEXT_AREA_Y)
+    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y)
 
 
-def updateScore(score):
-    drawText("Score", SCORE_AREA_X, SCORE_AREA_Y)
-    drawText(str(score), SCORE_AREA_X, SCORE_AREA_Y + TXT_HEIGHT + NEAR, color=NEON_BLUE)
+def updateScore(score, high_score):
+    # Display current score
+    drawText("Score", SCORE_TEXT_X, SCORE_TEXT_Y, size=SCORE_SIZE, color=NEON_BLUE, font=CHATHURA_XBOLD)
+    drawText(str(score), SCORE_VAL_X, SCORE_VAL_Y, size=SCORE_SIZE)
+
+    # Display high score
+    drawText("High", HIGH_SCORE_TEXT_X, HIGH_SCORE_TEXT_Y, size=SCORE_SIZE, color=LIGHT_ORANGE, font=CHATHURA_XBOLD)
+    drawText(str(high_score), HIGH_SCORE_VAL_X, HIGH_SCORE_VAL_Y, size=SCORE_SIZE)
 
 
 def updateGameButtons():
-    drawButton(PAUSE_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y)
-    drawButton(END_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y + BTN_HEIGHT + NEAR)
+    drawButton(PAUSE_BTN, PAUSE_BTN_X, PAUSE_BTN_Y)
+    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
 
 
 def updatePauseMenu():
     # Background
     transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    transparent_bg.fill((0, 0, 0, 175))  # 150 represents opacitiy [0 = no opacity]
+    transparent_bg.fill((0, 0, 0, 200))  # Last number represents opacitiy [0 = no opacity]
     SCREEN.blit(transparent_bg, (0, 0))
 
-    # Game buttons
-    drawButton(RESUME_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y)
-    drawButton(END_BTN, GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y + BTN_HEIGHT + NEAR)
+    # Buttons
+    drawButton(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
+    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+
+
+def updateGameOverScreen():
+    # Background
+    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    transparent_bg.fill((0, 0, 0, 200))  # Last number represents opacitiy [0 = no opacity]
+    SCREEN.blit(transparent_bg, (0, 0))
+
+    # Message
+    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, font=CHATHURA_XBOLD)
+
+    # Buttons
+    drawButton(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
+    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+
+
+def updateMainMenu():
+    SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
+
+    drawButton(START_BTN, START_BTN_X, START_BTN_Y)
+    drawButton(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
+    drawButton(STATS_BTN, STATS_BTN_X, STATS_BTN_Y)
+    drawButton(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
+
+    SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))

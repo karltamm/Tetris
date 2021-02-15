@@ -3,29 +3,41 @@ from board import *
 from nextblock import *
 from blocks import *
 from screen import *
+from stats import *
+
+# Initialize pygame
+pygame.init()
+CLOCK = pygame.time.Clock()
 
 
-# MAIN
-def main():
-    # Initialize
-    pygame.init()
-    CLOCK = pygame.time.Clock()
-    board = createBoard()  # 2D array, where "0" represents empty cell
+# FUNCTIONS
+# Close program
+def closeProgram():
+    closeDatabase()
+    pygame.quit()
+    return False  # Return False to assign it to "run" variable
+
+
+# Playing the game
+def startNewGame():
+    # Game states
+    game_running = True  # unpaused or not
+    game_over = False
+
+    # Create button click areas
+    pause_button = buttonClickBox(PAUSE_BTN_X, PAUSE_BTN_Y)
+    end_button = buttonClickBox(END_BTN_X, END_BTN_Y)  # End game
+    new_game_button = buttonClickBox(NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
+
+    # Initialize game
+    board = createBoard()
     next_block_area = createNextBlockArea()
-    score = 0
-
-    # Which UI window is shown?
-    game_paused = False
-
-    # Buttons
-    pause_button = buttonClickBox(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y)
-    end_button = buttonClickBox(GAME_BTNS_AREA_X, GAME_BTNS_AREA_Y + BTN_HEIGHT + NEAR)
-
-    # Blocks
     current_block = generateActiveBlock(board)
     next_block = generateNextBlock(next_block_area)
+    current_score = 0
+    high_score = getHighScore()
 
-    # For holding down keys
+    # Block movement control
     down_pressed = False
     left_pressed = False
     right_pressed = False
@@ -37,46 +49,62 @@ def main():
 
     run = True
     while run:
-        # Screen
+        # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
 
         updateBoard(board)
         updateNextBlockArea(next_block_area)
-        updateScore(score)
+        updateScore(current_score, high_score)
         updateGameButtons()
 
-        if game_paused:
+        if game_over:
+            updateGameOverScreen()
+        elif not game_running:
             updatePauseMenu()
 
         pygame.display.update()
-        
-        # Mouse
-        mouse_pos = pygame.mouse.get_pos()
 
         # UI control
+        mouse_pos = pygame.mouse.get_pos()
+
         events = pygame.event.get()
         for event in events:
             # Close program
             if event.type == pygame.QUIT:
-                run = False
-                pygame.quit()
+                run = closeProgram()
 
-            # Pause game
+            # If game is over
+            if event.type == GAME_OVER:
+                game_running = False
+                game_over = True
+                saveHighScore(current_score, high_score)
+
+            # Pause or unpause game
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    game_paused = not game_paused  # Invert the boolean value
-                    
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if pause_button.collidepoint(mouse_pos):
-                        game_paused = not game_paused  # Invert the boolean value
-                    elif end_button.collidepoint(mouse_pos):
-                        run = False
-                        pygame.quit()
+                if event.key == pygame.K_ESCAPE and not game_over:
+                    game_running = not game_running
 
-        # Block movement
-        if game_paused == False:
+            # Buttons clicks
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if new_game_button.collidepoint(mouse_pos) and game_over:
+                        # Run following code only if game is over
+                        # new_game_button is shown when game is over
+                        # new_game_button is at the same place, where pause/unpause button (click areas overlap)
+
+                        # Start new game
+                        run = False  # End current game process!
+                        startNewGame()
+                    elif pause_button.collidepoint(mouse_pos):
+                        # Pause or unpause game
+                        game_running = not game_running
+                    elif end_button.collidepoint(mouse_pos):
+                        # End game and go to the main menu
+                        run = False
+
+        # Block movement control
+        if game_running:
             # For holding down keys
             key_timer += 1
 
@@ -85,10 +113,12 @@ def main():
             if fall_timer > FALL_SPEED:
                 fall_timer = 0
                 current_block.move(board, 0, 1)
-                if down_pressed:
-                    score += 1
 
-            # User input
+                # Give points for faster drops
+                if down_pressed:
+                    current_score = increaseScore(current_score, FAST_DROP_POINTS)
+
+            # Check if user wants to move a block
             for event in events:
                 if event.type == pygame.KEYDOWN:  # If a key is pressed down
                     key_timer = 0
@@ -109,6 +139,7 @@ def main():
                     elif event.key == pygame.K_LEFT:
                         left_pressed = False
 
+            # Move blocks
             if down_pressed:
                 fall_timer += 8
             if right_pressed and key_timer % 10 == 0:
@@ -116,14 +147,55 @@ def main():
             if left_pressed and key_timer % 10 == 0:
                 current_block.move(board, -1, 0)
 
+            # Sound effect if moving a block
+            if (right_pressed or left_pressed or down_pressed) and key_timer % 10 == 0:
+                MOVE_SOUND.play()
+
             # Is current block placed?
-            if current_block.is_placed == True:
+            if current_block.is_placed:
                 full_rows = clearFullRows(board)
-                if full_rows > 0:
-                    score += 100 + (full_rows-1)*200
                 current_block = generateActiveBlock(board, next_block)
                 next_block = generateNextBlock(next_block_area)
 
+                # Give points for cleared rows
+                if full_rows > 0:
+                    current_score = increaseScore(current_score, FULL_ROW_POINTS, full_rows)
 
-main()
+                    # Sound effect if at least one row is cleared
+                    ROW_CLEARED_SOUND.play()
 
+
+# Main menu
+def main_menu():
+    # Create button click areas
+    start_button = buttonClickBox(START_BTN_X, START_BTN_Y)  # New game
+    quit_button = buttonClickBox(QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
+
+    run = True
+    while run:
+        # Update screen
+        CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)
+        updateMainMenu()
+        pygame.display.update()
+
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                # Close program
+                run = closeProgram()
+
+            # Buttons clicks
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if start_button.collidepoint(mouse_pos):
+                        # Start new game
+                        startNewGame()
+                    elif quit_button.collidepoint(mouse_pos):
+                        # Quit program
+                        run = closeProgram()
+
+
+main_menu()  # Launch main menu when program is opened

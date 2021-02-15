@@ -3,6 +3,9 @@ from shapes import *
 from board import *
 from screen import *
 
+# EVENTS
+GAME_OVER = pygame.USEREVENT + 1
+
 
 # CLASS
 class Block:
@@ -15,7 +18,9 @@ class Block:
         self.is_placed = False
 
         if self.updateBoard(board) == False:  # No room for new block, so game over
-            pass  # TODO: pygame custom event: game_over
+            # Notify program that game is over
+            pygame.event.post(pygame.event.Event(GAME_OVER))
+            GAME_OVER_SOUND.play()
 
     def move(self, board, x_step=0, y_step=0):
         self.x += x_step
@@ -30,13 +35,39 @@ class Block:
                 self.is_placed = True  # Block can't go any lower, so it's placed
 
     def rotate(self, board):
+        rotate_success = False
         if self.rotation == 3:
             self.rotation = -1
 
         self.rotation += 1
 
-        if self.updateBoard(board) == False:
+        if self.updateBoard(board) == False: # Rotate failed
+            # If block on the leftmost side (means rotate was out of bounds)
+            if self.x == -1:
+                self.x += 1
+                if self.updateBoard(board) == False:
+                    self.x -= 1
+                else:
+                    self.rotation += 1
+                    rotate_success = True
+            # If block on the rightmost side
+            elif self.x == 8:
+                if self.shape == SHAPE_I:
+                    self.x -= 1
+                self.x -= 1
+                if self.updateBoard(board) == False:
+                    if self.shape == SHAPE_I:
+                        self.x += 1
+                    self.x += 1
+                else:
+                    self.rotation += 1
+                    rotate_success = True
             self.rotation -= 1
+        else:
+            rotate_success = True
+        # Rotation was successful so play sound
+        if rotate_success and self.shape != SHAPE_O:
+            ROTATE_SOUND.play()
 
     def removeOldCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
