@@ -49,7 +49,9 @@ def startNewGame():
     # Block automatic falling
     fall_timer = 0
     fall_speed = 0.4  # Every X second trigger block autofall
-    stage_timer = 0
+    
+    # Game stages and increasing fall speed
+    stage_score_counter = 0
     stage = 1
     
 
@@ -113,13 +115,12 @@ def startNewGame():
         if game_running:
             # For holding down keys
             key_timer += 1
-
+            print(stage_score_counter)
             # For stage (higher stage -> faster block autofall)
-            stage_timer += 1
-            if (stage_timer / FPS) > 20:  # Next stage every 20 seconds
-                stage_timer = 0
+            if stage_score_counter >= 1000:  # Next stage every 1000 score
+                stage_score_counter = current_score % 1000  # If current score skips round number ex 1967 -> 2167, Then score counter from 167
                 
-                if fall_speed > 0.15:  # Until block falls every 0.15 seconds
+                if fall_speed > 0.15:  # Until block falls every 0.15 seconds (max speed)
                     stage += 1
                     fall_speed -= 0.05
 
@@ -155,6 +156,8 @@ def startNewGame():
                 current_block.move(board, 0, 1)
                 # Give points for faster drops
                 current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                stage_score_counter = increaseScore(stage_score_counter, FAST_DROP_POINTS)
+                
             if right_pressed and key_timer % 10 == 0:
                 current_block.move(board, 1, 0)
             if left_pressed and key_timer % 10 == 0:
@@ -170,7 +173,8 @@ def startNewGame():
                 # Give points for cleared rows
                 if full_rows > 0:
                     current_score = increaseScore(current_score, FULL_ROW_POINTS, full_rows)
-
+                    stage_score_counter = increaseScore(stage_score_counter, FULL_ROW_POINTS, full_rows)
+                    
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
 
