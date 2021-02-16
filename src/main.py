@@ -122,7 +122,7 @@ def startNewGame():
                 
                 if fall_speed > 0.15:  # Until block falls every 0.15 seconds (max speed)
                     stage += 1
-                    fall_speed -= 0.05
+                    fall_speed *= 0.9
 
             # Block automatic falling
             fall_timer += 1
