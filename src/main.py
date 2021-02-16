@@ -48,7 +48,10 @@ def startNewGame():
 
     # Block automatic falling
     fall_timer = 0
-    FALL_SPEED = 25  # Lower value -> Faster drop speed
+    fall_speed = 0.4  # Every X second trigger block autofall
+    stage_timer = 0
+    stage = 1
+    
 
     run = True
     while run:
@@ -58,7 +61,7 @@ def startNewGame():
 
         updateBoard(board)
         updateNextBlockArea(next_block_area)
-        updateScore(current_score, high_score)
+        updateScore(current_score, high_score, stage)
         updateGameButtons()
 
         if game_over:
@@ -111,17 +114,20 @@ def startNewGame():
             # For holding down keys
             key_timer += 1
 
+            # For stage (higher stage -> faster block autofall)
+            stage_timer += 1
+            if (stage_timer / FPS) > 20:  # Next stage every 20 seconds
+                stage_timer = 0
+                
+                if fall_speed > 0.15:  # Until block falls every 0.15 seconds
+                    stage += 1
+                    fall_speed -= 0.05
+
             # Block automatic falling
             fall_timer += 1
-            if fall_timer > FALL_SPEED:
+            if (fall_timer / FPS) > fall_speed:
                 fall_timer = 0
-
-                # Give points for faster drops
-                if down_pressed:
-                    current_block.move(board, 0, 1)
-                    current_score = increaseScore(current_score, FAST_DROP_POINTS)
-                else:
-                    current_block.move(board, 0, 1, True)
+                current_block.move(board, 0, 1, True)
 
             # Check if user wants to move a block
             for event in events:
@@ -145,8 +151,10 @@ def startNewGame():
                         left_pressed = False
 
             # Move blocks
-            if down_pressed:
-                fall_timer += 8
+            if down_pressed and key_timer % 4 == 0:
+                current_block.move(board, 0, 1)
+                # Give points for faster drops
+                current_score = increaseScore(current_score, FAST_DROP_POINTS)
             if right_pressed and key_timer % 10 == 0:
                 current_block.move(board, 1, 0)
             if left_pressed and key_timer % 10 == 0:
