@@ -48,7 +48,11 @@ def startNewGame():
 
     # Block automatic falling
     fall_timer = 0
-    FALL_SPEED = 25  # Lower value -> Faster drop speed
+    fall_speed = 0.4  # Every X second trigger block autofall
+    
+    # Game stage
+    stage = 1
+    
 
     run = True
     while run:
@@ -58,7 +62,7 @@ def startNewGame():
 
         updateBoard(board)
         updateNextBlockArea(next_block_area)
-        updateScore(current_score, high_score)
+        updateScore(current_score, high_score, stage)
         updateGameButtons()
 
         if game_over:
@@ -111,17 +115,16 @@ def startNewGame():
             # For holding down keys
             key_timer += 1
 
+            # For stage (higher stage -> faster block autofall)
+            if current_score >= (1000 * stage):  # Next stage every 1000 score
+                stage += 1
+                fall_speed *= 0.9
+
             # Block automatic falling
             fall_timer += 1
-            if fall_timer > FALL_SPEED:
+            if (fall_timer / FPS) > fall_speed:
                 fall_timer = 0
-
-                # Give points for faster drops
-                if down_pressed:
-                    current_block.move(board, 0, 1)
-                    current_score = increaseScore(current_score, FAST_DROP_POINTS)
-                else:
-                    current_block.move(board, 0, 1, True)
+                current_block.move(board, 0, 1, True)
 
             # Check if user wants to move a block
             for event in events:
@@ -135,6 +138,11 @@ def startNewGame():
                         right_pressed = True
                     elif event.key == pygame.K_LEFT:
                         left_pressed = True
+                    elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
+                        while not current_block.is_placed:
+                            current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                            current_block.move(board, 0, 1, True)
+                        MOVE_SOUND.play()
 
                 elif event.type == pygame.KEYUP:  # If a key is released
                     if event.key == pygame.K_DOWN:
@@ -145,8 +153,11 @@ def startNewGame():
                         left_pressed = False
 
             # Move blocks
-            if down_pressed:
-                fall_timer += 8
+            if down_pressed and key_timer % 4 == 0:
+                current_block.move(board, 0, 1)
+                # Give points for faster drops
+                current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                
             if right_pressed and key_timer % 10 == 0:
                 current_block.move(board, 1, 0)
             if left_pressed and key_timer % 10 == 0:
@@ -162,7 +173,7 @@ def startNewGame():
                 # Give points for cleared rows
                 if full_rows > 0:
                     current_score = increaseScore(current_score, FULL_ROW_POINTS, full_rows)
-
+                    
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
 

@@ -60,6 +60,13 @@ HIGH_SCORE_TEXT_Y = SCORE_TEXT_Y + TXT_HEIGHT2 + NEAR
 HIGH_SCORE_VAL_X = HIGH_SCORE_TEXT_X + 70
 HIGH_SCORE_VAL_Y = HIGH_SCORE_TEXT_Y
 
+# Stage
+STAGE_TEXT_X = SCORE_TEXT_X + 220
+STAGE_TEXT_Y = PADDING
+
+STAGE_VAL_X = STAGE_TEXT_X + 70
+STAGE_VAL_Y = STAGE_TEXT_Y
+
 # Board
 BOARD_CELL = 30  # 30 px square
 
@@ -175,7 +182,7 @@ def updateNextBlockArea(next_block_area):
     drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y)
 
 
-def updateScore(score, high_score):
+def updateScore(score, high_score, stage):
     # Display current score
     drawText("Score", SCORE_TEXT_X, SCORE_TEXT_Y, size=SCORE_SIZE, color=NEON_BLUE, font=CHATHURA_XBOLD)
     drawText(str(score), SCORE_VAL_X, SCORE_VAL_Y, size=SCORE_SIZE)
@@ -183,6 +190,10 @@ def updateScore(score, high_score):
     # Display high score
     drawText("High", HIGH_SCORE_TEXT_X, HIGH_SCORE_TEXT_Y, size=SCORE_SIZE, color=LIGHT_ORANGE, font=CHATHURA_XBOLD)
     drawText(str(high_score), HIGH_SCORE_VAL_X, HIGH_SCORE_VAL_Y, size=SCORE_SIZE)
+    
+    # Display stage
+    drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, size=SCORE_SIZE, color=LAVENDER, font=CHATHURA_XBOLD)
+    drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y, size=SCORE_SIZE)
 
 
 def updateGameButtons():
