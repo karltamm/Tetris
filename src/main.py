@@ -138,6 +138,11 @@ def startNewGame():
                         right_pressed = True
                     elif event.key == pygame.K_LEFT:
                         left_pressed = True
+                    elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
+                        while not current_block.is_placed:
+                            current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                            current_block.move(board, 0, 1, True)
+                        MOVE_SOUND.play()
 
                 elif event.type == pygame.KEYUP:  # If a key is released
                     if event.key == pygame.K_DOWN:
