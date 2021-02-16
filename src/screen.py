@@ -192,7 +192,7 @@ def updateScore(score, high_score, stage):
     drawText(str(high_score), HIGH_SCORE_VAL_X, HIGH_SCORE_VAL_Y, size=SCORE_SIZE)
     
     # Display stage
-    drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, size=SCORE_SIZE, color=LAVENDER, font=CHATHURA_XBOLD)
+    drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, size=SCORE_SIZE, color=NEON_GREEN, font=CHATHURA_XBOLD)
     drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y, size=SCORE_SIZE)
 
 

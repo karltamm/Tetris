@@ -1,4 +1,5 @@
 import pygame
+import sys
 from board import *
 from nextblock import *
 from blocks import *
@@ -13,9 +14,9 @@ CLOCK = pygame.time.Clock()
 # FUNCTIONS
 # Close program
 def closeProgram():
-    closeDatabase()
+    closeStatsDB()
     pygame.quit()
-    return False  # Return False to assign it to "run" variable
+    sys.exit()
 
 
 # Playing the game
@@ -74,12 +75,12 @@ def startNewGame():
 
         # UI control
         mouse_pos = pygame.mouse.get_pos()
-
         events = pygame.event.get()
+
         for event in events:
             # Close program
             if event.type == pygame.QUIT:
-                run = closeProgram()
+                closeProgram()
 
             # If game is over
             if event.type == GAME_OVER:
@@ -101,14 +102,15 @@ def startNewGame():
                         # new_game_button is at the same place, where pause/unpause button (click areas overlap)
 
                         # Start new game
-                        run = False  # End current game process!
+                        run = False  # End current game process
                         startNewGame()
                     elif checkButtonPress(mouse_pos, pause_button):
                         # Pause or unpause game
                         game_running = not game_running
                     elif checkButtonPress(mouse_pos, end_button):
                         # End game and go to the main menu
-                        run = False
+                        run = False # Stop game process
+                        main_menu()
 
         # Block movement control
         if game_running:
@@ -124,7 +126,8 @@ def startNewGame():
             fall_timer += 1
             if (fall_timer / FPS) > fall_speed:
                 fall_timer = 0
-                current_block.move(board, 0, 1, True)
+                if not down_pressed:
+                    current_block.move(board, 0, 1, autofall=True)
 
             # Check if user wants to move a block
             for event in events:
@@ -141,7 +144,7 @@ def startNewGame():
                     elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
                         while not current_block.is_placed:
                             current_score = increaseScore(current_score, FAST_DROP_POINTS)
-                            current_block.move(board, 0, 1, True)
+                            current_block.move(board, 0, 1, autofall=True)
                         MOVE_SOUND.play()
 
                 elif event.type == pygame.KEYUP:  # If a key is released
@@ -157,10 +160,9 @@ def startNewGame():
                 current_block.move(board, 0, 1)
                 # Give points for faster drops
                 current_score = increaseScore(current_score, FAST_DROP_POINTS)
-                
-            if right_pressed and key_timer % 10 == 0:
+            elif right_pressed and key_timer % 10 == 0:
                 current_block.move(board, 1, 0)
-            if left_pressed and key_timer % 10 == 0:
+            elif left_pressed and key_timer % 10 == 0:
                 current_block.move(board, -1, 0)
 
             # Is current block placed?
@@ -194,21 +196,19 @@ def main_menu():
 
         # UI control
         mouse_pos = pygame.mouse.get_pos()
-        events = pygame.event.get()
-        for event in events:
+        
+        for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                # Close program
-                run = closeProgram()
+                closeProgram()
 
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if checkButtonPress(mouse_pos, start_button):
-                        # Start new game
+                        run = False # Stop main menu proccess
                         startNewGame()
                     elif checkButtonPress(mouse_pos, quit_button):
-                        # Quit program
-                        run = closeProgram()
+                        closeProgram()
 
 
 main_menu()  # Launch main menu when program is opened

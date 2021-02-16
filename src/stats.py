@@ -7,7 +7,7 @@ FAST_DROP_POINTS = 1
 FULL_ROW_POINTS = 200
 
 # INITIALIZE
-database = shelve.open(os.path.join("data", "stats"))
+STATS_DB = shelve.open(os.path.join("data", "stats"))
 
 
 # FUNCTIONS
@@ -22,7 +22,7 @@ def increaseScore(current_score, reward, full_rows=0):
 def getHighScore():
     try:
         # If database already has high_score entry
-        high_score = database["high_score"]
+        high_score = STATS_DB["high_score"]
     except:
         high_score = 0
 
@@ -31,8 +31,8 @@ def getHighScore():
 
 def saveHighScore(current_score, high_score):
     if current_score > high_score:
-        database["high_score"] = current_score
+        STATS_DB["high_score"] = current_score
 
 
-def closeDatabase():
-    database.close()
+def closeStatsDB():
+    STATS_DB.close()
