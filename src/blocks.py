@@ -38,6 +38,7 @@ class Block:
         # Move was successful so play sound
         else:
             move_success = True
+            
         if move_success and not autofall:
             MOVE_SOUND.play()
 
@@ -127,8 +128,7 @@ class BlocksBatch:
             self.blocks[block_2] = temp
 
     def getBlock(self):
-        if len(self.blocks) > 0:
-            return self.blocks.pop()
-        else:
+        if len(self.blocks) == 0:
             self.newBatch()
-            return self.blocks.pop()
+
+        return self.blocks.pop()
