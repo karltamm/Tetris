@@ -115,7 +115,7 @@ def startNewGame():
         if game_running:
             # For holding down keys
             key_timer += 1
-            print(stage_score_counter)
+
             # For stage (higher stage -> faster block autofall)
             if stage_score_counter >= 1000:  # Next stage every 1000 score
                 stage_score_counter = current_score % 1000  # If current score skips round number ex 1967 -> 2167, Then score counter from 167
