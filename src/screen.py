@@ -23,6 +23,7 @@ TXT_HEIGHT2 = 25
 # Buttons
 BTN_HEIGHT = 60
 BTN_WIDTH = 150
+BTN_CORNER_RAD = 11
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -116,13 +117,13 @@ def checkButtonPress(mouse_pos, button_pos):
     mouse_x, mouse_y = mouse_pos
     button_x, button_y = button_pos
 
-    height_box = pygame.Rect(button_x + 11, button_y, BTN_WIDTH - 22, BTN_HEIGHT)  # Rect with correct height, without left and right edge
-    width_box = pygame.Rect(button_x, button_y + 11, BTN_WIDTH, BTN_HEIGHT - 22)  # Rect with correct width, without top and bottom
+    height_box = pygame.Rect(button_x + BTN_CORNER_RAD, button_y, BTN_WIDTH - BTN_CORNER_RAD*2, BTN_HEIGHT)  # Rect with correct height, without left and right edge
+    width_box = pygame.Rect(button_x, button_y + BTN_CORNER_RAD, BTN_WIDTH, BTN_HEIGHT - BTN_CORNER_RAD*2)  # Rect with correct width, without top and bottom
 
-    top_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + 11, button_y + 11)
-    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - 11, button_y + 11)
-    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + 11, button_y + BTN_HEIGHT - 11)
-    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - 11, button_y + BTN_HEIGHT - 11)
+    top_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD, button_y + BTN_CORNER_RAD)
+    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD, button_y + BTN_CORNER_RAD)
+    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD, button_y + BTN_HEIGHT - BTN_CORNER_RAD)
+    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD, button_y + BTN_HEIGHT - BTN_CORNER_RAD)
 
     if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
         return True
