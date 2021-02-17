@@ -157,6 +157,8 @@ def updateBoard(board):
                 SCREEN.blit(YELLOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
             elif board[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+            elif board[row][col] == 8:
+                SCREEN.blit(SHADOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
 
 
 def updateNextBlockArea(next_block_area):

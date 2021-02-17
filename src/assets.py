@@ -13,6 +13,7 @@ PINK_CELL = pygame.image.load(os.path.join("assets/cells", "pink.png"))
 RED_CELL = pygame.image.load(os.path.join("assets/cells", "red.png"))
 YELLOW_CELL = pygame.image.load(os.path.join("assets/cells", "yellow.png"))
 BLUE_CELL = pygame.image.load(os.path.join("assets/cells", "blue.png"))
+SHADOW_CELL = pygame.image.load(os.path.join("assets/cells", "shadow.png"))
 
 # Colors
 LIGHT_GREY = (209, 209, 209)
