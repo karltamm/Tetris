@@ -1,4 +1,4 @@
-import random
+import random, copy
 from shapes import *
 from board import *
 from screen import *
@@ -93,7 +93,7 @@ class Block:
 
                 if block_cell != 0:
                     if col < BOARD_WIDTH and col > -1 and row < BOARD_HEIGHT:
-                        if new_board[row][col] == 0:
+                        if new_board[row][col] == 0 or new_board[row][col] == 8:  # No collision with cells of 0 or 8 value
                             # Cell isn't occupied by another block
                             new_board[row][col] = block_cell
                             temp_used_board_cells.append((row, col))
@@ -106,6 +106,44 @@ class Block:
         self.used_board_cells = temp_used_board_cells
         copyBoard(new_board, board)
         return True  # Block placement was successful
+
+
+# CHILD CLASS OF "Block"
+class ShadowBlock(Block):
+    def __init__(self, current_block, board):
+        """
+        copy.deepcopy, sest kui muidu teha -> shape = current_block.shape,
+        shape[0][0][1] = "Ananass",
+        siis ka -> current_block.shape[0][0][1] = "Ananass"
+        """
+        shape = copy.deepcopy(current_block.shape)
+        rotation = current_block.rotation
+
+        for row in range(len(shape[rotation])):
+            for col in range(len(shape[rotation][row])):
+                if shape[rotation][row][col] != 0:
+                    # Nt O kujund, [[0, 2, 2, 0][0, 2, 2, 0]...] -> [[0, 8, 8, 0][0, 8, 8, 0]...]
+                    shape[rotation][row][col] = 8
+        
+        self.shape = shape
+        self.rotation = rotation
+        self.x = current_block.x
+        self.y = current_block.y + 3
+        self.used_board_cells = []
+        self.is_placed = False
+        self.board = board
+        
+        # Drops shadow block down as much as possible
+        while not self.is_placed:
+            self.move(board, 0, 1, autofall=True)
+            
+    # TODO: Implement better functions, tidy up?
+
+    def clearShadow(self, board):
+        for row in range(BOARD_HEIGHT):
+            for col in range(BOARD_WIDTH):
+                if board[row][col] == 8:
+                    board[row][col] = 0
 
 
 class BlocksBatch:

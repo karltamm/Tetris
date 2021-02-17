@@ -118,6 +118,8 @@ def startNewGame():
             # For holding down keys
             key_timer += 1
 
+            shadow_block = ShadowBlock(current_block, board)  # Create shadow block based on current_block
+
             # Block automatic falling
             fall_timer += 1
             if (fall_timer / FPS) > fall_speed:
@@ -130,6 +132,7 @@ def startNewGame():
                 if event.type == pygame.KEYDOWN:  # If a key is pressed down
                     key_timer = 0
                     if event.key == pygame.K_UP:
+                        shadow_block.clearShadow(board)
                         current_block.rotate(board)
                     elif event.key == pygame.K_DOWN:
                         down_pressed = True
@@ -157,12 +160,15 @@ def startNewGame():
                 # Give points for faster drops
                 current_score = score_counter.drop()
             elif right_pressed and key_timer % 10 == 0:
+                shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
                 current_block.move(board, 1, 0)
             elif left_pressed and key_timer % 10 == 0:
+                shadow_block.clearShadow(board)
                 current_block.move(board, -1, 0)
 
             # Is current block placed?
             if current_block.is_placed:
+                shadow_block.clearShadow(board)  # Clear previous shadow block
                 full_rows = clearFullRows(board)
 
                 current_block = Block(next_block, board)
