@@ -18,7 +18,6 @@ def closeProgram():
     pygame.quit()
     sys.exit()
 
-
 # Playing the game
 def startNewGame():
     # Game states
@@ -38,8 +37,11 @@ def startNewGame():
     current_block = Block(batch.getBlock(), board)
     next_block = getNextBlock(batch.getBlock(), next_block_area)
 
+    solved_rows = 0
     current_score = 0
+    score_counter = Score(current_score)
     high_score = getHighScore()
+
 
     # Block movement control
     down_pressed = False
@@ -53,7 +55,6 @@ def startNewGame():
     
     # Game stage
     stage = 1
-    
 
     run = True
     while run:
@@ -119,11 +120,6 @@ def startNewGame():
 
             shadow_block = ShadowBlock(current_block, board)  # Create shadow block based on current_block
 
-            # For stage (higher stage -> faster block autofall)
-            if current_score >= (1000 * stage):  # Next stage every 1000 score
-                stage += 1
-                fall_speed *= 0.9
-
             # Block automatic falling
             fall_timer += 1
             if (fall_timer / FPS) > fall_speed:
@@ -146,7 +142,7 @@ def startNewGame():
                         left_pressed = True
                     elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
                         while not current_block.is_placed:
-                            current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                            current_score = score_counter.drop()
                             current_block.move(board, 0, 1, autofall=True)
                         MOVE_SOUND.play()
 
@@ -162,7 +158,7 @@ def startNewGame():
             if down_pressed and key_timer % 4 == 0:
                 current_block.move(board, 0, 1)
                 # Give points for faster drops
-                current_score = increaseScore(current_score, FAST_DROP_POINTS)
+                current_score = score_counter.drop()
             elif right_pressed and key_timer % 10 == 0:
                 shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
                 current_block.move(board, 1, 0)
@@ -178,13 +174,19 @@ def startNewGame():
                 current_block = Block(next_block, board)
                 next_block = getNextBlock(batch.getBlock(), next_block_area)
 
-                # Give points for cleared rows
+                # Is row cleared?
                 if full_rows > 0:
-                    current_score = increaseScore(current_score, FULL_ROW_POINTS, full_rows)
-                    
+                    # Give points for cleared rows
+                    current_score = score_counter.fullRow(stage, full_rows)
+
+                    # Check current stage
+                    solved_rows += full_rows
+                    if solved_rows >= stage*5:
+                        stage += 1
+                        fall_speed *= 0.9
+
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
-
 
 # Main menu
 def main_menu():
@@ -215,6 +217,5 @@ def main_menu():
                         startNewGame()
                     elif checkButtonPress(mouse_pos, quit_button):
                         closeProgram()
-
 
 main_menu()  # Launch main menu when program is opened

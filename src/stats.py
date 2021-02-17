@@ -4,21 +4,28 @@ import os
 # CONSTANTS
 # Score
 FAST_DROP_POINTS = 1
-FULL_ROW_POINTS = 200
+SINGLE_ROW_POINTS = 100
+MULTIPLE_ROW_POINTS = 200
 
 # INITIALIZE
 STATS_DB = shelve.open(os.path.join("data", "stats"))
 
 
+# CLASS
+class Score():
+    def __init__(self, current_score):
+        self.current_score = current_score
+
+    def fullRow(self, stage, full_rows):
+        self.current_score += int((SINGLE_ROW_POINTS + (MULTIPLE_ROW_POINTS * (full_rows-1)))*(1 + (stage-1) * 0.5))
+        return self.current_score
+
+    def drop(self):
+        self.current_score += FAST_DROP_POINTS
+        return self.current_score
+    # Can add more functions for adding score (perfect clear, T-spin...)
+
 # FUNCTIONS
-# Score
-def increaseScore(current_score, reward, full_rows=0):
-    if full_rows:
-        return current_score + reward * full_rows
-    else:
-        return current_score + reward
-
-
 def getHighScore():
     try:
         # If database already has high_score entry
