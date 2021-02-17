@@ -118,10 +118,11 @@ class ShadowBlock(Block):
         """
         shape = copy.deepcopy(current_block.shape)
         rotation = current_block.rotation
-        # Nt O kujund, [[0, 2, 2, 0][0, 2, 2, 0]...] -> [[0, 8, 8, 0][0, 8, 8, 0]...]
+
         for row in range(len(shape[rotation])):
             for col in range(len(shape[rotation][row])):
                 if shape[rotation][row][col] != 0:
+                    # Nt O kujund, [[0, 2, 2, 0][0, 2, 2, 0]...] -> [[0, 8, 8, 0][0, 8, 8, 0]...]
                     shape[rotation][row][col] = 8
         
         self.shape = shape
