@@ -17,8 +17,18 @@ NEAR = 10
 FAR = 30
 
 # Text
-TXT_HEIGHT = 50
-TXT_HEIGHT2 = 25
+TILE_SIZE = 150
+HEADING1_SIZE = 100
+TEXT_SIZE = 50
+
+TILE_HEIGHT = 100
+HEADING1_HEIGHT = 50
+TEXT_HEIGHT = 25
+
+TITLE_FONT = CHATHURA_XBOLD
+HEADING_FONT = CHATHURA_RG
+TEXT_FONT = CHATHURA_RG
+BOLD_FONT = CHATHURA_BOLD
 
 # Buttons
 BTN_HEIGHT = 60
@@ -50,8 +60,6 @@ INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 2 * FAR
 INSTRUCTION_Y = LOGO_Y + LOGO_HEIGHT + 2 * FAR
 
 # Score
-SCORE_SIZE = 50
-
 SCORE_TEXT_X = PADDING
 SCORE_TEXT_Y = PADDING
 
@@ -59,7 +67,7 @@ SCORE_VAL_X = SCORE_TEXT_X + 70
 SCORE_VAL_Y = SCORE_TEXT_Y
 
 HIGH_SCORE_TEXT_X = SCORE_TEXT_X
-HIGH_SCORE_TEXT_Y = SCORE_TEXT_Y + TXT_HEIGHT2 + NEAR
+HIGH_SCORE_TEXT_Y = SCORE_TEXT_Y + TEXT_HEIGHT + NEAR
 
 HIGH_SCORE_VAL_X = HIGH_SCORE_TEXT_X + 70
 HIGH_SCORE_VAL_Y = HIGH_SCORE_TEXT_Y
@@ -75,11 +83,11 @@ STAGE_VAL_Y = STAGE_TEXT_Y
 BOARD_CELL = 30  # 30 px square
 
 BOARD_X = PADDING
-BOARD_Y = HIGH_SCORE_VAL_Y + TXT_HEIGHT2 + FAR
+BOARD_Y = HIGH_SCORE_VAL_Y + TEXT_HEIGHT + FAR
 
 # Next block area
 NEXT_BLOCK_TEXT_X = BOARD_X + BOARD_WIDTH * BOARD_CELL + PADDING
-NEXT_BLOCK_TEXT_Y = BOARD_Y - (TXT_HEIGHT + NEAR)
+NEXT_BLOCK_TEXT_Y = BOARD_Y - (HEADING1_HEIGHT + NEAR)
 
 NEXT_BLOCK_AREA_X = NEXT_BLOCK_TEXT_X
 NEXT_BLOCK_AREA_Y = BOARD_Y
@@ -95,8 +103,8 @@ END_BTN_X = PAUSE_BTN_X
 END_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
 
 # Game over screen
-GAME_OVER_TEXT_X = (SCREEN_WIDTH - 235) / 2
-GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - TXT_HEIGHT) / 2
+GAME_OVER_TEXT_X = (SCREEN_WIDTH - 350) / 2
+GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - HEADING1_HEIGHT) / 2
 NEW_GAME_BTN_X = PAUSE_BTN_X
 NEW_GAME_BTN_Y = PAUSE_BTN_Y
 
@@ -108,7 +116,7 @@ pygame.display.set_caption("Tetris")
 
 # FUNCTIONS
 # General
-def drawText(text, x, y, size=100, color=WHITE, font=CHATHURA_RG):
+def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT):
     font.render_to(SCREEN, (x, y), text, color, size=size)
 
 
@@ -120,13 +128,18 @@ def checkButtonPress(mouse_pos, button_pos):
     mouse_x, mouse_y = mouse_pos
     button_x, button_y = button_pos
 
-    height_box = pygame.Rect(button_x + BTN_CORNER_RAD, button_y, BTN_WIDTH - BTN_CORNER_RAD*2, BTN_HEIGHT)  # Rect with correct height, without left and right edge
-    width_box = pygame.Rect(button_x, button_y + BTN_CORNER_RAD, BTN_WIDTH, BTN_HEIGHT - BTN_CORNER_RAD*2)  # Rect with correct width, without top and bottom
+    height_box = pygame.Rect(button_x + BTN_CORNER_RAD, button_y, BTN_WIDTH - BTN_CORNER_RAD * 2,
+                             BTN_HEIGHT)  # Rect with correct height, without left and right edge
+    width_box = pygame.Rect(button_x, button_y + BTN_CORNER_RAD, BTN_WIDTH,
+                            BTN_HEIGHT - BTN_CORNER_RAD * 2)  # Rect with correct width, without top and bottom
 
     top_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD, button_y + BTN_CORNER_RAD)
-    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD, button_y + BTN_CORNER_RAD)
-    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD, button_y + BTN_HEIGHT - BTN_CORNER_RAD)
-    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD, button_y + BTN_HEIGHT - BTN_CORNER_RAD)
+    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD,
+                                         button_y + BTN_CORNER_RAD)
+    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD,
+                                           button_y + BTN_HEIGHT - BTN_CORNER_RAD)
+    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD,
+                                            button_y + BTN_HEIGHT - BTN_CORNER_RAD)
 
     if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
         return True
@@ -185,21 +198,21 @@ def updateNextBlockArea(next_block_area):
             elif next_block_area[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
 
-    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y)
+    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING1_SIZE)
 
 
 def updateScore(score, high_score, stage):
     # Display current score
-    drawText("Score", SCORE_TEXT_X, SCORE_TEXT_Y, size=SCORE_SIZE, color=NEON_BLUE, font=CHATHURA_XBOLD)
-    drawText(str(score), SCORE_VAL_X, SCORE_VAL_Y, size=SCORE_SIZE)
+    drawText("Score", SCORE_TEXT_X, SCORE_TEXT_Y, color=NEON_BLUE, font=BOLD_FONT)
+    drawText(str(score), SCORE_VAL_X, SCORE_VAL_Y)
 
     # Display high score
-    drawText("High", HIGH_SCORE_TEXT_X, HIGH_SCORE_TEXT_Y, size=SCORE_SIZE, color=LIGHT_ORANGE, font=CHATHURA_XBOLD)
-    drawText(str(high_score), HIGH_SCORE_VAL_X, HIGH_SCORE_VAL_Y, size=SCORE_SIZE)
-    
+    drawText("High", HIGH_SCORE_TEXT_X, HIGH_SCORE_TEXT_Y, color=LIGHT_ORANGE, font=BOLD_FONT)
+    drawText(str(high_score), HIGH_SCORE_VAL_X, HIGH_SCORE_VAL_Y)
+
     # Display stage
-    drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, size=SCORE_SIZE, color=NEON_GREEN, font=CHATHURA_XBOLD)
-    drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y, size=SCORE_SIZE)
+    drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, color=NEON_GREEN, font=BOLD_FONT)
+    drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y)
 
 
 def updateGameButtons():
@@ -225,7 +238,7 @@ def updateGameOverScreen():
     SCREEN.blit(transparent_bg, (0, 0))
 
     # Message
-    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, font=CHATHURA_XBOLD)
+    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TILE_SIZE, font=TITLE_FONT)
 
     # Buttons
     drawButton(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)

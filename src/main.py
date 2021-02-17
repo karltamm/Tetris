@@ -18,6 +18,7 @@ def closeProgram():
     pygame.quit()
     sys.exit()
 
+
 # Playing the game
 def startNewGame():
     # Game states
@@ -42,7 +43,6 @@ def startNewGame():
     score_counter = Score(current_score)
     high_score = getHighScore()
 
-
     # Block movement control
     down_pressed = False
     left_pressed = False
@@ -52,7 +52,7 @@ def startNewGame():
     # Block automatic falling
     fall_timer = 0
     fall_speed = 0.4  # Every X second trigger block autofall
-    
+
     # Game stage
     stage = 1
 
@@ -110,7 +110,7 @@ def startNewGame():
                         game_running = not game_running
                     elif checkButtonPress(mouse_pos, end_button):
                         # End game and go to the main menu
-                        run = False # Stop game process
+                        run = False  # Stop game process
                         main_menu()
 
         # Block movement control
@@ -181,12 +181,13 @@ def startNewGame():
 
                     # Check current stage
                     solved_rows += full_rows
-                    if solved_rows >= stage*5:
+                    if solved_rows >= stage * 5:
                         stage += 1
                         fall_speed *= 0.9
 
                     # Sound effect if at least one row is cleared
                     ROW_CLEARED_SOUND.play()
+
 
 # Main menu
 def main_menu():
@@ -204,7 +205,7 @@ def main_menu():
 
         # UI control
         mouse_pos = pygame.mouse.get_pos()
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
@@ -213,9 +214,10 @@ def main_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if checkButtonPress(mouse_pos, start_button):
-                        run = False # Stop main menu proccess
+                        run = False  # Stop main menu proccess
                         startNewGame()
                     elif checkButtonPress(mouse_pos, quit_button):
                         closeProgram()
+
 
 main_menu()  # Launch main menu when program is opened

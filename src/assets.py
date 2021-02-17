@@ -28,8 +28,10 @@ LAVENDER = (230, 230, 250)
 NEON_GREEN = (66, 245, 114)
 
 # Fonts
+CHATHURA_LIGHT = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-light.ttf"))
 CHATHURA_RG = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-regular.ttf"))
 CHATHURA_XBOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-extrabold.ttf"))
+CHATHURA_BOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-bold.ttf"))
 
 # Buttons
 START_BTN = pygame.image.load(os.path.join("assets/buttons", "Start.png"))
