@@ -35,12 +35,21 @@ CHATHURA_XBOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "cha
 START_BTN = pygame.image.load(os.path.join("assets/buttons", "Start.png"))
 OPTIONS_BTN = pygame.image.load(os.path.join("assets/buttons", "Options.png"))
 STATS_BTN = pygame.image.load(os.path.join("assets/buttons", "Stats.png"))
+TROPHIES_BTN = pygame.image.load(os.path.join("assets/buttons", "Trophies.png"))
 QUIT_BTN = pygame.image.load(os.path.join("assets/buttons", "Quit.png"))
 
 RESUME_BTN = pygame.image.load(os.path.join("assets/buttons", "Resume.png"))
 PAUSE_BTN = pygame.image.load(os.path.join("assets/buttons", "Pause.png"))
 END_BTN = pygame.image.load(os.path.join("assets/buttons", "End.png"))
 NEW_GAME_BTN = pygame.image.load(os.path.join("assets/buttons", "NewGame.png"))
+
+BACK_BTN = pygame.image.load(os.path.join("assets/buttons", "Back.png"))
+PREVIOUS_BTN = pygame.image.load(os.path.join("assets/buttons", "Previous.png"))
+NEXT_BTN = pygame.image.load(os.path.join("assets/buttons", "Next.png"))
+
+# Switches
+ON_SWITCH = pygame.image.load(os.path.join("assets/switches", "On.png"))
+OFF_SWITCH = pygame.image.load(os.path.join("assets/switches", "Off.png"))
 
 # Images
 LOGO = pygame.image.load(os.path.join("assets", "logo.png"))
