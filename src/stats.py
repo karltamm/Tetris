@@ -17,13 +17,15 @@ class Score():
         self.current_score = current_score
 
     def fullRow(self, stage, full_rows):
-        self.current_score += int((SINGLE_ROW_POINTS + (MULTIPLE_ROW_POINTS * (full_rows-1)))*(1 + (stage-1) * 0.5))
+        self.current_score += int(
+            (SINGLE_ROW_POINTS + (MULTIPLE_ROW_POINTS * (full_rows - 1))) * (1 + (stage - 1) * 0.5))
         return self.current_score
 
     def drop(self):
         self.current_score += FAST_DROP_POINTS
         return self.current_score
     # Can add more functions for adding score (perfect clear, T-spin...)
+
 
 # FUNCTIONS
 def getHighScore():

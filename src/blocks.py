@@ -38,7 +38,7 @@ class Block:
         # Move was successful so play sound
         else:
             move_success = True
-            
+
         if move_success and not autofall:
             MOVE_SOUND.play()
 
@@ -93,7 +93,8 @@ class Block:
 
                 if block_cell != 0:
                     if col < BOARD_WIDTH and col > -1 and row < BOARD_HEIGHT:
-                        if new_board[row][col] == 0 or new_board[row][col] == 8:  # No collision with cells of 0 or 8 value
+                        if new_board[row][col] == 0 or new_board[row][
+                            col] == 8:  # No collision with cells of 0 or 8 value
                             # Cell isn't occupied by another block
                             new_board[row][col] = block_cell
                             temp_used_board_cells.append((row, col))
@@ -124,7 +125,7 @@ class ShadowBlock(Block):
                 if shape[rotation][row][col] != 0:
                     # Nt O kujund, [[0, 2, 2, 0][0, 2, 2, 0]...] -> [[0, 8, 8, 0][0, 8, 8, 0]...]
                     shape[rotation][row][col] = 8
-        
+
         self.shape = shape
         self.rotation = rotation
         self.x = current_block.x
@@ -132,11 +133,11 @@ class ShadowBlock(Block):
         self.used_board_cells = []
         self.is_placed = False
         self.board = board
-        
+
         # Drops shadow block down as much as possible
         while not self.is_placed:
             self.move(board, 0, 1, autofall=True)
-            
+
     # TODO: Implement better functions, tidy up?
 
     def clearShadow(self, board):
