@@ -4,6 +4,7 @@ import math
 from board import *
 from nextblock import *
 from assets import *
+from database import *
 
 # CONSTANTS
 # Screen
@@ -17,12 +18,12 @@ NEAR = 10
 FAR = 30
 
 # Text
-TILE_SIZE = 150
-HEADING1_SIZE = 100
+TITLE_SIZE = 150
+HEADING_SIZE = 100
 TEXT_SIZE = 50
 
-TILE_HEIGHT = 100
-HEADING1_HEIGHT = 50
+TITLE_HEIGHT = 100
+HEADING_HEIGHT = 50
 TEXT_HEIGHT = 25
 
 TITLE_FONT = CHATHURA_XBOLD
@@ -34,6 +35,10 @@ BOLD_FONT = CHATHURA_BOLD
 BTN_HEIGHT = 60
 BTN_WIDTH = 150
 BTN_CORNER_RAD = 11
+
+# Switches
+SWITCH_HEIGHT = BTN_HEIGHT
+SWITCH_WIDTH = BTN_WIDTH
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -87,7 +92,7 @@ BOARD_Y = HIGH_SCORE_VAL_Y + TEXT_HEIGHT + FAR
 
 # Next block area
 NEXT_BLOCK_TEXT_X = BOARD_X + BOARD_WIDTH * BOARD_CELL + PADDING
-NEXT_BLOCK_TEXT_Y = BOARD_Y - (HEADING1_HEIGHT + NEAR)
+NEXT_BLOCK_TEXT_Y = BOARD_Y - (HEADING_HEIGHT + NEAR)
 
 NEXT_BLOCK_AREA_X = NEXT_BLOCK_TEXT_X
 NEXT_BLOCK_AREA_Y = BOARD_Y
@@ -104,9 +109,39 @@ END_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
 
 # Game over screen
 GAME_OVER_TEXT_X = (SCREEN_WIDTH - 350) / 2
-GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - HEADING1_HEIGHT) / 2
+GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - HEADING_HEIGHT) / 2
 NEW_GAME_BTN_X = PAUSE_BTN_X
 NEW_GAME_BTN_Y = PAUSE_BTN_Y
+
+# Options menu
+BACK_BTN_X = PADDING
+BACK_BTN_Y = PADDING
+
+OPTIONS_TEXT_X = PADDING
+OPTIONS_TEXT_Y = PADDING + BTN_HEIGHT + FAR
+
+SOUND_TEXT_X = PADDING
+SOUND_TEXT_Y = OPTIONS_TEXT_Y + TITLE_HEIGHT + FAR
+SOUND_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+SOUND_SWITCH_Y = SOUND_TEXT_Y - 10
+
+STAGES_TEXT_X = PADDING
+STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING_HEIGHT + FAR
+STAGES_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+STAGES_SWITCH_Y = STAGES_TEXT_Y - 10
+
+BLOCK_SHADOW_TEXT_X = PADDING
+BLOCK_SHADOW_TEXT_Y = STAGES_TEXT_Y + HEADING_HEIGHT + FAR
+BLOCK_SHADOW_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+BLOCK_SHADOW_SWITCH_Y = BLOCK_SHADOW_TEXT_Y - 10
+
+POWER_UPS_TEXT_X = PADDING
+POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING_HEIGHT + FAR
+POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y - 10
+
+
+
 
 # INITIALIZE
 pygame.init()
@@ -198,7 +233,7 @@ def updateNextBlockArea(next_block_area):
             elif next_block_area[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
 
-    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING1_SIZE)
+    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING_SIZE)
 
 
 def updateScore(score, high_score, stage):
@@ -211,8 +246,9 @@ def updateScore(score, high_score, stage):
     drawText(str(high_score), HIGH_SCORE_VAL_X, HIGH_SCORE_VAL_Y)
 
     # Display stage
-    drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, color=NEON_GREEN, font=BOLD_FONT)
-    drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y)
+    if optionsValues("stages"):
+        drawText("Stage", STAGE_TEXT_X, STAGE_TEXT_Y, color=NEON_GREEN, font=BOLD_FONT)
+        drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y)
 
 
 def updateGameButtons():
@@ -238,7 +274,7 @@ def updateGameOverScreen():
     SCREEN.blit(transparent_bg, (0, 0))
 
     # Message
-    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TILE_SIZE, font=TITLE_FONT)
+    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
     # Buttons
     drawButton(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
@@ -255,3 +291,28 @@ def updateMainMenu():
     drawButton(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
 
     SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))
+
+def updateOptionsMenu():
+    drawButton(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+    drawText("Options", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    drawText("Sound:", SOUND_TEXT_X, SOUND_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+    drawText("stages:", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+    drawText("Block shadows:", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+    drawText("Power ups:", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+    if optionsValues("sound"):
+        drawButton(ON_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
+    elif not optionsValues("sound"):
+        drawButton(OFF_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
+    if optionsValues("stages"):
+        drawButton(ON_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
+    elif not optionsValues("stages"):
+        drawButton(OFF_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
+    if optionsValues("block_shadows"):
+        drawButton(ON_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+    elif not optionsValues("block_shadows"):
+        drawButton(OFF_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+    if optionsValues("power_ups"):
+        drawButton(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+    elif not optionsValues("power_ups"):
+        drawButton(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+

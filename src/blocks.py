@@ -2,6 +2,7 @@ import random, copy
 from shapes import *
 from board import *
 from screen import *
+from database import *
 
 # EVENTS
 GAME_OVER = pygame.USEREVENT + 1
@@ -20,7 +21,8 @@ class Block:
         if self.updateBoard(board) == False:  # No room for new block, so game over
             # Notify program that game is over
             pygame.event.post(pygame.event.Event(GAME_OVER))
-            GAME_OVER_SOUND.play()
+            if optionsValues("sound"):   # If sounds turned on
+                GAME_OVER_SOUND.play()
 
     def move(self, board, x_step=0, y_step=0, autofall=False):
         move_success = False
@@ -39,7 +41,7 @@ class Block:
         else:
             move_success = True
 
-        if move_success and not autofall:
+        if move_success and not autofall and optionsValues("sound"):
             MOVE_SOUND.play()
 
     def rotate(self, board):
@@ -74,7 +76,7 @@ class Block:
         else:
             rotate_success = True
         # Rotation was successful so play sound
-        if rotate_success and self.shape != SHAPE_O:
+        if rotate_success and self.shape != SHAPE_O and optionsValues("sound"):
             ROTATE_SOUND.play()
 
     def removeOldCellsFromBoard(self, board):
@@ -117,26 +119,27 @@ class ShadowBlock(Block):
         shape[0][0][1] = "Ananass",
         siis ka -> current_block.shape[0][0][1] = "Ananass"
         """
-        shape = copy.deepcopy(current_block.shape)
-        rotation = current_block.rotation
+        if optionsValues("block_shadows"):  # If block shadows are turned on
+            shape = copy.deepcopy(current_block.shape)
+            rotation = current_block.rotation
 
-        for row in range(len(shape[rotation])):
-            for col in range(len(shape[rotation][row])):
-                if shape[rotation][row][col] != 0:
-                    # Nt O kujund, [[0, 2, 2, 0][0, 2, 2, 0]...] -> [[0, 8, 8, 0][0, 8, 8, 0]...]
-                    shape[rotation][row][col] = 8
+            for row in range(len(shape[rotation])):
+                for col in range(len(shape[rotation][row])):
+                    if shape[rotation][row][col] != 0:
+                        # Nt O kujund, [[0, 2, 2, 0][0, 2, 2, 0]...] -> [[0, 8, 8, 0][0, 8, 8, 0]...]
+                        shape[rotation][row][col] = 8
 
-        self.shape = shape
-        self.rotation = rotation
-        self.x = current_block.x
-        self.y = current_block.y + 3
-        self.used_board_cells = []
-        self.is_placed = False
-        self.board = board
+            self.shape = shape
+            self.rotation = rotation
+            self.x = current_block.x
+            self.y = current_block.y + 3
+            self.used_board_cells = []
+            self.is_placed = False
+            self.board = board
 
-        # Drops shadow block down as much as possible
-        while not self.is_placed:
-            self.move(board, 0, 1, autofall=True)
+            # Drops shadow block down as much as possible
+            while not self.is_placed:
+                self.move(board, 0, 1, autofall=True)
 
     # TODO: Implement better functions, tidy up?
 

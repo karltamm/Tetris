@@ -4,7 +4,7 @@ from board import *
 from nextblock import *
 from blocks import *
 from screen import *
-from stats import *
+from database import *
 
 # Initialize pygame
 pygame.init()
@@ -14,7 +14,7 @@ CLOCK = pygame.time.Clock()
 # FUNCTIONS
 # Close program
 def closeProgram():
-    closeStatsDB()
+    closeDB()
     pygame.quit()
     sys.exit()
 
@@ -144,7 +144,8 @@ def startNewGame():
                         while not current_block.is_placed:
                             current_score = score_counter.drop()
                             current_block.move(board, 0, 1, autofall=True)
-                        MOVE_SOUND.play()
+                        if optionsValues("sound"):  # If sounds turned on
+                            MOVE_SOUND.play()
 
                 elif event.type == pygame.KEYUP:  # If a key is released
                     if event.key == pygame.K_DOWN:
@@ -181,18 +182,20 @@ def startNewGame():
 
                     # Check current stage
                     solved_rows += full_rows
-                    if solved_rows >= stage * 5:
+                    if solved_rows >= stage * 5 and optionsValues("stages"):
                         stage += 1
                         fall_speed *= 0.9
 
                     # Sound effect if at least one row is cleared
-                    ROW_CLEARED_SOUND.play()
+                    if optionsValues("sound"):  # If sounds turned on
+                        ROW_CLEARED_SOUND.play()
 
 
 # Main menu
 def main_menu():
     # Button positions
     start_button = [START_BTN_X, START_BTN_Y]  # New game
+    options_button = [OPTIONS_BTN_X, OPTIONS_BTN_Y]  # Options
     quit_button = [QUIT_BTN_X, QUIT_BTN_Y]  # Quit program
 
     run = True
@@ -216,8 +219,49 @@ def main_menu():
                     if checkButtonPress(mouse_pos, start_button):
                         run = False  # Stop main menu proccess
                         startNewGame()
+                    elif checkButtonPress(mouse_pos, options_button):
+                        run = False  # Stop main menu proccess
+                        options()
                     elif checkButtonPress(mouse_pos, quit_button):
                         closeProgram()
 
+# Options menu
+def options():
+    # Buttons and switches positions
+    back_button = [BACK_BTN_X, BACK_BTN_Y]
+    sound_switch = [SOUND_SWITCH_X, SOUND_SWITCH_Y]
+    stages_switch = [STAGES_SWITCH_X, STAGES_SWITCH_Y]
+    block_shadows_switch = [BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y]
+    power_ups_switch = [POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y]
+
+    run = True
+    while run:
+
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
+
+        # Update screen
+        CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)
+        updateOptionsMenu()
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                closeProgram()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if checkButtonPress(mouse_pos, back_button):
+                        run = False  # Stop main menu proccess
+                        main_menu()
+                    elif checkButtonPress(mouse_pos, sound_switch):
+                        optionsValues("sound", True) # True changes value
+                    elif checkButtonPress(mouse_pos, stages_switch):
+                        optionsValues("stages", True)
+                    elif checkButtonPress(mouse_pos, block_shadows_switch):
+                        optionsValues("block_shadows", True)
+                    elif checkButtonPress(mouse_pos, power_ups_switch):
+                        optionsValues("power_ups", True)
 
 main_menu()  # Launch main menu when program is opened
