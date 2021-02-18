@@ -86,7 +86,7 @@ def startNewGame():
                     if not game_over and not power.is_active:
                         game_running = not game_running
                 if event.key == pygame.K_p:
-                    if not power.is_active:
+                    if not power.is_active and game_running:
                         power.activate()
                         game_running = False
                     else:
@@ -110,7 +110,7 @@ def startNewGame():
                             # Pause or unpause game
                             game_running = not game_running
                         elif checkButtonPress(mouse_pos, activate_power_button):
-                            if power.is_available:
+                            if power.is_available and game_running:
                                 power.activate()
                                 game_running = False
                         elif checkButtonPress(mouse_pos, end_button):
