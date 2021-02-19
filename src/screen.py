@@ -124,9 +124,13 @@ CLOSE_POWER_BTN_Y = END_BTN_Y
 POWER_HELP_TXT_X = PADDING
 POWER_HELP_TXT_Y = BOARD_Y - TEXT_HEIGHT - NEAR
 
+# Countdown
+COUNTDOWN_X = BOARD_X + (BOARD_SCREEN_WIDTH - 10) / 2
+COUNTDOWN_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
+
 # Game over screen
-GAME_OVER_TEXT_X = (SCREEN_WIDTH - 275) / 2
-GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - HEADING1_HEIGHT) / 2
+GAME_OVER_TEXT_X = BOARD_X + (BOARD_SCREEN_WIDTH - 280) / 2
+GAME_OVER_TEXT_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
 NEW_GAME_BTN_X = PAUSE_BTN_X
 NEW_GAME_BTN_Y = PAUSE_BTN_Y
 
@@ -173,6 +177,12 @@ def checkButtonCorner(mouse_x, mouse_y, button_x, button_y):  # Checks if mouse 
     ysq = math.pow(mouse_y - button_y, 2)
     if math.sqrt(xsq + ysq) < 10:
         return True
+
+
+def drawTransparentOverlay():
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
+    SCREEN.blit(overlay, (0, 0))
 
 
 # GAME
@@ -241,23 +251,9 @@ def updateGameButtons():
     drawButton(END_BTN, END_BTN_X, END_BTN_Y)
 
 
-def updatePowersSelection(power):
-    drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
-
-    if power.is_available:
-        if power.name == "Laser":
-            button = LASER_BTN
-
-        drawButton(button, ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
-    else:
-        drawText("Not available", POWER_NAME_X, POWER_NAME_Y, size=TEXT_SIZE, font=HEADING_FONT, color=LIGHT_GREY)
-
-
 def updatePauseMenu():
     # Background
-    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    transparent_bg.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
-    SCREEN.blit(transparent_bg, (0, 0))
+    drawTransparentOverlay()
 
     # Buttons
     drawButton(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
@@ -265,10 +261,7 @@ def updatePauseMenu():
 
 
 def updateGameOverScreen():
-    # Background
-    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    transparent_bg.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
-    SCREEN.blit(transparent_bg, (0, 0))
+    drawTransparentOverlay()
 
     # Message
     drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
@@ -276,6 +269,14 @@ def updateGameOverScreen():
     # Buttons
     drawButton(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
     drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+
+
+def showCountdownToResumeGame(countdown):
+    drawTransparentOverlay()
+    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
+
+    pygame.display.update()  # Without it, countdown is shown with delay
+    pygame.time.delay(1000)  # Show current count for a second
 
 
 # MAIN MENU
@@ -292,6 +293,19 @@ def updateMainMenu():
 
 
 # POWERS
+def updatePowersSelection(power):
+    drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
+
+    if power.is_available:
+        if power.name == "Laser":
+            button = LASER_BTN
+
+        drawButton(button, ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
+    else:
+        drawText("Not available", ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y, size=TEXT_SIZE, font=HEADING_FONT,
+                 color=LIGHT_GREY)
+
+
 # Laser
 def laserScreen(row):
     highlightBoard()
