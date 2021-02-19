@@ -24,8 +24,11 @@ def closeProgram():
 def startNewGame():
     # Game states
     game_running = True  # unpaused or not
-    resume_countdown = False # not yet implemented!
     game_over = False
+
+    # Countdown
+    show_countdown = False  # If game_running goes from False to true, then show countdown
+    countdown = 3
 
     # UI
     activate_power_button = (ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
@@ -82,52 +85,59 @@ def startNewGame():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    # Pause or unpause game
-                    if not game_over and not power.is_active:
-                        game_running = not game_running
+                    if not game_over and not show_countdown and not power.is_active:
+                        if game_running:  # Pause game
+                            game_running = False
+                        else:  # Unpause
+                            show_countdown = True
+
                 if event.key == pygame.K_p:
-                    if not power.is_active and game_running:
+                    if power.is_available and game_running:
                         power.activate()
                         game_running = False
-                    else:
-                        power.deactivate()
-                        game_running = True
+                    elif power.is_active:
+                        power.deactivate(laser=(current_block, board))
+                        show_countdown = True
 
             # Buttons clicks
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if game_over:
-                        if checkButtonPress(mouse_pos, new_game_button):
-                            # Run following code only if game is over
-                            # new_game_button is shown when game is over
-                            # new_game_button is at the same place, where pause/unpause button (click areas overlap)
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if not power.is_active and not show_countdown:
+                    if checkButtonPress(mouse_pos, end_button):
+                        # End game and go to the main menu
+                        run = False  # Stop game process
+                        main_menu()
 
-                            # Start new game
-                            run = False  # End current game process
-                            startNewGame()
-                    elif not power.is_active:
-                        if checkButtonPress(mouse_pos, pause_button):
-                            # Pause or unpause game
-                            game_running = not game_running
-                        elif checkButtonPress(mouse_pos, activate_power_button):
-                            if power.is_available and game_running:
-                                power.activate()
-                                game_running = False
-                        elif checkButtonPress(mouse_pos, end_button):
-                            # End game and go to the main menu
-                            run = False  # Stop game process
-                            main_menu()
-                    else:
-                        if checkButtonPress(mouse_pos, close_power_button):
-                            power.deactivate()
-                            game_running = True
+                if game_over:
+                    if checkButtonPress(mouse_pos, new_game_button):
+                        # Run following code only if game is over
+                        # new_game_button is shown when game is over
+                        # new_game_button is at the same place, where pause/unpause button (click areas overlap)
+
+                        # Start new game
+                        run = False  # End current game process
+                        startNewGame()
+                elif game_running:
+                    if checkButtonPress(mouse_pos, pause_button):
+                        game_running = False
+                    if checkButtonPress(mouse_pos, activate_power_button):
+                        if power.is_available:
+                            power.activate()
+                            game_running = False
+                elif not game_running and not power.is_active:
+                    if checkButtonPress(mouse_pos, pause_button):
+                        # Unpause the game
+                        show_countdown = True
+                elif power.is_active:
+                    if checkButtonPress(mouse_pos, close_power_button):
+                        power.deactivate(laser=(current_block, board))
+                        show_countdown = True
 
         # Powers
         if power.is_active:
-            power.run(laser_parameters=(mouse_pos, events, board, current_block, shadow_block))
+            power.run(laser=(mouse_pos, events, board, current_block, shadow_block))
 
             if not power.is_active:  # If power.run() deactivated the power
-                game_running = True
+                show_countdown = True
 
         # Block movement control
         if game_running:
@@ -221,8 +231,14 @@ def startNewGame():
                 laserScreen(power.row)
 
             drawButton(CLOSE_POWER_BTN, CLOSE_POWER_BTN_X, CLOSE_POWER_BTN_Y)
-        elif resume_countdown:
-            pass  # TODO
+        elif show_countdown:
+            showCountdownToResumeGame(countdown)
+            countdown -= 1
+
+            if countdown < 1:
+                show_countdown = False
+                game_running = True
+                countdown = 3  # Reset countdown
         elif not game_running:
             updatePauseMenu()
 

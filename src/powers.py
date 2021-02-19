@@ -18,26 +18,48 @@ class Power:
 
     def activate(self):
         self.is_active = True
+        self.is_available = False  # By activating, the power is currently used
 
-    def deactivate(self):
+    def deactivate(self, laser=None):
         self.is_active = False
-        self.is_available = True
+        #self.is_available = True  # Only for testing!
 
-    def run(self, laser_parameters=None):
+        if laser is not None:
+            rewindCurrentBlock(*laser)
+
+    def run(self, laser=None):
         if self.name == "Laser":
-            mouse_pos, events, board, current_block, shadow_block = laser_parameters  # Unpack tuple
+            self.laserPower(laser)
 
-            self.row = getRowUnderCursor(mouse_pos)
+    def laserPower(self, laser_parameters):
+        # Unpack tuple
+        mouse_pos, events, board, current_block, shadow_block = laser_parameters
 
-            for event in events:
-                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    if userChoseRow(mouse_pos, *self.row):
-                        removeSelectedRow(board, *self.row, current_block, shadow_block)
-                        self.deactivate()
+        temporarilyRemoveCurrentBlock(current_block, shadow_block, board)
+        self.row = getRowUnderCursor(mouse_pos)  # (also for screen.py function)
+
+        # Remove the row if player clicked on it
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if playerChoseRow(mouse_pos, *self.row):
+                    removeSelectedRow(board, *self.row, current_block, shadow_block)
+                    LASER_SOUND.play()
+                    self.deactivate(laser=(current_block, board))
 
 
 # FUNCTIONS
 # Laser
+def temporarilyRemoveCurrentBlock(current_block, shadow_block, board):
+    current_block.removeCellsFromBoard(board)
+    shadow_block.clearShadow(board)
+
+
+def rewindCurrentBlock(current_block, board):
+    current_block.x = 4
+    current_block.y = 0
+    current_block.updateBoard(board)
+
+
 def getRowUnderCursor(mouse_pos):
     row_index = None
     row_y = None
@@ -56,7 +78,7 @@ def getRowUnderCursor(mouse_pos):
     return (row_y, row_index)
 
 
-def userChoseRow(mouse_pos, row_y, row_index):
+def playerChoseRow(mouse_pos, row_y, row_index):
     # Find out wheter user clicked on a row or not
     if row_y is not None:
         if mouse_pos[1] >= row_y and mouse_pos[1] <= row_y + BOARD_CELL:
@@ -74,6 +96,3 @@ def removeSelectedRow(board, row_y, row_index, current_block, shadow_block):
     # Remove the row and add new one
     board.pop(row_index)
     board.insert(0, [0] * BOARD_WIDTH)
-
-    # Restore current_block
-    current_block.updateBoard(board)
