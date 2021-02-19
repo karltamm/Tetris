@@ -39,6 +39,7 @@ BTN_CORNER_RAD = 11
 # Switches
 SWITCH_HEIGHT = BTN_HEIGHT
 SWITCH_WIDTH = BTN_WIDTH
+SWITCH_CORNER_RAD = 19
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -140,9 +141,6 @@ POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING_HEIGHT + FAR
 POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y - 10
 
-
-
-
 # INITIALIZE
 pygame.init()
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -154,27 +152,21 @@ pygame.display.set_caption("Tetris")
 def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT):
     font.render_to(SCREEN, (x, y), text, color, size=size)
 
+def drawObject(object, x, y):
+    SCREEN.blit(object, (x, y))
 
-def drawButton(button, x, y):
-    SCREEN.blit(button, (x, y))
-
-
-def checkButtonPress(mouse_pos, button_pos):
+def clickBox(mouse_pos, button_pos, radius):
     mouse_x, mouse_y = mouse_pos
     button_x, button_y = button_pos
+    # Two rects that cover everything but rounded corners
+    height_box = pygame.Rect(button_x + radius, button_y, BTN_WIDTH - radius * 2, BTN_HEIGHT)
+    width_box = pygame.Rect(button_x, button_y + radius, BTN_WIDTH, BTN_HEIGHT - radius * 2)
 
-    height_box = pygame.Rect(button_x + BTN_CORNER_RAD, button_y, BTN_WIDTH - BTN_CORNER_RAD * 2,
-                             BTN_HEIGHT)  # Rect with correct height, without left and right edge
-    width_box = pygame.Rect(button_x, button_y + BTN_CORNER_RAD, BTN_WIDTH,
-                            BTN_HEIGHT - BTN_CORNER_RAD * 2)  # Rect with correct width, without top and bottom
-
-    top_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD, button_y + BTN_CORNER_RAD)
-    top_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD,
-                                         button_y + BTN_CORNER_RAD)
-    bottom_left_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_CORNER_RAD,
-                                           button_y + BTN_HEIGHT - BTN_CORNER_RAD)
-    bottom_right_corner = checkButtonCorner(mouse_x, mouse_y, button_x + BTN_WIDTH - BTN_CORNER_RAD,
-                                            button_y + BTN_HEIGHT - BTN_CORNER_RAD)
+    top_left_corner = checkCornerRad(mouse_x, mouse_y, button_x + radius, button_y + radius, radius)
+    top_right_corner = checkCornerRad(mouse_x, mouse_y, button_x + BTN_WIDTH - radius, button_y + radius, radius)
+    bottom_left_corner = checkCornerRad(mouse_x, mouse_y, button_x + radius,button_y + BTN_HEIGHT - radius, radius)
+    bottom_right_corner = checkCornerRad(mouse_x, mouse_y, button_x + BTN_WIDTH - radius,
+                                            button_y + BTN_HEIGHT - radius, radius)
 
     if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
         return True
@@ -182,10 +174,10 @@ def checkButtonPress(mouse_pos, button_pos):
         return True
 
 
-def checkButtonCorner(mouse_x, mouse_y, button_x, button_y):  # Checks if mouse is inside rounded corner
+def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if mouse is inside rounded corner
     xsq = math.pow(mouse_x - button_x, 2)
     ysq = math.pow(mouse_y - button_y, 2)
-    if math.sqrt(xsq + ysq) < 10:
+    if math.sqrt(xsq + ysq) < radius-1:
         return True
 
 
@@ -252,8 +244,8 @@ def updateScore(score, high_score, stage):
 
 
 def updateGameButtons():
-    drawButton(PAUSE_BTN, PAUSE_BTN_X, PAUSE_BTN_Y)
-    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+    drawObject(PAUSE_BTN, PAUSE_BTN_X, PAUSE_BTN_Y)
+    drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
 def updatePauseMenu():
@@ -263,8 +255,8 @@ def updatePauseMenu():
     SCREEN.blit(transparent_bg, (0, 0))
 
     # Buttons
-    drawButton(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
-    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+    drawObject(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
+    drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
 def updateGameOverScreen():
@@ -277,42 +269,44 @@ def updateGameOverScreen():
     drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
     # Buttons
-    drawButton(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
-    drawButton(END_BTN, END_BTN_X, END_BTN_Y)
+    drawObject(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
+    drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
 def updateMainMenu():
     SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
 
-    drawButton(START_BTN, START_BTN_X, START_BTN_Y)
-    drawButton(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
-    drawButton(STATS_BTN, STATS_BTN_X, STATS_BTN_Y)
-    drawButton(TROPHIES_BTN, TROPHIES_BTN_X, TROPHIES_BTN_Y)
-    drawButton(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
+    drawObject(START_BTN, START_BTN_X, START_BTN_Y)
+    drawObject(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
+    drawObject(STATS_BTN, STATS_BTN_X, STATS_BTN_Y)
+    drawObject(TROPHIES_BTN, TROPHIES_BTN_X, TROPHIES_BTN_Y)
+    drawObject(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
 
     SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))
 
 def updateOptionsMenu():
-    drawButton(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+    drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+
     drawText("Options", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
     drawText("Sound:", SOUND_TEXT_X, SOUND_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
-    drawText("stages:", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+    drawText("Stages:", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
     drawText("Block shadows:", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
     drawText("Power ups:", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+
     if optionsValues("sound"):
-        drawButton(ON_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
+        drawObject(ON_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
     elif not optionsValues("sound"):
-        drawButton(OFF_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
+        drawObject(OFF_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
     if optionsValues("stages"):
-        drawButton(ON_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
+        drawObject(ON_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
     elif not optionsValues("stages"):
-        drawButton(OFF_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
+        drawObject(OFF_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
     if optionsValues("block_shadows"):
-        drawButton(ON_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+        drawObject(ON_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     elif not optionsValues("block_shadows"):
-        drawButton(OFF_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+        drawObject(OFF_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     if optionsValues("power_ups"):
-        drawButton(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+        drawObject(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
     elif not optionsValues("power_ups"):
-        drawButton(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+        drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 

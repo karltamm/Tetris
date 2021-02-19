@@ -29,7 +29,7 @@ class Score:
 
 
 # FUNCTIONS
-def optionsValues(name, change = False):
+def optionsValues(name, change=False):
     try:
         value = OPTIONS_DB[name]
     except:

@@ -97,7 +97,7 @@ def startNewGame():
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if checkButtonPress(mouse_pos, new_game_button) and game_over:
+                    if clickBox(mouse_pos, new_game_button, BTN_CORNER_RAD) and game_over:
                         # Run following code only if game is over
                         # new_game_button is shown when game is over
                         # new_game_button is at the same place, where pause/unpause button (click areas overlap)
@@ -105,10 +105,10 @@ def startNewGame():
                         # Start new game
                         run = False  # End current game process
                         startNewGame()
-                    elif checkButtonPress(mouse_pos, pause_button):
+                    elif clickBox(mouse_pos, pause_button, BTN_CORNER_RAD):
                         # Pause or unpause game
                         game_running = not game_running
-                    elif checkButtonPress(mouse_pos, end_button):
+                    elif clickBox(mouse_pos, end_button, BTN_CORNER_RAD):
                         # End game and go to the main menu
                         run = False  # Stop game process
                         main_menu()
@@ -144,8 +144,7 @@ def startNewGame():
                         while not current_block.is_placed:
                             current_score = score_counter.drop()
                             current_block.move(board, 0, 1, autofall=True)
-                        if optionsValues("sound"):  # If sounds turned on
-                            MOVE_SOUND.play()
+                        current_block.playSound(MOVE_SOUND)
 
                 elif event.type == pygame.KEYUP:  # If a key is released
                     if event.key == pygame.K_DOWN:
@@ -187,8 +186,7 @@ def startNewGame():
                         fall_speed *= 0.9
 
                     # Sound effect if at least one row is cleared
-                    if optionsValues("sound"):  # If sounds turned on
-                        ROW_CLEARED_SOUND.play()
+                    current_block.playSound(ROW_CLEARED_SOUND)
 
 
 # Main menu
@@ -216,13 +214,13 @@ def main_menu():
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if checkButtonPress(mouse_pos, start_button):
-                        run = False  # Stop main menu proccess
+                    if clickBox(mouse_pos, start_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu process
                         startNewGame()
-                    elif checkButtonPress(mouse_pos, options_button):
-                        run = False  # Stop main menu proccess
+                    elif clickBox(mouse_pos, options_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu process
                         options()
-                    elif checkButtonPress(mouse_pos, quit_button):
+                    elif clickBox(mouse_pos, quit_button, BTN_CORNER_RAD):
                         closeProgram()
 
 # Options menu
@@ -236,7 +234,6 @@ def options():
 
     run = True
     while run:
-
         # UI control
         mouse_pos = pygame.mouse.get_pos()
 
@@ -252,16 +249,16 @@ def options():
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if checkButtonPress(mouse_pos, back_button):
-                        run = False  # Stop main menu proccess
+                    if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
+                        run = False
                         main_menu()
-                    elif checkButtonPress(mouse_pos, sound_switch):
-                        optionsValues("sound", True) # True changes value
-                    elif checkButtonPress(mouse_pos, stages_switch):
+                    elif clickBox(mouse_pos, sound_switch, SWITCH_CORNER_RAD):
+                        optionsValues("sound", True)  # Second parameter changes value
+                    elif clickBox(mouse_pos, stages_switch, SWITCH_CORNER_RAD):
                         optionsValues("stages", True)
-                    elif checkButtonPress(mouse_pos, block_shadows_switch):
+                    elif clickBox(mouse_pos, block_shadows_switch, SWITCH_CORNER_RAD):
                         optionsValues("block_shadows", True)
-                    elif checkButtonPress(mouse_pos, power_ups_switch):
+                    elif clickBox(mouse_pos, power_ups_switch, SWITCH_CORNER_RAD):
                         optionsValues("power_ups", True)
 
 main_menu()  # Launch main menu when program is opened
