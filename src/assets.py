@@ -53,7 +53,8 @@ NEW_GAME_BTN = pygame.image.load(os.path.join("assets/buttons", "NewGame.png"))
 
 # Powers
 LASER_BTN = pygame.image.load(os.path.join("assets/buttons", "Laser.png"))
-CLOSE_POWER_BTN = pygame.image.load(os.path.join("assets/buttons", "Close.png"))
+WISHLIST_BTN = pygame.image.load(os.path.join("assets/buttons", "Wishlist.png"))
+CANCEL_POWER_BTN = pygame.image.load(os.path.join("assets/buttons", "Cancel.png"))
 
 # Navigation
 BACK_BTN = pygame.image.load(os.path.join("assets/buttons", "Back.png"))
@@ -76,3 +77,12 @@ ROW_CLEARED_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rowcleared
 GAME_OVER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "gameover.mp3"))
 LASER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser.mp3"))
 
+# Blocks
+BLOCK_I = pygame.image.load(os.path.join("assets/blocks", "I_block.png"))
+BLOCK_O = pygame.image.load(os.path.join("assets/blocks", "O_block.png"))
+BLOCK_L = pygame.image.load(os.path.join("assets/blocks", "L_block.png"))
+BLOCK_J = pygame.image.load(os.path.join("assets/blocks", "J_block.png"))
+BLOCK_T = pygame.image.load(os.path.join("assets/blocks", "T_block.png"))
+BLOCK_Z = pygame.image.load(os.path.join("assets/blocks", "Z_block.png"))
+BLOCK_S = pygame.image.load(os.path.join("assets/blocks", "S_block.png"))
+BLOCK_IMAGES = [BLOCK_I, BLOCK_O, BLOCK_L, BLOCK_J, BLOCK_T, BLOCK_Z, BLOCK_S]
