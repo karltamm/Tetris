@@ -18,7 +18,6 @@ class Power:
 
     def activate(self):
         self.is_active = True
-        self.is_available = False  # By activating, the power is currently used
 
     def deactivate(self, laser=None):
         self.is_active = False
@@ -44,6 +43,8 @@ class Power:
                 if playerChoseRow(mouse_pos, *self.row):
                     removeSelectedRow(board, *self.row, current_block, shadow_block)
                     LASER_SOUND.play()
+                    
+                    self.is_available = False  # Power is currently used
                     self.deactivate(laser=(current_block, board))
 
 
