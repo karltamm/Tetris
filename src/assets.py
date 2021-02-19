@@ -26,6 +26,10 @@ NEON_BLUE = (78, 250, 252)
 LIGHT_ORANGE = (252, 144, 78)
 LAVENDER = (230, 230, 250)
 NEON_GREEN = (66, 245, 114)
+RICH_YELLOW = (252, 186, 3)
+
+TRANSPARENT_WHITE = (255, 255, 255, 100)
+TRANSPARENT_BLACK = (0, 0, 0, 200)
 
 # Fonts
 CHATHURA_LIGHT = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-light.ttf"))
@@ -34,17 +38,24 @@ CHATHURA_XBOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "cha
 CHATHURA_BOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-bold.ttf"))
 
 # Buttons
+# Main Menu
 START_BTN = pygame.image.load(os.path.join("assets/buttons", "Start.png"))
 OPTIONS_BTN = pygame.image.load(os.path.join("assets/buttons", "Options.png"))
 STATS_BTN = pygame.image.load(os.path.join("assets/buttons", "Stats.png"))
 TROPHIES_BTN = pygame.image.load(os.path.join("assets/buttons", "Trophies.png"))
 QUIT_BTN = pygame.image.load(os.path.join("assets/buttons", "Quit.png"))
 
+# Game
 RESUME_BTN = pygame.image.load(os.path.join("assets/buttons", "Resume.png"))
 PAUSE_BTN = pygame.image.load(os.path.join("assets/buttons", "Pause.png"))
 END_BTN = pygame.image.load(os.path.join("assets/buttons", "End.png"))
 NEW_GAME_BTN = pygame.image.load(os.path.join("assets/buttons", "NewGame.png"))
 
+# Powers
+LASER_BTN = pygame.image.load(os.path.join("assets/buttons", "Laser.png"))
+CLOSE_POWER_BTN = pygame.image.load(os.path.join("assets/buttons", "Close.png"))
+
+# Navigation
 BACK_BTN = pygame.image.load(os.path.join("assets/buttons", "Back.png"))
 PREVIOUS_BTN = pygame.image.load(os.path.join("assets/buttons", "Previous.png"))
 NEXT_BTN = pygame.image.load(os.path.join("assets/buttons", "Next.png"))
@@ -63,3 +74,5 @@ MOVE2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move2.mp3"))
 ROTATE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rotate.mp3"))
 ROW_CLEARED_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rowcleared.mp3"))
 GAME_OVER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "gameover.mp3"))
+LASER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser.mp3"))
+

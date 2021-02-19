@@ -14,17 +14,23 @@ FPS = 60
 
 # Whitespace
 PADDING = 50
-NEAR = 10
+NEAR = 15
 FAR = 30
 
 # Text
-TITLE_SIZE = 150
-HEADING_SIZE = 100
+
+TITLE_SIZE = 120
+HEADING1_SIZE = 100
+HEADING2_SIZE = 80
 TEXT_SIZE = 50
 
-TITLE_HEIGHT = 100
-HEADING_HEIGHT = 50
-TEXT_HEIGHT = 25
+HEIGHT_SIZE_RATIO = 0.417
+
+TITLE_HEIGHT = round(TITLE_SIZE * HEIGHT_SIZE_RATIO)
+HEADING1_HEIGHT = round(HEADING1_SIZE * HEIGHT_SIZE_RATIO)
+HEADING2_HEIGHT = round(HEADING2_SIZE * HEIGHT_SIZE_RATIO)
+TEXT_HEIGHT = round(TEXT_SIZE * HEIGHT_SIZE_RATIO)
+
 
 TITLE_FONT = CHATHURA_XBOLD
 HEADING_FONT = CHATHURA_RG
@@ -87,13 +93,19 @@ STAGE_VAL_Y = STAGE_TEXT_Y
 
 # Board
 BOARD_CELL = 30  # 30 px square
+BOARD_SCREEN_WIDTH = BOARD_WIDTH * BOARD_CELL
+BOARD_SCREEN_HEIGHT = BOARD_HEIGHT * BOARD_CELL
 
 BOARD_X = PADDING
 BOARD_Y = HIGH_SCORE_VAL_Y + TEXT_HEIGHT + FAR
 
+BOARD_X_END = BOARD_X + BOARD_SCREEN_WIDTH
+BOARD_Y_END = BOARD_Y + BOARD_SCREEN_HEIGHT
+
 # Next block area
-NEXT_BLOCK_TEXT_X = BOARD_X + BOARD_WIDTH * BOARD_CELL + PADDING
-NEXT_BLOCK_TEXT_Y = BOARD_Y - (HEADING_HEIGHT + NEAR)
+NEXT_BLOCK_TEXT_X = BOARD_X_END + PADDING
+NEXT_BLOCK_TEXT_Y = BOARD_Y - (HEADING1_HEIGHT + NEAR)
+
 
 NEXT_BLOCK_AREA_X = NEXT_BLOCK_TEXT_X
 NEXT_BLOCK_AREA_Y = BOARD_Y
@@ -108,9 +120,28 @@ RESUME_BTN_Y = PAUSE_BTN_Y
 END_BTN_X = PAUSE_BTN_X
 END_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
 
+# Powers
+POWERS_HEADING_X = NEXT_BLOCK_TEXT_X
+POWERS_HEADING_Y = NEXT_BLOCK_AREA_Y + NEXT_BLOCK_AREA_HEIGHT * BOARD_CELL + FAR
+
+ACTIVATE_POWER_BTN_X = POWERS_HEADING_X
+ACTIVATE_POWER_BTN_Y = POWERS_HEADING_Y + HEADING1_HEIGHT + NEAR
+
+CLOSE_POWER_BTN_X = END_BTN_X
+CLOSE_POWER_BTN_Y = END_BTN_Y
+
+POWER_HELP_TXT_X = PADDING
+POWER_HELP_TXT_Y = BOARD_Y - TEXT_HEIGHT - NEAR
+
+# Countdown
+COUNTDOWN_X = BOARD_X + (BOARD_SCREEN_WIDTH - 10) / 2
+COUNTDOWN_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
+
 # Game over screen
-GAME_OVER_TEXT_X = (SCREEN_WIDTH - 350) / 2
-GAME_OVER_TEXT_Y = (SCREEN_HEIGHT - HEADING_HEIGHT) / 2
+
+GAME_OVER_TEXT_X = BOARD_X + (BOARD_SCREEN_WIDTH - 280) / 2
+GAME_OVER_TEXT_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
+
 NEW_GAME_BTN_X = PAUSE_BTN_X
 NEW_GAME_BTN_Y = PAUSE_BTN_Y
 
@@ -127,17 +158,17 @@ SOUND_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 SOUND_SWITCH_Y = SOUND_TEXT_Y - 10
 
 STAGES_TEXT_X = PADDING
-STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING_HEIGHT + FAR
+STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING1_HEIGHT + FAR
 STAGES_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 STAGES_SWITCH_Y = STAGES_TEXT_Y - 10
 
 BLOCK_SHADOW_TEXT_X = PADDING
-BLOCK_SHADOW_TEXT_Y = STAGES_TEXT_Y + HEADING_HEIGHT + FAR
+BLOCK_SHADOW_TEXT_Y = STAGES_TEXT_Y + HEADING1_HEIGHT + FAR
 BLOCK_SHADOW_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 BLOCK_SHADOW_SWITCH_Y = BLOCK_SHADOW_TEXT_Y - 10
 
 POWER_UPS_TEXT_X = PADDING
-POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING_HEIGHT + FAR
+POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING1_HEIGHT + FAR
 POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y - 10
 
@@ -147,8 +178,7 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tetris")
 
 
-# FUNCTIONS
-# General
+# GENERAL FUNCTIONS
 def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT):
     font.render_to(SCREEN, (x, y), text, color, size=size)
 
@@ -181,7 +211,13 @@ def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if m
         return True
 
 
-# Game UI
+def drawTransparentOverlay():
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+    overlay.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
+    SCREEN.blit(overlay, (0, 0))
+
+
+# GAME
 def updateBoard(board):
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
@@ -225,7 +261,7 @@ def updateNextBlockArea(next_block_area):
             elif next_block_area[row][col] == 7:
                 SCREEN.blit(BLUE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
 
-    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING_SIZE)
+    drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING1_SIZE)
 
 
 def updateScore(score, high_score, stage):
@@ -250,9 +286,7 @@ def updateGameButtons():
 
 def updatePauseMenu():
     # Background
-    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    transparent_bg.fill((0, 0, 0, 200))  # Last number represents opacitiy [0 = no opacity]
-    SCREEN.blit(transparent_bg, (0, 0))
+    drawTransparentOverlay()
 
     # Buttons
     drawObject(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
@@ -260,10 +294,7 @@ def updatePauseMenu():
 
 
 def updateGameOverScreen():
-    # Background
-    transparent_bg = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    transparent_bg.fill((0, 0, 0, 200))  # Last number represents opacitiy [0 = no opacity]
-    SCREEN.blit(transparent_bg, (0, 0))
+    drawTransparentOverlay()
 
     # Message
     drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
@@ -273,6 +304,15 @@ def updateGameOverScreen():
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
+def showCountdownToResumeGame(countdown):
+    drawTransparentOverlay()
+    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
+
+    pygame.display.update()  # Without it, countdown is shown with delay
+    pygame.time.delay(1000)  # Show current count for a second
+
+
+# MAIN MENU
 def updateMainMenu():
     SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
 
@@ -284,14 +324,15 @@ def updateMainMenu():
 
     SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))
 
+
 def updateOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
 
     drawText("Options", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
-    drawText("Sound:", SOUND_TEXT_X, SOUND_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
-    drawText("Stages:", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
-    drawText("Block shadows:", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
-    drawText("Power ups:", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING_SIZE, font=HEADING_FONT)
+    drawText("Sound:", SOUND_TEXT_X, SOUND_TEXT_Y, size=HEADING1_SIZE, font=HEADING_FONT)
+    drawText("Stages:", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING1_SIZE, font=HEADING_FONT)
+    drawText("Block shadows:", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING1_SIZE, font=HEADING_FONT)
+    drawText("Power ups:", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING1_SIZE, font=HEADING_FONT)
 
     if optionsValues("sound"):
         drawObject(ON_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
@@ -309,4 +350,56 @@ def updateOptionsMenu():
         drawObject(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+
+
+# POWERS
+def updatePowersSelection(power):
+    drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
+
+    if power.is_available:
+        if power.name == "Laser":
+            button = LASER_BTN
+
+        drawObject(button, ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
+    else:
+        drawText("Not available", ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y, size=TEXT_SIZE, font=HEADING_FONT,
+                 color=LIGHT_GREY)
+
+
+# Laser
+def laserScreen(row):
+    highlightBoard()
+    highlightRow(*row)
+    showPowerHelpText("Click on a row to remove it")
+
+
+def highlightBoard():
+    # Create pieces of screen covers
+    top_side = pygame.Surface((SCREEN_WIDTH, BOARD_Y), pygame.SRCALPHA)
+    left_side = pygame.Surface((BOARD_X, SCREEN_HEIGHT), pygame.SRCALPHA)
+    right_side = pygame.Surface((SCREEN_WIDTH - BOARD_X_END, SCREEN_HEIGHT), pygame.SRCALPHA)
+    bottom_side = pygame.Surface((BOARD_SCREEN_WIDTH, SCREEN_HEIGHT - BOARD_Y_END), pygame.SRCALPHA)
+
+    # Make every piece transparent
+    top_side.fill(DARK_GREY)
+    left_side.fill(DARK_GREY)
+    right_side.fill(DARK_GREY)
+    bottom_side.fill(DARK_GREY)
+
+    # Place pieces on right positions
+    SCREEN.blit(top_side, (0, 0))
+    SCREEN.blit(left_side, (0, BOARD_Y))
+    SCREEN.blit(right_side, (BOARD_X_END, BOARD_Y))
+    SCREEN.blit(bottom_side, (BOARD_X, BOARD_Y_END))
+
+
+def showPowerHelpText(text):
+    drawText(text, POWER_HELP_TXT_X, POWER_HELP_TXT_Y)
+
+
+def highlightRow(row_y, row_index=0):
+    if row_y is not None:
+        highlight = pygame.Surface((BOARD_SCREEN_WIDTH, BOARD_CELL), pygame.SRCALPHA)
+        highlight.fill(TRANSPARENT_WHITE)
+        SCREEN.blit(highlight, (BOARD_X, row_y))
 

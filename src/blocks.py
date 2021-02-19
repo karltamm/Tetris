@@ -78,13 +78,13 @@ class Block:
         if rotate_success and self.shape != SHAPE_O:
             self.playSound(ROTATE_SOUND)
 
-    def removeOldCellsFromBoard(self, board):
+    def removeCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
             board[row][col] = 0
 
     def updateBoard(self, board):
         new_board = copyBoard(board)
-        self.removeOldCellsFromBoard(new_board)
+        self.removeCellsFromBoard(new_board)
         temp_used_board_cells = []
 
         # Check whether block can be placed on board area (4x4 cells)
