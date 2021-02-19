@@ -118,11 +118,16 @@ POWERS_HEADING_Y = NEXT_BLOCK_AREA_Y + NEXT_BLOCK_AREA_HEIGHT * BOARD_CELL + FAR
 ACTIVATE_POWER_BTN_X = POWERS_HEADING_X
 ACTIVATE_POWER_BTN_Y = POWERS_HEADING_Y + HEADING1_HEIGHT + NEAR
 
-CLOSE_POWER_BTN_X = END_BTN_X
-CLOSE_POWER_BTN_Y = END_BTN_Y
+CANCEL_POWER_BTN_X = END_BTN_X
+CANCEL_POWER_BTN_Y = END_BTN_Y
 
 POWER_HELP_TXT_X = PADDING
 POWER_HELP_TXT_Y = BOARD_Y - TEXT_HEIGHT - NEAR
+
+BLOCK_IMAGE_AREA = 75
+BLOCK_SELECTION_X = BOARD_X_END + (SCREEN_WIDTH - BOARD_X_END - BLOCK_IMAGE_AREA) / 2
+BLOCK_SELECTION_Y = PADDING
+BLOCK_IMAGE_SPACING = BLOCK_IMAGE_AREA + NEAR
 
 # Countdown
 COUNTDOWN_X = BOARD_X + (BOARD_SCREEN_WIDTH - 10) / 2
@@ -299,6 +304,8 @@ def updatePowersSelection(power):
     if power.is_available:
         if power.name == "Laser":
             button = LASER_BTN
+        elif power.name == "Wishlist":
+            button = WISHLIST_BTN
 
         drawButton(button, ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
     else:
@@ -306,11 +313,8 @@ def updatePowersSelection(power):
                  color=LIGHT_GREY)
 
 
-# Laser
-def laserScreen(row):
-    highlightBoard()
-    highlightRow(*row)
-    showPowerHelpText("Click on a row to remove it")
+def showPowerHelpText(text):
+    drawText(text, POWER_HELP_TXT_X, POWER_HELP_TXT_Y)
 
 
 def highlightBoard():
@@ -333,8 +337,23 @@ def highlightBoard():
     SCREEN.blit(bottom_side, (BOARD_X, BOARD_Y_END))
 
 
-def showPowerHelpText(text):
-    drawText(text, POWER_HELP_TXT_X, POWER_HELP_TXT_Y)
+# Wishlist
+def wishlistScreen():
+    highlightBoard()
+    displayBlocksSelection()
+    showPowerHelpText("Click on a block to choose it")
+
+
+def displayBlocksSelection():
+    for i, block in enumerate(BLOCK_IMAGES):
+        SCREEN.blit(block, (BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * i))
+
+
+# Laser
+def laserScreen(row):
+    highlightBoard()
+    highlightRow(*row)
+    showPowerHelpText("Click on a row to remove it")
 
 
 def highlightRow(row_y, row_index=0):

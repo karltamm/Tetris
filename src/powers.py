@@ -1,56 +1,90 @@
 import random
 from screen import *
+from assets import *
 
 # CONSTANTS
-POWERS = ["Laser"]
+POWERS = ["Laser", "Wishlist"]
 
 
 # CLASS
 class Power:
     def __init__(self):
-        self.is_active = False
-        self.name = random.choice(POWERS)
-        self.highlight_board = False
         self.is_available = True
+        self.is_running = False
+        # self.name = random.choice(POWERS)
+        self.name = "Wishlist"  # Only for testing!
+
+        self.highlight_board = False
+        self.board = None
+        self.current_block = None
 
         # Laser specific
         self.row = None
 
-    def activate(self):
-        self.is_active = True
+        # Wishlist
+        self.selection = []
 
-    def deactivate(self, laser=None):
-        self.is_active = False
-        #self.is_available = True  # Only for testing!
+    def start(self, board_params=None):
+        self.is_running = True
 
-        if laser is not None:
-            rewindCurrentBlock(*laser)
+        if board_params is not None:
+            self.board, self.current_block, shadow_block = board_params
+            temporarilyRemoveCurrentBlock(self.board, self.current_block, shadow_block)
 
-    def run(self, laser=None):
+        if self.name == "Wishlist":
+            self.createBlockSelection()
+
+    def stop(self):
+        self.is_running = False
+        self.is_available = True  # TESTING!
+
         if self.name == "Laser":
-            self.laserPower(laser)
+            rewindCurrentBlock(self.current_block, self.board)
 
-    def laserPower(self, laser_parameters):
+        elif self.name == "Wishlist":
+            rewindCurrentBlock(self.current_block, self.board)
+
+    def run(self, UI_control=None):
+        if self.name == "Laser":
+            self.runLaser(UI_control)
+        elif self.name == "Wishlist":
+            self.runWishlist(UI_control)
+
+    # Laser
+    def runLaser(self, UI_control):
         # Unpack tuple
-        mouse_pos, events, board, current_block, shadow_block = laser_parameters
+        mouse_pos, events = UI_control
 
-        temporarilyRemoveCurrentBlock(current_block, shadow_block, board)
-        self.row = getRowUnderCursor(mouse_pos)  # (also for screen.py function)
+        self.row = getRowUnderCursor(mouse_pos)  # also for screen.py function
 
         # Remove the row if player clicked on it
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if playerChoseRow(mouse_pos, *self.row):
-                    removeSelectedRow(board, *self.row, current_block, shadow_block)
-                    LASER_SOUND.play()
-                    
-                    self.is_available = False  # Power is currently used
-                    self.deactivate(laser=(current_block, board))
+                    removeSelectedRow(self.board, *self.row)
+                    self.stop()  # Job done
+
+    # Wishlist
+    def runWishlist(self, UI_control):
+        # Unpack tuple
+        mouse_pos, events = UI_control
+
+        self.getBlockUnderCursor(mouse_pos)
+
+    def createBlockSelection(self):
+        for i, block in enumerate(BLOCK_IMAGES):
+            block = block.get_rect()
+            block.topleft = ((BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * i))
+            self.selection.append(block)
+
+    def getBlockUnderCursor(self, mouse_pos):
+        for index, block in enumerate(self.selection):
+            if block.collidepoint(mouse_pos):
+                break
 
 
 # FUNCTIONS
-# Laser
-def temporarilyRemoveCurrentBlock(current_block, shadow_block, board):
+def temporarilyRemoveCurrentBlock(board, current_block, shadow_block):
     current_block.removeCellsFromBoard(board)
     shadow_block.clearShadow(board)
 
@@ -61,6 +95,7 @@ def rewindCurrentBlock(current_block, board):
     current_block.updateBoard(board)
 
 
+# Laser
 def getRowUnderCursor(mouse_pos):
     row_index = None
     row_y = None
@@ -86,14 +121,7 @@ def playerChoseRow(mouse_pos, row_y, row_index):
             return True
 
 
-def removeSelectedRow(board, row_y, row_index, current_block, shadow_block):
-    # Temporarily remove current block from board
-    # because otherwise current_block leaves a ghost image
-    current_block.removeCellsFromBoard(board)
-
-    # Remove shadow to avoid glitch
-    shadow_block.clearShadow(board)
-
-    # Remove the row and add new one
+def removeSelectedRow(board, row_y, row_index):
     board.pop(row_index)
     board.insert(0, [0] * BOARD_WIDTH)
+    LASER_SOUND.play()
