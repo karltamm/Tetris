@@ -72,10 +72,14 @@ INSTRUCTION_IMAGE = pygame.image.load(os.path.join("assets", "instruction.png"))
 # Sounds
 MOVE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move.mp3"))
 MOVE2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move2.mp3"))
+MOVE3_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move3.mp3"))
 ROTATE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rotate.mp3"))
 ROW_CLEARED_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rowcleared.mp3"))
 GAME_OVER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "gameover.mp3"))
+RESUME_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "resume.mp3"))
+TICK_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "tick.mp3"))
 LASER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser.mp3"))
+APPEAR_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "appear.mp3"))
 
 # Blocks
 BLOCK_I = pygame.image.load(os.path.join("assets/blocks", "I_block.png"))
@@ -85,4 +89,14 @@ BLOCK_J = pygame.image.load(os.path.join("assets/blocks", "J_block.png"))
 BLOCK_T = pygame.image.load(os.path.join("assets/blocks", "T_block.png"))
 BLOCK_Z = pygame.image.load(os.path.join("assets/blocks", "Z_block.png"))
 BLOCK_S = pygame.image.load(os.path.join("assets/blocks", "S_block.png"))
-BLOCK_IMAGES = [BLOCK_I, BLOCK_O, BLOCK_L, BLOCK_J, BLOCK_T, BLOCK_Z, BLOCK_S]
+BLOCK_IMAGES = [BLOCK_I, BLOCK_O, BLOCK_L, BLOCK_J, BLOCK_T, BLOCK_Z, BLOCK_S]  # Do not change the order!
+
+BLOCK_I_HL = pygame.image.load(os.path.join("assets/blocks", "I_block_HL.png"))
+BLOCK_O_HL = pygame.image.load(os.path.join("assets/blocks", "O_block_HL.png"))
+BLOCK_L_HL = pygame.image.load(os.path.join("assets/blocks", "L_block_HL.png"))
+BLOCK_J_HL = pygame.image.load(os.path.join("assets/blocks", "J_block_HL.png"))
+BLOCK_T_HL = pygame.image.load(os.path.join("assets/blocks", "T_block_HL.png"))
+BLOCK_Z_HL = pygame.image.load(os.path.join("assets/blocks", "Z_block_HL.png"))
+BLOCK_S_HL = pygame.image.load(os.path.join("assets/blocks", "S_block_HL.png"))
+BLOCK_IMAGES_HL = [BLOCK_I_HL, BLOCK_O_HL, BLOCK_L_HL, BLOCK_J_HL, BLOCK_T_HL, BLOCK_Z_HL,
+                   BLOCK_S_HL]  # Do not change the order!
