@@ -4,7 +4,7 @@ from board import *
 from nextblock import *
 from blocks import *
 from screen import *
-from stats import *
+from database import *
 from powers import *
 
 # Initialize pygame
@@ -15,7 +15,7 @@ CLOCK = pygame.time.Clock()
 # FUNCTIONS
 # Close program
 def closeProgram():
-    closeStatsDB()
+    closeDB()
     pygame.quit()
     sys.exit()
 
@@ -103,13 +103,14 @@ def startNewGame():
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if not power_is_active and not show_countdown:
-                    if checkButtonPress(mouse_pos, end_button):
+                    if clickBox(mouse_pos, end_button, BTN_CORNER_RAD):
+
                         # End game and go to the main menu
                         run = False  # Stop game process
                         main_menu()
 
                 if game_over:
-                    if checkButtonPress(mouse_pos, new_game_button):
+                    if clickBox(mouse_pos, new_game_button, BTN_CORNER_RAD):
                         # Run following code only if game is over
                         # new_game_button is shown when game is over
                         # new_game_button is at the same place, where pause/unpause button (click areas overlap)
@@ -118,18 +119,18 @@ def startNewGame():
                         run = False  # End current game process
                         startNewGame()
                 elif game_running:
-                    if checkButtonPress(mouse_pos, pause_button):
+                    if clickBox(mouse_pos, pause_button, BTN_CORNER_RAD):
                         game_running = False
-                    if checkButtonPress(mouse_pos, activate_power_button):
+                    if clickBox(mouse_pos, activate_power_button, BTN_CORNER_RAD):
                         if power.is_available:
                             power_is_active = True
                             game_running = False
                 elif not game_running and not power_is_active:
-                    if checkButtonPress(mouse_pos, pause_button):
+                    if clickBox(mouse_pos, pause_button, BTN_CORNER_RAD):
                         # Unpause the game
                         show_countdown = True
                 elif power_is_active:
-                    if checkButtonPress(mouse_pos, cancel_power_button):
+                    if clickBox(mouse_pos, cancel_power_button, BTN_CORNER_RAD):
                         power_is_active = False
                         show_countdown = True
 
@@ -188,7 +189,7 @@ def startNewGame():
                         while not current_block.is_placed:
                             current_score = score_counter.drop()
                             current_block.move(board, 0, 1, autofall=True)
-                        MOVE_SOUND.play()
+                        current_block.playSound(MOVE_SOUND)
 
                 elif event.type == pygame.KEYUP:  # If a key is released
                     if event.key == pygame.K_DOWN:
@@ -225,12 +226,12 @@ def startNewGame():
 
                     # Check current stage
                     solved_rows += full_rows
-                    if solved_rows >= stage * 5:
+                    if solved_rows >= stage * 5 and optionsValues("stages"):
                         stage += 1
                         fall_speed *= 0.9
 
                     # Sound effect if at least one row is cleared
-                    ROW_CLEARED_SOUND.play()
+                    current_block.playSound(ROW_CLEARED_SOUND)
 
         # Update screen
         CLOCK.tick(FPS)
@@ -250,7 +251,7 @@ def startNewGame():
             elif power.name == "Wishlist":
                 wishlistScreen(power.block_under_cursor)
 
-            drawButton(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
+            drawObject(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
         elif show_countdown:
             TICK_SOUND.play()
             showCountdownToResumeGame(countdown)
@@ -271,7 +272,9 @@ def startNewGame():
 def main_menu():
     # Button positions
     start_button = (START_BTN_X, START_BTN_Y)  # New game
+    options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)  # Options
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
+
 
     run = True
     while run:
@@ -291,11 +294,51 @@ def main_menu():
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if checkButtonPress(mouse_pos, start_button):
-                        run = False  # Stop main menu proccess
+                    if clickBox(mouse_pos, start_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu process
                         startNewGame()
-                    elif checkButtonPress(mouse_pos, quit_button):
+                    elif clickBox(mouse_pos, options_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu process
+                        options()
+                    elif clickBox(mouse_pos, quit_button, BTN_CORNER_RAD):
                         closeProgram()
 
+# Options menu
+def options():
+    # Buttons and switches positions
+    back_button = (BACK_BTN_X, BACK_BTN_Y)
+    sound_switch = (SOUND_SWITCH_X, SOUND_SWITCH_Y)
+    stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
+    block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+    power_ups_switch = (POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+
+    run = True
+    while run:
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
+
+        # Update screen
+        CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)
+        updateOptionsMenu()
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                closeProgram()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
+                        run = False
+                        main_menu()
+                    elif clickBox(mouse_pos, sound_switch, SWITCH_CORNER_RAD):
+                        optionsValues("sound", True)  # Second parameter changes value
+                    elif clickBox(mouse_pos, stages_switch, SWITCH_CORNER_RAD):
+                        optionsValues("stages", True)
+                    elif clickBox(mouse_pos, block_shadows_switch, SWITCH_CORNER_RAD):
+                        optionsValues("block_shadows", True)
+                    elif clickBox(mouse_pos, power_ups_switch, SWITCH_CORNER_RAD):
+                        optionsValues("power_ups", True)
 
 main_menu()  # Launch main menu when program is opened

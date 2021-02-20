@@ -9,10 +9,11 @@ MULTIPLE_ROW_POINTS = 200
 
 # INITIALIZE
 STATS_DB = shelve.open(os.path.join("data", "stats"))
+OPTIONS_DB = shelve.open(os.path.join("data", "options"))
 
 
 # CLASS
-class Score():
+class Score:
     def __init__(self, current_score):
         self.current_score = current_score
 
@@ -28,6 +29,17 @@ class Score():
 
 
 # FUNCTIONS
+def optionsValues(name, change=False):
+    try:
+        value = OPTIONS_DB[name]
+    except:
+        value = True
+        OPTIONS_DB[name] = value
+    if change:
+        value = not value
+        OPTIONS_DB[name] = value
+    return value
+
 def getHighScore():
     try:
         # If database already has high_score entry
@@ -43,5 +55,6 @@ def saveHighScore(current_score, high_score):
         STATS_DB["high_score"] = current_score
 
 
-def closeStatsDB():
+def closeDB():
     STATS_DB.close()
+    OPTIONS_DB.close()
