@@ -1,6 +1,7 @@
 import pygame
 import pygame.freetype
 import math
+import datetime
 from board import *
 from nextblock import *
 from assets import *
@@ -176,6 +177,24 @@ POWER_UPS_TEXT_X = PADDING
 POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING1_HEIGHT + FAR
 POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y - 18
+
+# Stats menu
+PREVIOUS_BTN_X = PADDING
+PREVIOUS_BTN_Y = SCREEN_HEIGHT - BTN_HEIGHT - PADDING
+NEXT_BTN_X = SCREEN_WIDTH - BTN_WIDTH - PADDING
+NEXT_BTN_Y = PREVIOUS_BTN_Y
+PAGE_TXT_X = NEXT_BTN_X - BTN_WIDTH - NEAR
+PAGE_TXT_Y = SCREEN_HEIGHT -  BTN_HEIGHT - PADDING + 10
+
+STAT_TEXT_X = PADDING
+STAT_VAL_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+
+STAT_1_Y = OPTIONS_TEXT_Y + TITLE_HEIGHT + 2 * FAR
+STAT_2_Y = STAT_1_Y + HEADING1_HEIGHT + NEAR
+STAT_3_Y = STAT_2_Y + HEADING1_HEIGHT + NEAR
+STAT_4_Y = STAT_3_Y + HEADING1_HEIGHT + NEAR
+STAT_5_Y = STAT_4_Y + HEADING1_HEIGHT + NEAR
+STAT_6_Y = STAT_5_Y + HEADING1_HEIGHT + NEAR
 
 # INITIALIZE
 pygame.init()
@@ -356,6 +375,45 @@ def updateOptionsMenu():
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
+def updateStatsMenu(page):
+    drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+    drawText("Stats", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    
+    if(page==1):
+        drawText("Page 1", PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
+        drawObject(PREVIOUS_BTN_BW, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
+        
+        drawText("Highscore(Classic):", STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("high_score")), STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Highscore(Pwr-Up):", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("0", STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Best stage:", STAT_TEXT_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("highest_stage")), STAT_VAL_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Time in-game:", STAT_TEXT_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(datetime.timedelta(seconds=getStat("time_ingame"))), STAT_VAL_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Total games:", STAT_TEXT_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("games_played")), STAT_VAL_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Blocks generated:", STAT_TEXT_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("blocks_created")), STAT_VAL_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+
+    else:
+        drawText("Page 2", PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
+        
+        drawText("Rows cleared:", STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("rows")), STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Single rows:", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("rows_1")), STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Double rows:", STAT_TEXT_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("rows_2")), STAT_VAL_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Triple rows:", STAT_TEXT_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("rows_3")), STAT_VAL_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Quadruple rows:", STAT_TEXT_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("rows_4")), STAT_VAL_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText("Hard drops:", STAT_TEXT_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("hard_drops")), STAT_VAL_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
 # POWERS
 def updatePowersSelection(power):

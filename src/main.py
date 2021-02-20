@@ -50,9 +50,14 @@ def startNewGame():
     solved_rows = 0
     current_score = 0
     score_counter = Score(current_score)
-    high_score = getHighScore()
+    high_score = getStat("high_score")
 
     power = Power()
+    
+    # Variables for stats
+    blocks_created = 0
+    timer = 0
+    seconds_in_game = 0
 
     # Block movement control
     down_pressed = False
@@ -82,7 +87,13 @@ def startNewGame():
             if event.type == GAME_OVER:
                 game_running = False
                 game_over = True
-                saveHighScore(current_score, high_score)
+                # STATS
+                saveStat("high_score", current_score, compare=1)
+                saveStat("highest_stage", stage, compare=1) 
+                saveStat("rows", solved_rows)
+                saveStat("blocks_created", blocks_created)
+                saveStat("time_ingame", seconds_in_game)
+                saveStat("games_played", 1)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -161,6 +172,12 @@ def startNewGame():
         # Block movement control
         if game_running:
             shadow_block = ShadowBlock(current_block, board)  # Update
+            
+            # Measure time spent in game (for stats)
+            timer += 1
+            if (timer / FPS) == 1:
+                timer = 0
+                seconds_in_game += 1
 
             # For holding down keys
             key_timer += 1
@@ -187,9 +204,10 @@ def startNewGame():
                         left_pressed = True
                     elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
                         while not current_block.is_placed:
-                            current_score = score_counter.drop()
+                            current_score = score_counter.drop(2)
                             current_block.move(board, 0, 1, autofall=True)
                         current_block.playSound(MOVE_SOUND)
+                        saveStat("hard_drops", 1)
 
                 elif event.type == pygame.KEYUP:  # If a key is released
                     if event.key == pygame.K_DOWN:
@@ -203,7 +221,7 @@ def startNewGame():
             if down_pressed and key_timer % 4 == 0:
                 current_block.move(board, 0, 1)
                 # Give points for faster drops
-                current_score = score_counter.drop()
+                current_score = score_counter.drop(1)
             elif right_pressed and key_timer % 10 == 0:
                 shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
                 current_block.move(board, 1, 0)
@@ -217,10 +235,11 @@ def startNewGame():
                 full_rows = clearFullRows(board)
 
                 current_block = Block(next_block, board)
+                blocks_created += 1 
                 next_block = getNextBlock(batch.getBlock(), next_block_area)
 
                 # Is row cleared?
-                if full_rows > 0:
+                if full_rows:
                     # Give points for cleared rows
                     current_score = score_counter.fullRow(stage, full_rows)
 
@@ -273,6 +292,7 @@ def main_menu():
     # Button positions
     start_button = (START_BTN_X, START_BTN_Y)  # New game
     options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)  # Options
+    stats_button = [STATS_BTN_X, STATS_BTN_Y] # Stats
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
 
 
@@ -300,6 +320,9 @@ def main_menu():
                     elif clickBox(mouse_pos, options_button, BTN_CORNER_RAD):
                         run = False  # Stop main menu process
                         options()
+                    elif clickBox(mouse_pos, stats_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu proccess
+                        stats()
                     elif clickBox(mouse_pos, quit_button, BTN_CORNER_RAD):
                         closeProgram()
 
@@ -340,5 +363,39 @@ def options():
                         optionsValues("block_shadows", True)
                     elif clickBox(mouse_pos, power_ups_switch, SWITCH_CORNER_RAD):
                         optionsValues("power_ups", True)
+
+# Stats menu
+def stats(page=1):
+    # Buttons and switches positions
+    back_button = [BACK_BTN_X, BACK_BTN_Y]
+    previous_button = [PREVIOUS_BTN_X, PREVIOUS_BTN_Y]
+    next_button = [NEXT_BTN_X, NEXT_BTN_Y]
+
+    run = True
+    while run:
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
+        # Update screen
+        CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)
+        updateStatsMenu(page)
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                closeProgram()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu proccess
+                        main_menu()
+                    elif clickBox(mouse_pos, previous_button, BTN_CORNER_RAD):
+                        if(page != 1):
+                            page -= 1
+                            stats(page)
+                    elif clickBox(mouse_pos, next_button, BTN_CORNER_RAD):
+                        if(page != 2):
+                            page += 1
+                            stats(page)
 
 main_menu()  # Launch main menu when program is opened
