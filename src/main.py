@@ -25,6 +25,7 @@ def startNewGame():
     # Game states
     game_running = True  # unpaused or not
     game_over = False
+    power_is_active = False
 
     # Countdown
     show_countdown = False  # If game_running goes from False to true, then show countdown
@@ -32,7 +33,7 @@ def startNewGame():
 
     # UI
     activate_power_button = (ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
-    close_power_button = (CLOSE_POWER_BTN_X, CLOSE_POWER_BTN_Y)
+    cancel_power_button = (CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
     pause_button = (PAUSE_BTN_X, PAUSE_BTN_Y)
     end_button = (END_BTN_X, END_BTN_Y)  # End game
     new_game_button = (NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
@@ -85,7 +86,7 @@ def startNewGame():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    if not game_over and not show_countdown and not power.is_active:
+                    if not game_over and not show_countdown and not power_is_active:
                         if game_running:  # Pause game
                             game_running = False
                         else:  # Unpause
@@ -93,16 +94,17 @@ def startNewGame():
 
                 if event.key == pygame.K_p:
                     if power.is_available and game_running:
-                        power.activate()
+                        power_is_active = True
                         game_running = False
-                    elif power.is_active:
-                        power.deactivate(laser=(current_block, board))
+                    elif power_is_active:
+                        power_is_active = False
                         show_countdown = True
 
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if not power.is_active and not show_countdown:
+                if not power_is_active and not show_countdown:
                     if clickBox(mouse_pos, end_button, BTN_CORNER_RAD):
+
                         # End game and go to the main menu
                         run = False  # Stop game process
                         main_menu()
@@ -121,23 +123,40 @@ def startNewGame():
                         game_running = False
                     if clickBox(mouse_pos, activate_power_button, BTN_CORNER_RAD):
                         if power.is_available:
-                            power.activate()
+                            power_is_active = True
                             game_running = False
-                elif not game_running and not power.is_active:
+                elif not game_running and not power_is_active:
                     if clickBox(mouse_pos, pause_button, BTN_CORNER_RAD):
                         # Unpause the game
                         show_countdown = True
-                elif power.is_active:
-                    if clickBox(mouse_pos, close_power_button, BTN_CORNER_RAD):
-                        power.deactivate(laser=(current_block, board))
+                elif power_is_active:
+                    if clickBox(mouse_pos, cancel_power_button, BTN_CORNER_RAD):
+                        power_is_active = False
                         show_countdown = True
 
         # Powers
-        if power.is_active:
-            power.run(laser=(mouse_pos, events, board, current_block, shadow_block))
+        if power_is_active:
+            # Start the power
+            if not power.is_running:
+                if power.name == "Laser":
+                    power.start(board_params=(board, current_block, shadow_block))
+                elif power.name == "Wishlist":
+                    power.start(board_params=(board, current_block, shadow_block))
 
-            if not power.is_active:  # If power.run() deactivated the power
-                show_countdown = True
+            # Keep the power running
+            if power.is_running:
+                if power.name == "Laser":
+                    power.run(UI_control=(mouse_pos, events))
+                elif power.name == "Wishlist":
+                    power.run(UI_control=(mouse_pos, events))
+
+                if not power.is_running:  # If power.run() stopped the process
+                    power_is_active = False
+                    show_countdown = True
+
+        if power.is_running and not power_is_active:
+            # Player has turned off power, but power process is still runnning
+            power.stop()
 
         # Block movement control
         if game_running:
@@ -226,11 +245,13 @@ def startNewGame():
 
         if game_over:
             updateGameOverScreen()
-        elif power.is_active:
+        elif power_is_active:
             if power.name == "Laser":
                 laserScreen(power.row)
+            elif power.name == "Wishlist":
+                wishlistScreen()
 
-            drawObject(CLOSE_POWER_BTN, CLOSE_POWER_BTN_X, CLOSE_POWER_BTN_Y)
+            drawObject(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
         elif show_countdown:
             showCountdownToResumeGame(countdown)
             countdown -= 1
@@ -248,9 +269,10 @@ def startNewGame():
 # Main menu
 def main_menu():
     # Button positions
-    start_button = [START_BTN_X, START_BTN_Y]  # New game
-    options_button = [OPTIONS_BTN_X, OPTIONS_BTN_Y]  # Options
-    quit_button = [QUIT_BTN_X, QUIT_BTN_Y]  # Quit program
+    start_button = (START_BTN_X, START_BTN_Y)  # New game
+    options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)  # Options
+    quit_button = (QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
+
 
     run = True
     while run:
@@ -282,11 +304,11 @@ def main_menu():
 # Options menu
 def options():
     # Buttons and switches positions
-    back_button = [BACK_BTN_X, BACK_BTN_Y]
-    sound_switch = [SOUND_SWITCH_X, SOUND_SWITCH_Y]
-    stages_switch = [STAGES_SWITCH_X, STAGES_SWITCH_Y]
-    block_shadows_switch = [BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y]
-    power_ups_switch = [POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y]
+    back_button = (BACK_BTN_X, BACK_BTN_Y)
+    sound_switch = (SOUND_SWITCH_X, SOUND_SWITCH_Y)
+    stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
+    block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+    power_ups_switch = (POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
     run = True
     while run:
