@@ -338,10 +338,11 @@ def highlightBoard():
 
 
 # Wishlist
-def wishlistScreen():
+def wishlistScreen(block_under_cursor):
     highlightBoard()
+    showPowerHelpText("Click on a block to use it")
     displayBlocksSelection()
-    showPowerHelpText("Click on a block to choose it")
+    highlightBlockUnderCursor(block_under_cursor)
 
 
 def displayBlocksSelection():
@@ -349,15 +350,24 @@ def displayBlocksSelection():
         SCREEN.blit(block, (BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * i))
 
 
+def highlightBlockUnderCursor(block_under_cursor):
+    if block_under_cursor is not None:
+        index, block_area = block_under_cursor  # Unpack tuple
+
+        SCREEN.blit(BLOCK_IMAGES_HL[index], (BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * index))
+
+
 # Laser
 def laserScreen(row):
     highlightBoard()
-    highlightRow(*row)
+    highlightRow(row)
     showPowerHelpText("Click on a row to remove it")
 
 
-def highlightRow(row_y, row_index=0):
-    if row_y is not None:
+def highlightRow(row):
+    if row is not None:
+        index, row_y = row  # Unpack tuple
+
         highlight = pygame.Surface((BOARD_SCREEN_WIDTH, BOARD_CELL), pygame.SRCALPHA)
         highlight.fill(TRANSPARENT_WHITE)
         SCREEN.blit(highlight, (BOARD_X, row_y))

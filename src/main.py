@@ -248,14 +248,16 @@ def startNewGame():
             if power.name == "Laser":
                 laserScreen(power.row)
             elif power.name == "Wishlist":
-                wishlistScreen()
+                wishlistScreen(power.block_under_cursor)
 
             drawButton(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
         elif show_countdown:
+            TICK_SOUND.play()
             showCountdownToResumeGame(countdown)
             countdown -= 1
 
             if countdown < 1:
+                RESUME_SOUND.play()
                 show_countdown = False
                 game_running = True
                 countdown = 3  # Reset countdown
