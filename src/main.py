@@ -293,7 +293,6 @@ def startNewGame():
         elif countdown_is_active:
             showCountdown(countdown)
             countdown, countdown_is_active, game_is_running = runCountdown(countdown)
-            down_pressed = False  # Make sure block stops fastdropping at the end of count
         elif not game_is_running:
             showPauseMenu()
             
