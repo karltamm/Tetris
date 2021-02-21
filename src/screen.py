@@ -192,20 +192,6 @@ STAT_VAL_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 STAT_1_Y = OPTIONS_TEXT_Y + TITLE_HEIGHT + 2 * FAR
 STAT_Y = [STAT_1_Y + i * (HEADING1_HEIGHT + NEAR) for i in range(6)]  # Create a list of Y values [stat1_Y, stat2_Y, ...]
 
-STATS_VALUES = [[["Highscore(Classic):", str(getStat("high_score"))],
-                ["Highscore(Pwr-Up):", str(getStat("high_score_powers"))],
-                ["Best stage:", str(getStat("highest_stage"))],
-                ["Time in-game:", str(datetime.timedelta(seconds=getStat("time_ingame")))],
-                ["Total games:", str(getStat("games_played"))],
-                ["Blocks generated:", str(getStat("blocks_created"))]],            
-                
-                [["Rows cleared:", str(getStat("rows"))],
-                ["Single rows:", str(getStat("rows_1"))],
-                ["Double rows:", str(getStat("rows_2"))],
-                ["Triple rows:", str(getStat("rows_3"))],
-                ["Quadruple rows:", str(getStat("rows_4"))],
-                ["Hard drops:", str(getStat("hard_drops"))]]]
-
 # Trophies
 PREVIOUS_BTN_X = PADDING
 PREVIOUS_BTN_Y = SCREEN_HEIGHT - PADDING - BTN_HEIGHT
@@ -434,9 +420,27 @@ def showStatsMenu(page):
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
     
+    STATS_VALUES = updateStats()
+    
     for i in range(len(STATS_VALUES[page-1])):
         drawText(STATS_VALUES[page-1][i][0], STAT_TEXT_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(STATS_VALUES[page-1][i][1], STAT_VAL_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
+        
+def updateStats():
+    STATS_VALUES = [[["Highscore(Classic):", str(getStat("high_score"))],
+                     ["Highscore(Pwr-Up):", str(getStat("high_score_powers"))],
+                     ["Best stage:", str(getStat("highest_stage"))],
+                     ["Time in-game:", str(datetime.timedelta(seconds=getStat("time_ingame")))],
+                     ["Total games:", str(getStat("games_played"))],
+                     ["Blocks generated:", str(getStat("blocks_created"))]],            
+                    
+                    [["Rows cleared:", str(getStat("rows"))],
+                     ["Single rows:", str(getStat("rows_1"))],
+                     ["Double rows:", str(getStat("rows_2"))],
+                     ["Triple rows:", str(getStat("rows_3"))],
+                     ["Quadruple rows:", str(getStat("rows_4"))],
+                     ["Hard drops:", str(getStat("hard_drops"))]]]
+    return STATS_VALUES
     
 def showTrophiesScreen(page_nr):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)

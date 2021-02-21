@@ -402,6 +402,8 @@ def stats(page=1):
     back_button = [BACK_BTN_X, BACK_BTN_Y]
     previous_button = [PREVIOUS_BTN_X, PREVIOUS_BTN_Y]
     next_button = [NEXT_BTN_X, NEXT_BTN_Y]
+    
+    STATS_VALUES = updateStats()
 
     run = True
     while run:
