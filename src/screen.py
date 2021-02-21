@@ -393,7 +393,7 @@ def showMainMenu():
     SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))
 
 
-def updateOptionsMenu():
+def showOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
 
     drawText("Options", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
@@ -419,7 +419,7 @@ def updateOptionsMenu():
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
-def updateStatsMenu(page):
+def showStatsMenu(page):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
     drawText("Stats", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
     drawText("Page " + str(page), PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
@@ -438,7 +438,7 @@ def updateStatsMenu(page):
         drawText(STATS_VALUES[page-1][i][0], STAT_TEXT_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(STATS_VALUES[page-1][i][1], STAT_VAL_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
     
-def updateTrophiesScreen(page_nr):
+def showTrophiesScreen(page_nr):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
     if page_nr != 1:
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)

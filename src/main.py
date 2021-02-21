@@ -7,9 +7,10 @@ from screen import *
 from database import *
 from powers import *
 
-# Initialize pygame
+# INITIALIZE
 pygame.init()
 CLOCK = pygame.time.Clock()
+pygame.display.set_caption("Tetris")
 
 
 # FUNCTIONS
@@ -23,12 +24,12 @@ def closeProgram():
 # Playing the game
 def startNewGame():
     # Game states
-    game_running = True  # unpaused or not
-    game_over = False
+    game_is_running = True  # unpaused or not
+    game_is_over = False
     power_is_active = False
 
     # Countdown
-    show_countdown = False  # If game_running goes from False to true, then show countdown
+    countdown_is_active = False  # If game_running goes from False to true, then show countdown
     countdown = 3
 
     # UI
@@ -88,8 +89,8 @@ def startNewGame():
 
             # If game is over
             if event.type == GAME_OVER:
-                game_running = False
-                game_over = True
+                game_is_running = False
+                game_is_over = True
                 # STATS
                 if(optionsValues("power_ups")):
                     saveStat("high_score_powers", current_score, compare=1)
@@ -103,30 +104,30 @@ def startNewGame():
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    if not game_over and not show_countdown and not power_is_active:
-                        if game_running:  # Pause game
-                            game_running = False
+                    if not game_is_over and not countdown_is_active and not power_is_active:
+                        if game_is_running:  # Pause game
+                            game_is_running = False
                         else:  # Unpause
-                            show_countdown = True
+                            countdown_is_active = True
 
                 if event.key == pygame.K_p:
-                    if power.is_available and game_running:
+                    if power.is_available and game_is_running:
                         power_is_active = True
-                        game_running = False
+                        game_is_running = False
                     elif power_is_active:
                         power_is_active = False
-                        show_countdown = True
+                        countdown_is_active = True
 
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if not power_is_active and not show_countdown:
+                if not power_is_active and not countdown_is_active:
                     if clickBox(mouse_pos, end_button, BTN_CORNER_RAD):
 
                         # End game and go to the main menu
                         run = False  # Stop game process
                         main_menu()
 
-                if game_over:
+                if game_is_over:
                     if clickBox(mouse_pos, new_game_button, BTN_CORNER_RAD):
                         # Run following code only if game is over
                         # new_game_button is shown when game is over
@@ -134,49 +135,56 @@ def startNewGame():
 
                         # Start new game
                         run = False  # End current game process
-                        startNewGame()
-                elif game_running:
+                        startNewGame()         
+                elif game_is_running:
                     if clickBox(mouse_pos, pause_button, BTN_CORNER_RAD):
-                        game_running = False
+                        game_is_running = False
                     if clickBox(mouse_pos, activate_power_button, BTN_CORNER_RAD):
                         if power.is_available:
                             power_is_active = True
-                            game_running = False
-                elif not game_running and not power_is_active:
+                            game_is_running = False
+                elif not game_is_running and not power_is_active:
                     if clickBox(mouse_pos, pause_button, BTN_CORNER_RAD):
                         # Unpause the game
-                        show_countdown = True
+                        countdown_is_active = True
                 elif power_is_active:
                     if clickBox(mouse_pos, cancel_power_button, BTN_CORNER_RAD):
                         power_is_active = False
-                        show_countdown = True
+                        countdown_is_active = True
 
         # Powers
-        if power_is_active:
-            # Start the power
+        if power_is_active and not power.is_running:
+            if power.name == "Laser":
+                power.start(board_params=(board, current_block, shadow_block))
+            elif power.name == "Wishlist":
+                power.start(board_params=(board, current_block, shadow_block))
+            elif power.name == "Timeless":
+                power.start(board_params=(board, current_block, shadow_block))
+
+            if power.game_should_run == True:
+                game_is_running = True
+
+        if power.is_running:
+            if power.name == "Laser":
+                power.run(UI_control=(mouse_pos, events))
+            elif power.name == "Wishlist":
+                power.run(UI_control=(mouse_pos, events))
+            elif power.name == "Timeless":
+                power.run(current_block=current_block)
+
+            # If power.run() stopped the process
             if not power.is_running:
-                if power.name == "Laser":
-                    power.start(board_params=(board, current_block, shadow_block))
-                elif power.name == "Wishlist":
-                    power.start(board_params=(board, current_block, shadow_block))
+                power_is_active = False
+                game_is_running = False
+                countdown_is_active = True
 
-            # Keep the power running
-            if power.is_running:
-                if power.name == "Laser":
-                    power.run(UI_control=(mouse_pos, events))
-                elif power.name == "Wishlist":
-                    power.run(UI_control=(mouse_pos, events))
-
-                if not power.is_running:  # If power.run() stopped the process
-                    power_is_active = False
-                    show_countdown = True
-
+        # Player has turned off power, but power process is still runnning
         if power.is_running and not power_is_active:
-            # Player has turned off power, but power process is still runnning
             power.stop()
+            game_is_running = False
 
         # Block movement control
-        if game_running:
+        if game_is_running:
             shadow_block = ShadowBlock(current_block, board)  # Update
             
             # Measure time spent in game (for stats)
@@ -189,11 +197,12 @@ def startNewGame():
             key_timer += 1
 
             # Block automatic falling
-            fall_timer += 1
-            if (fall_timer / FPS) > fall_speed:
-                fall_timer = 0
-                if not down_pressed:
-                    current_block.move(board, 0, 1, autofall=True)
+            if not power.autofall_is_off:
+                fall_timer += 1
+                if (fall_timer / FPS) > fall_speed:
+                    fall_timer = 0
+                    if not down_pressed:
+                        current_block.move(board, 0, 1, autofall=True)
 
             # Check if user wants to move a block
             for event in events:
@@ -262,38 +271,51 @@ def startNewGame():
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
 
-        updateBoard(board)
-        updateNextBlockArea(next_block_area)
-        updateScore(current_score, high_score, stage)
-        updatePowersSelection(power)
-        updateGameButtons()
+        showBoard(board)
+        showNextBlockArea(next_block_area)
+        showScore(current_score, high_score, stage)
+        showPowersSelection(power)
+        showGameButtons()
 
-        if game_over:
-            updateGameOverScreen()
+        if game_is_over:
+            showGameOverScreen()
         elif power_is_active:
             if power.name == "Laser":
-                laserScreen(power.row)
+                showLaserScreen(power.row)
             elif power.name == "Wishlist":
-                wishlistScreen(power.block_under_cursor)
+                showWishlistScreen(power.block_under_cursor)
+            elif power.name == "Timeless":
+                showTimelessScreen(power.num_of_blocks_left)
+                showNextBlockArea(next_block_area)
 
             drawObject(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
-        elif show_countdown:
-            TICK_SOUND.play()
-            showCountdownToResumeGame(countdown)
-            countdown -= 1
-
-            if countdown < 1:
-                RESUME_SOUND.play()
-                show_countdown = False
-                game_running = True
-                countdown = 3  # Reset countdown
-        elif not game_running:
-            updatePauseMenu()
-
+        elif countdown_is_active:
+            showCountdown(countdown)
+            countdown, countdown_is_active, game_is_running = runCountdown(countdown)
+            #RESUME_SOUND.play()
+        elif not game_is_running:
+            showPauseMenu()
+            
         pygame.display.update()
 
 
-# Main menu
+def runCountdown(countdown):
+    countdown -= 1
+
+    if countdown < 1:
+        RESUME_SOUND.play()
+        countdown_is_active = False
+        game_is_running = True
+        countdown = 3  # Reset countdown
+    else:
+        TICK_SOUND.play()
+        countdown_is_active = True
+        game_is_running = False
+
+    return (countdown, countdown_is_active, game_is_running)
+
+
+# MAIN MENU
 def main_menu():
     # Button positions
     start_button = (START_BTN_X, START_BTN_Y)  # New game
@@ -308,7 +330,7 @@ def main_menu():
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
-        updateMainMenu()
+        showMainMenu()
         pygame.display.update()
 
         # UI control
@@ -353,7 +375,7 @@ def options():
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
-        updateOptionsMenu()
+        showOptionsMenu()
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -388,7 +410,7 @@ def stats(page=1):
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
-        updateStatsMenu(page)
+        showStatsMenu(page)
         pygame.display.update()
         
         for event in pygame.event.get():
@@ -420,7 +442,7 @@ def trophies():
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
-        updateTrophiesScreen(page_nr)
+        showTrophiesScreen(page_nr)
         pygame.display.update()
 
         for event in pygame.event.get():
