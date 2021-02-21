@@ -50,7 +50,10 @@ def startNewGame():
     solved_rows = 0
     current_score = 0
     score_counter = Score(current_score)
-    high_score = getStat("high_score")
+    if(optionsValues("power_ups")):
+        high_score = getStat("high_score_powers")
+    else:
+        high_score = getStat("high_score")
 
     power = Power()
     
@@ -88,7 +91,10 @@ def startNewGame():
                 game_running = False
                 game_over = True
                 # STATS
-                saveStat("high_score", current_score, compare=1)
+                if(optionsValues("power_ups")):
+                    saveStat("high_score_powers", current_score, compare=1)
+                else:
+                    saveStat("high_score", current_score, compare=1)
                 saveStat("highest_stage", stage, compare=1) 
                 saveStat("rows", solved_rows)
                 saveStat("blocks_created", blocks_created)

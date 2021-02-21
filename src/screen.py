@@ -387,7 +387,7 @@ def updateStatsMenu(page):
         drawText("Highscore(Classic):", STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(str(getStat("high_score")), STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Highscore(Pwr-Up):", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("0", STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(str(getStat("high_score_powers")), STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Best stage:", STAT_TEXT_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(str(getStat("highest_stage")), STAT_VAL_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Time in-game:", STAT_TEXT_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
