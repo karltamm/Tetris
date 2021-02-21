@@ -41,7 +41,7 @@ class Block:
             move_success = True
 
         if move_success and not autofall:
-            self.playSound(MOVE_SOUND)
+            self.playSound(MOVE3_SOUND)
 
     def rotate(self, board):
         rotate_success = False
