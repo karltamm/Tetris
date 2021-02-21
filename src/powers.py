@@ -3,7 +3,7 @@ from screen import *
 from assets import *
 
 # CONSTANTS
-POWERS = ["Laser", "Wishlist"]
+POWERS = ["Laser", "Wishlist", "Timeless"]
 
 
 # CLASS
@@ -12,48 +12,63 @@ class Power:
         self.is_available = True
         self.is_running = False
         # self.name = random.choice(POWERS)
-        self.name = "Wishlist"  # Only for testing!
+        self.name = "Timeless"  # Only for testing!
 
-        self.highlight_board = False
+        # Game state
+        self.game_should_run = False
+
+        # Board
         self.board = None
         self.current_block = None
-
-        # Laser specific
-        self.row = None
-
-        # Wishlist
-        self.block_selection = []
-        self.block_under_cursor = None
-        self.start_time = None
+        self.highlight_board = False
+        self.autofall_is_off = False
 
     def start(self, board_params=None):
         self.is_running = True
 
         if board_params is not None:
             self.board, self.current_block, shadow_block = board_params
+
+        if self.name == "Laser":
+            self.row = None
+            temporarilyRemoveCurrentBlock(self.board, self.current_block, shadow_block)
+        elif self.name == "Wishlist":
+            self.block_selection = []
+            self.block_under_cursor = None
+            self.start_time = None
+
+            self.createBlockSelection()
             temporarilyRemoveCurrentBlock(self.board, self.current_block, shadow_block)
 
-        if self.name == "Wishlist":
-            self.createBlockSelection()
-
-            # A part of blocks selection shares screen area with power activation button. If user clicks on a button then this can automaticly triger certain block selection. Do not allow to choose a block if certain amount of time hasn't elapsed since selection area became avaialable. This gives time for player to actually see the selection and make a choice
+            # A part of blocks selection shares screen area with power activation button.
+            # If user clicks on a button then this can automaticly trigger certain block selection.
+            # Do not allow to choose a block if certain amount of time hasn't elapsed
+            # to give time for player to actually see the selection and make a choice
             self.start_time = pygame.time.get_ticks()
+        elif self.name == "Timeless":
+            self.autofall_is_off = True
+            self.num_of_blocks_left = 2  # At start, player can move 3 blocks without autofall
+            self.game_should_run = True
+            self.last_block = self.current_block  # To know if user got a new block
 
     def stop(self):
         self.is_running = False
-        self.is_available = False  # TESTING!
+        self.is_available = True  # TESTING!
 
         if self.name == "Laser":
             rewindCurrentBlock(self.current_block, self.board)
-
         elif self.name == "Wishlist":
             rewindCurrentBlock(self.current_block, self.board)
+        elif self.name == "Timeless":
+            self.autofall_is_off = False
 
-    def run(self, UI_control=None):
+    def run(self, UI_control=None, current_block=None):
         if self.name == "Laser":
             self.runLaser(UI_control)
         elif self.name == "Wishlist":
             self.runWishlist(UI_control)
+        elif self.name == "Timeless":
+            self.runTimeless(current_block)
 
     # LASER
     def runLaser(self, UI_control):
@@ -115,6 +130,17 @@ class Power:
     def changeCurrentBlockShape(self):
         self.current_block.shape = SHAPES[self.block_under_cursor[0]]
         APPEAR_SOUND.play()
+
+    # TIMELESS
+    def runTimeless(self, current_block):
+        if self.last_block != current_block:
+            self.last_block = current_block  # Keep track if block changes
+
+            if self.num_of_blocks_left > 0:
+                self.num_of_blocks_left -= 1
+            else:
+                TIMEUP2_SOUND.play()
+                self.stop()
 
 
 # FUNCTIONS

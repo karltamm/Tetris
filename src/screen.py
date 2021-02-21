@@ -41,7 +41,7 @@ BOLD_FONT = CHATHURA_BOLD
 # Buttons
 BTN_HEIGHT = 60
 BTN_WIDTH = 150
-BTN_CORNER_RAD = 11
+BTN_CORNER_RAD = 10
 
 # Switches
 SWITCH_HEIGHT = BTN_HEIGHT
@@ -244,7 +244,6 @@ TROPHY_PAGES = [["Legend", "Reach 500,000 points",
 # INITIALIZE
 pygame.init()
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Tetris")
 
 
 # GENERAL FUNCTIONS
@@ -287,7 +286,7 @@ def drawTransparentOverlay():
 
 
 # GAME
-def updateBoard(board):
+def showBoard(board):
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
             if board[row][col] == 0:
@@ -310,7 +309,7 @@ def updateBoard(board):
                 SCREEN.blit(SHADOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
 
 
-def updateNextBlockArea(next_block_area):
+def showNextBlockArea(next_block_area):
     for row in range(NEXT_BLOCK_AREA_HEIGHT):
         for col in range(NEXT_BLOCK_AREA_WIDTH):
             if next_block_area[row][col] == 0:
@@ -333,7 +332,7 @@ def updateNextBlockArea(next_block_area):
     drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING1_SIZE)
 
 
-def updateScore(score, high_score, stage):
+def showScore(score, high_score, stage):
     # Display current score
     drawText("Score", SCORE_TEXT_X, SCORE_TEXT_Y, color=NEON_BLUE, font=BOLD_FONT)
     drawText(str(score), SCORE_VAL_X, SCORE_VAL_Y)
@@ -348,12 +347,12 @@ def updateScore(score, high_score, stage):
         drawText(str(stage), STAGE_VAL_X, STAGE_VAL_Y)
 
 
-def updateGameButtons():
+def showGameButtons():
     drawObject(PAUSE_BTN, PAUSE_BTN_X, PAUSE_BTN_Y)
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
-def updatePauseMenu():
+def showPauseMenu():
     # Background
     drawTransparentOverlay()
 
@@ -362,7 +361,7 @@ def updatePauseMenu():
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
-def updateGameOverScreen():
+def showGameOverScreen():
     drawTransparentOverlay()
 
     # Message
@@ -373,16 +372,16 @@ def updateGameOverScreen():
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
-def showCountdownToResumeGame(countdown):
+def showCountdown(countdown):
     drawTransparentOverlay()
     drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
     pygame.display.update()  # Without it, countdown is shown with delay
-    pygame.time.delay(1000)  # Show current count for a second
+    pygame.time.delay(1000)  # Show current countdown for a second
 
 
 # MAIN MENU
-def updateMainMenu():
+def showMainMenu():
     SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
 
     drawObject(START_BTN, START_BTN_X, START_BTN_Y)
@@ -456,7 +455,7 @@ def updateTrophiesScreen(page_nr):
     drawText(TROPHY_PAGES[page_nr-1][5], TROPHY3_TEXT_X, TROPHY3_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
 
 # POWERS
-def updatePowersSelection(power):
+def showPowersSelection(power):
     drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
 
     if power.is_available:
@@ -464,6 +463,8 @@ def updatePowersSelection(power):
             button = LASER_BTN
         elif power.name == "Wishlist":
             button = WISHLIST_BTN
+        elif power.name == "Timeless":
+            button = TIMELESS_BTN
 
         drawObject(button, ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
     else:
@@ -496,7 +497,7 @@ def highlightBoard():
 
 
 # Wishlist
-def wishlistScreen(block_under_cursor):
+def showWishlistScreen(block_under_cursor):
     highlightBoard()
     showPowerHelpText("Click on a block to use it")
     displayBlocksSelection()
@@ -516,7 +517,7 @@ def highlightBlockUnderCursor(block_under_cursor):
 
 
 # Laser
-def laserScreen(row):
+def showLaserScreen(row):
     highlightBoard()
     highlightRow(row)
     showPowerHelpText("Click on a row to remove it")
@@ -529,3 +530,17 @@ def highlightRow(row):
         highlight = pygame.Surface((BOARD_SCREEN_WIDTH, BOARD_CELL), pygame.SRCALPHA)
         highlight.fill(TRANSPARENT_WHITE)
         SCREEN.blit(highlight, (BOARD_X, row_y))
+
+
+# Timeless
+def showTimelessScreen(num_of_blocks_left):
+    if num_of_blocks_left > 1:
+        phrase = "%d blocks" % num_of_blocks_left
+    else:
+        phrase = "block"
+
+    highlightBoard()
+    if num_of_blocks_left > 0:
+        showPowerHelpText("Next %s will not fall" % phrase)
+    else:
+        showPowerHelpText("Next block will fall")
