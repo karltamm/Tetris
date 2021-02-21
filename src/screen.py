@@ -439,36 +439,6 @@ def updateStatsMenu(page):
         drawText(STATS_VALUES[page-1][i][0], STAT_TEXT_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(STATS_VALUES[page-1][i][1], STAT_VAL_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
     
-    
-    """
-    if(page==1):
-        drawText(STATS_VALUES[page-1][0][0], STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(STATS_VALUES[page-1][0][1], STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Highscore(Pwr-Up):", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("high_score_powers")), STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Best stage:", STAT_TEXT_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("highest_stage")), STAT_VAL_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Time in-game:", STAT_TEXT_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(datetime.timedelta(seconds=getStat("time_ingame"))), STAT_VAL_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Total games:", STAT_TEXT_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("games_played")), STAT_VAL_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Blocks generated:", STAT_TEXT_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("blocks_created")), STAT_VAL_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    if(page==2):
-        drawText("Rows cleared:", STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("rows")), STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Single rows:", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("rows_1")), STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Double rows:", STAT_TEXT_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("rows_2")), STAT_VAL_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Triple rows:", STAT_TEXT_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("rows_3")), STAT_VAL_X, STAT_4_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Quadruple rows:", STAT_TEXT_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("rows_4")), STAT_VAL_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText("Hard drops:", STAT_TEXT_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("hard_drops")), STAT_VAL_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    """
-    
 def updateTrophiesScreen(page_nr):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
     if page_nr != 1:
