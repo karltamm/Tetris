@@ -17,6 +17,7 @@ SHADOW_CELL = pygame.image.load(os.path.join("assets/cells", "shadow.png"))
 
 # Colors
 LIGHT_GREY = (209, 209, 209)
+GREY = (120, 120, 120)
 DARK_GREY = (43, 43, 43)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

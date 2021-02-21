@@ -299,6 +299,7 @@ def main_menu():
     start_button = (START_BTN_X, START_BTN_Y)  # New game
     options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)  # Options
     stats_button = [STATS_BTN_X, STATS_BTN_Y] # Stats
+    trophies_button = (TROPHIES_BTN_X, TROPHIES_BTN_Y)
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
 
 
@@ -329,6 +330,9 @@ def main_menu():
                     elif clickBox(mouse_pos, stats_button, BTN_CORNER_RAD):
                         run = False  # Stop main menu proccess
                         stats()
+                    elif clickBox(mouse_pos, trophies_button, BTN_CORNER_RAD):
+                        run = False  # Stop main menu process
+                        trophies()
                     elif clickBox(mouse_pos, quit_button, BTN_CORNER_RAD):
                         closeProgram()
 
@@ -403,5 +407,30 @@ def stats(page=1):
                         if(page != 2):
                             page += 1
                             stats(page)
+
+def trophies():
+    back_button = (BACK_BTN_X, BACK_BTN_Y)
+    previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+    next_button = (NEXT_BTN_X, NEXT_BTN_Y)
+    page_nr = 1
+    # Update screen
+        CLOCK.tick(FPS)
+        SCREEN.fill(DARK_GREY)
+        updateTrophiesScreen(page_nr)
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                closeProgram()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
+                        run = False
+                        main_menu()
+                    if clickBox(mouse_pos, previous_button, BTN_CORNER_RAD) and page_nr != 1:
+                        page_nr -= 1
+                    if clickBox(mouse_pos, next_button, BTN_CORNER_RAD) and page_nr != 2:
+                        page_nr += 1
 
 main_menu()  # Launch main menu when program is opened
