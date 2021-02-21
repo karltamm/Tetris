@@ -414,23 +414,23 @@ def trophies():
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
     page_nr = 1
     # Update screen
-        CLOCK.tick(FPS)
-        SCREEN.fill(DARK_GREY)
-        updateTrophiesScreen(page_nr)
-        pygame.display.update()
+    CLOCK.tick(FPS)
+    SCREEN.fill(DARK_GREY)
+    updateTrophiesScreen(page_nr)
+    pygame.display.update()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                closeProgram()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            closeProgram()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
-                        run = False
-                        main_menu()
-                    if clickBox(mouse_pos, previous_button, BTN_CORNER_RAD) and page_nr != 1:
-                        page_nr -= 1
-                    if clickBox(mouse_pos, next_button, BTN_CORNER_RAD) and page_nr != 2:
-                        page_nr += 1
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
+                    run = False
+                    main_menu()
+                if clickBox(mouse_pos, previous_button, BTN_CORNER_RAD) and page_nr != 1:
+                    page_nr -= 1
+                if clickBox(mouse_pos, next_button, BTN_CORNER_RAD) and page_nr != 2:
+                    page_nr += 1
 
 main_menu()  # Launch main menu when program is opened
