@@ -136,12 +136,7 @@ def startNewGame():
 
         # Powers
         if power_is_active and not power.is_running:
-            if power.name == "Laser":
-                power.start(board_params=(board, current_block, shadow_block))
-            elif power.name == "Wishlist":
-                power.start(board_params=(board, current_block, shadow_block))
-            elif power.name == "Timeless":
-                power.start(board_params=(board, current_block, shadow_block))
+            power.start(board_params=(board, current_block, shadow_block))
 
             if power.game_should_run == True:
                 game_is_running = True
@@ -157,13 +152,19 @@ def startNewGame():
             # If power.run() stopped the process
             if not power.is_running:
                 power_is_active = False
-                game_is_running = False
                 countdown_is_active = True
+
+                if power.game_should_run == True:
+                    down_pressed = False
+                    game_is_running = False
 
         # Player has turned off power, but power process is still runnning
         if power.is_running and not power_is_active:
             power.stop()
-            game_is_running = False
+
+            if power.game_should_run == True:
+                down_pressed = False
+                game_is_running = False
 
         # Block movement control
         if game_is_running:
@@ -175,10 +176,10 @@ def startNewGame():
             # Block automatic falling
             if not power.autofall_is_off:
                 fall_timer += 1
-                if (fall_timer / FPS) > fall_speed:
+                if fall_timer / FPS > fall_speed:
                     fall_timer = 0
                     if not down_pressed:
-                        current_block.move(board, 0, 1, autofall=True)
+                        current_block.move(board, y_step=1, autofall=True)
 
             # Check if user wants to move a block
             for event in events:
@@ -196,7 +197,7 @@ def startNewGame():
                     elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
                         while not current_block.is_placed:
                             current_score = score_counter.drop()
-                            current_block.move(board, 0, 1, autofall=True)
+                            current_block.move(board, y_step=1, autofall=True)
                         MOVE_SOUND.play()
 
                 elif event.type == pygame.KEYUP:  # If a key is released
@@ -209,15 +210,15 @@ def startNewGame():
 
             # Move blocks
             if down_pressed and key_timer % 4 == 0:
-                current_block.move(board, 0, 1)
+                current_block.move(board, y_step=1)
                 # Give points for faster drops
                 current_score = score_counter.drop()
             elif right_pressed and key_timer % 10 == 0:
                 shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
-                current_block.move(board, 1, 0)
+                current_block.move(board, x_step=1)
             elif left_pressed and key_timer % 10 == 0:
                 shadow_block.clearShadow(board)
-                current_block.move(board, -1, 0)
+                current_block.move(board, x_step=-1)
 
             # Is current block placed?
             if current_block.is_placed:

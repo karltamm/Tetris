@@ -46,10 +46,13 @@ class Power:
             # to give time for player to actually see the selection and make a choice
             self.start_time = pygame.time.get_ticks()
         elif self.name == "Timeless":
+            self.game_should_run = True
             self.autofall_is_off = True
             self.num_of_blocks_left = 2  # At start, player can move 3 blocks without autofall
-            self.game_should_run = True
             self.last_block = self.current_block  # To know if user got a new block
+            temporarilyRemoveCurrentBlock(self.board, self.current_block, shadow_block)
+            rewindCurrentBlock(self.current_block, self.board)
+            REWIND_SOUND.play()
 
     def stop(self):
         self.is_running = False
@@ -139,7 +142,7 @@ class Power:
             if self.num_of_blocks_left > 0:
                 self.num_of_blocks_left -= 1
             else:
-                TIMEUP2_SOUND.play()
+                TAKEOFF_SOUND.play()
                 self.stop()
 
 
