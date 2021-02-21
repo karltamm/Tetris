@@ -425,17 +425,15 @@ def stats(page=1):
                         main_menu()
                     elif clickBox(mouse_pos, previous_button, BTN_CORNER_RAD) and page != 1:
                         page -= 1
-                        stats(page)
                     elif clickBox(mouse_pos, next_button, BTN_CORNER_RAD) and page != len(STATS_VALUES):
                         # Cant go higher than last page
                         page += 1
-                        stats(page)
 
 def trophies():
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
-    page_nr = 1
+    page = 1
     run = True
     while run:
         # UI control
@@ -444,7 +442,7 @@ def trophies():
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
-        showTrophiesScreen(page_nr)
+        showTrophiesScreen(page)
         pygame.display.update()
 
         for event in pygame.event.get():
@@ -456,9 +454,9 @@ def trophies():
                     if clickBox(mouse_pos, back_button, BTN_CORNER_RAD):
                         run = False
                         main_menu()
-                    if clickBox(mouse_pos, previous_button, BTN_CORNER_RAD) and page_nr != 1:
-                        page_nr -= 1
-                    if clickBox(mouse_pos, next_button, BTN_CORNER_RAD) and page_nr != 2:
-                        page_nr += 1
+                    if clickBox(mouse_pos, previous_button, BTN_CORNER_RAD) and page != 1:
+                        page -= 1
+                    if clickBox(mouse_pos, next_button, BTN_CORNER_RAD) and page != 2:
+                        page += 1
 
 main_menu()  # Launch main menu when program is opened
