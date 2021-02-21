@@ -183,18 +183,28 @@ PREVIOUS_BTN_X = PADDING
 PREVIOUS_BTN_Y = SCREEN_HEIGHT - BTN_HEIGHT - PADDING
 NEXT_BTN_X = SCREEN_WIDTH - BTN_WIDTH - PADDING
 NEXT_BTN_Y = PREVIOUS_BTN_Y
-PAGE_TXT_X = NEXT_BTN_X - BTN_WIDTH - NEAR
-PAGE_TXT_Y = SCREEN_HEIGHT -  BTN_HEIGHT - PADDING + 10
+PAGE_TXT_X = (PREVIOUS_BTN_X + NEXT_BTN_X) / 2 + NEAR
+PAGE_TXT_Y = SCREEN_HEIGHT - BTN_HEIGHT - PADDING + 13
 
 STAT_TEXT_X = PADDING
 STAT_VAL_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 
 STAT_1_Y = OPTIONS_TEXT_Y + TITLE_HEIGHT + 2 * FAR
-STAT_2_Y = STAT_1_Y + HEADING1_HEIGHT + NEAR
-STAT_3_Y = STAT_2_Y + HEADING1_HEIGHT + NEAR
-STAT_4_Y = STAT_3_Y + HEADING1_HEIGHT + NEAR
-STAT_5_Y = STAT_4_Y + HEADING1_HEIGHT + NEAR
-STAT_6_Y = STAT_5_Y + HEADING1_HEIGHT + NEAR
+STAT_Y = [STAT_1_Y + i * (HEADING1_HEIGHT + NEAR) for i in range(6)]  # Create a list of Y values [stat1_Y, stat2_Y, ...]
+
+STATS_VALUES = [[["Highscore(Classic):", str(getStat("high_score"))],
+                ["Highscore(Pwr-Up):", str(getStat("high_score_powers"))],
+                ["Best stage:", str(getStat("highest_stage"))],
+                ["Time in-game:", str(datetime.timedelta(seconds=getStat("time_ingame")))],
+                ["Total games:", str(getStat("games_played"))],
+                ["Blocks generated:", str(getStat("blocks_created"))]],            
+                
+                [["Rows cleared:", str(getStat("rows"))],
+                ["Single rows:", str(getStat("rows_1"))],
+                ["Double rows:", str(getStat("rows_2"))],
+                ["Triple rows:", str(getStat("rows_3"))],
+                ["Quadruple rows:", str(getStat("rows_4"))],
+                ["Hard drops:", str(getStat("hard_drops"))]]]
 
 # Trophies
 PREVIOUS_BTN_X = PADDING
@@ -413,14 +423,27 @@ def updateOptionsMenu():
 def updateStatsMenu(page):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
     drawText("Stats", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    drawText("Page " + str(page), PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
     
-    if(page==1):
-        drawText("Page 1", PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
+    if(page==1):  # If first page, prev button blacknwhite, next colored
         drawObject(PREVIOUS_BTN_BW, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
-        
-        drawText("Highscore(Classic):", STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-        drawText(str(getStat("high_score")), STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+    elif(page==2):  # If last page, prev button colored, next blacknwhite
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
+    else:  # Prev and next button colored
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
+    
+    for i in range(len(STATS_VALUES[page-1])):
+        drawText(STATS_VALUES[page-1][i][0], STAT_TEXT_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(STATS_VALUES[page-1][i][1], STAT_VAL_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
+    
+    
+    """
+    if(page==1):
+        drawText(STATS_VALUES[page-1][0][0], STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(STATS_VALUES[page-1][0][1], STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Highscore(Pwr-Up):", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(str(getStat("high_score_powers")), STAT_VAL_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Best stage:", STAT_TEXT_X, STAT_3_Y, size=HEADING2_SIZE, font=HEADING_FONT)
@@ -431,12 +454,7 @@ def updateStatsMenu(page):
         drawText(str(getStat("games_played")), STAT_VAL_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Blocks generated:", STAT_TEXT_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(str(getStat("blocks_created")), STAT_VAL_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-
-    else:
-        drawText("Page 2", PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
-        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
-        drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
-        
+    if(page==2):
         drawText("Rows cleared:", STAT_TEXT_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(str(getStat("rows")), STAT_VAL_X, STAT_1_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Single rows:", STAT_TEXT_X, STAT_2_Y, size=HEADING2_SIZE, font=HEADING_FONT)
@@ -449,7 +467,8 @@ def updateStatsMenu(page):
         drawText(str(getStat("rows_4")), STAT_VAL_X, STAT_5_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText("Hard drops:", STAT_TEXT_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
         drawText(str(getStat("hard_drops")), STAT_VAL_X, STAT_6_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-
+    """
+    
 def updateTrophiesScreen(page_nr):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
     if page_nr != 1:
