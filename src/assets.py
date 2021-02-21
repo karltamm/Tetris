@@ -85,6 +85,8 @@ LASER3_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser3.mp3"))
 APPEAR_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "appear.mp3"))
 TIMEUP_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup.mp3"))
 TIMEUP2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup2.mp3"))
+REWIND_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rewind.mp3"))
+TAKEOFF_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "takeoff.mp3"))
 
 # Blocks
 BLOCK_I = pygame.image.load(os.path.join("assets/blocks", "I_block.png"))
