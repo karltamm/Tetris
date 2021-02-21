@@ -54,6 +54,7 @@ NEW_GAME_BTN = pygame.image.load(os.path.join("assets/buttons", "NewGame.png"))
 # Powers
 LASER_BTN = pygame.image.load(os.path.join("assets/buttons", "Laser.png"))
 WISHLIST_BTN = pygame.image.load(os.path.join("assets/buttons", "Wishlist.png"))
+TIMELESS_BTN = pygame.image.load(os.path.join("assets/buttons", "Timeless.png"))
 CANCEL_POWER_BTN = pygame.image.load(os.path.join("assets/buttons", "Cancel.png"))
 
 # Navigation
@@ -79,7 +80,11 @@ GAME_OVER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "gameover.mp3
 RESUME_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "resume.mp3"))
 TICK_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "tick.mp3"))
 LASER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser.mp3"))
+LASER2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser2.mp3"))
+LASER3_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser3.mp3"))
 APPEAR_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "appear.mp3"))
+TIMEUP_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup.mp3"))
+TIMEUP2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup2.mp3"))
 
 # Blocks
 BLOCK_I = pygame.image.load(os.path.join("assets/blocks", "I_block.png"))
