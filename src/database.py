@@ -3,9 +3,7 @@ import os
 
 # CONSTANTS
 # Score
-FAST_DROP_POINTS = 1
 SINGLE_ROW_POINTS = 100
-MULTIPLE_ROW_POINTS = 200
 
 # INITIALIZE
 STATS_DB = shelve.open(os.path.join("data", "stats"))
@@ -18,12 +16,22 @@ class Score:
         self.current_score = current_score
 
     def fullRow(self, stage, full_rows):
-        self.current_score += int(
-            (SINGLE_ROW_POINTS + (MULTIPLE_ROW_POINTS * (full_rows - 1))) * (1 + (stage - 1) * 0.5))
+        if(full_rows == 1):
+            self.current_score += SINGLE_ROW_POINTS * stage
+            saveStat("rows_1", 1)
+        elif(full_rows == 2):
+            self.current_score += SINGLE_ROW_POINTS * 3 * stage
+            saveStat("rows_2", 1)
+        elif(full_rows == 3):
+            self.current_score += SINGLE_ROW_POINTS * 5 * stage
+            saveStat("rows_3", 1)
+        else:
+            self.current_score += SINGLE_ROW_POINTS * 8 * stage
+            saveStat("rows_4", 1)
         return self.current_score
 
-    def drop(self):
-        self.current_score += FAST_DROP_POINTS
+    def drop(self, points):
+        self.current_score += points
         return self.current_score
     # Can add more functions for adding score (perfect clear, T-spin...)
 
@@ -40,20 +48,22 @@ def optionsValues(name, change=False):
         OPTIONS_DB[name] = value
     return value
 
-def getHighScore():
+def getStat(stat):
     try:
         # If database already has high_score entry
-        high_score = STATS_DB["high_score"]
+        value = STATS_DB[stat]
     except:
-        high_score = 0
+        value = 0
+    return value
 
-    return high_score
-
-
-def saveHighScore(current_score, high_score):
-    if current_score > high_score:
-        STATS_DB["high_score"] = current_score
-
+def saveStat(stat, new_value, compare=0):
+    if compare:
+        # Replace stat with value if new value is higher
+        if new_value > getStat(stat):
+            STATS_DB[stat] = new_value
+    else:
+        # Add new value to old stat value
+        STATS_DB[stat] = getStat(stat) + new_value
 
 def closeDB():
     STATS_DB.close()

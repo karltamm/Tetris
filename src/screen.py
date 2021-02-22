@@ -1,6 +1,7 @@
 import pygame
 import pygame.freetype
 import math
+import datetime
 from board import *
 from nextblock import *
 from assets import *
@@ -143,7 +144,6 @@ COUNTDOWN_X = BOARD_X + (BOARD_SCREEN_WIDTH - 10) / 2
 COUNTDOWN_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
 
 # Game over screen
-
 GAME_OVER_TEXT_X = BOARD_X + (BOARD_SCREEN_WIDTH - 280) / 2
 GAME_OVER_TEXT_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
 
@@ -177,12 +177,21 @@ POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING1_HEIGHT + FAR
 POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y - 18
 
-# Trophies
+# Stats menu
 PREVIOUS_BTN_X = PADDING
-PREVIOUS_BTN_Y = SCREEN_HEIGHT - PADDING - BTN_HEIGHT
-NEXT_BTN_X = SCREEN_WIDTH - PADDING - BTN_WIDTH
-NEXT_BTN_Y = SCREEN_HEIGHT - PADDING - BTN_HEIGHT
+PREVIOUS_BTN_Y = SCREEN_HEIGHT - BTN_HEIGHT - PADDING
+NEXT_BTN_X = SCREEN_WIDTH - BTN_WIDTH - PADDING
+NEXT_BTN_Y = PREVIOUS_BTN_Y
+PAGE_TXT_X = (PREVIOUS_BTN_X + NEXT_BTN_X) / 2 + NEAR
+PAGE_TXT_Y = SCREEN_HEIGHT - BTN_HEIGHT - PADDING + 13
 
+STAT_TEXT_X = PADDING
+STAT_VAL_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+
+STAT1_Y = OPTIONS_TEXT_Y + TITLE_HEIGHT + 2 * FAR
+STAT_Y = [STAT1_Y + i * (HEADING1_HEIGHT + NEAR) for i in range(6)]  # Create a list of stat Y values [STAT1_Y, STAT2_Y, ...STAT6_Y]
+
+# Trophies
 PAGE_TEXT_X = PADDING + BTN_WIDTH + 20
 PAGE_TEXT_Y = SCREEN_HEIGHT - PADDING - BTN_HEIGHT + 13
 
@@ -364,7 +373,7 @@ def showMainMenu():
     SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))
 
 
-def updateOptionsMenu():
+def showOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
 
     drawText("Options", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
@@ -390,22 +399,68 @@ def updateOptionsMenu():
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
-def updateTrophiesScreen(page_nr):
-
+def showStatsMenu(page):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
-    if page_nr != 1:
-        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
-    if page_nr != 2:
+    drawText("Stats", OPTIONS_TEXT_X, OPTIONS_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    drawText("Page " + str(page), PAGE_TXT_X, PAGE_TXT_Y, size=HEADING2_SIZE, font=TITLE_FONT)
+    
+    STATS_VALUES = updateStats()
+    
+    if(page==1):  # If first page, prev button blacknwhite, next colored
+        drawObject(PREVIOUS_BTN_BW, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
-    drawText("Page "+str(page_nr)+"/2", PAGE_TEXT_X, PAGE_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+    elif(page==len(STATS_VALUES)):  # If last page, prev button colored, next blacknwhite
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
+    else:  # Prev and next button colored
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
+    
+    for i in range(len(STATS_VALUES[page-1])):  # Print stat name and value for stat in page
+        drawText(STATS_VALUES[page-1][i][0], STAT_TEXT_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
+        drawText(STATS_VALUES[page-1][i][1], STAT_VAL_X, STAT_Y[i], size=HEADING2_SIZE, font=HEADING_FONT)
+        
+def updateStats():
+    '''
+    Praeguses naites on 4 lehekulge statte,
+    esimeses 6, teises 6, kolmandas 1, neljandas 2
+    statid on kujul ["nimi", str(vaartus)]
+    '''
+    STATS_VALUES = [[["Highscore(Classic):", str(getStat("high_score"))],
+                     ["Highscore(Pwr-Up):", str(getStat("high_score_powers"))],
+                     ["Best stage:", str(getStat("highest_stage"))],
+                     ["Time in-game:", str(datetime.timedelta(seconds=getStat("time_ingame")))],
+                     ["Total games:", str(getStat("games_played"))],
+                     ["Blocks generated:", str(getStat("blocks_created"))]],            
+                    
+                    [["Rows cleared:", str(getStat("rows"))],
+                     ["Single rows:", str(getStat("rows_1"))],
+                     ["Double rows:", str(getStat("rows_2"))],
+                     ["Triple rows:", str(getStat("rows_3"))],
+                     ["Quadruple rows:", str(getStat("rows_4"))],
+                     ["Hard drops:", str(getStat("hard_drops"))]],
+                    
+                     [["Test:", "0"]],
+                     
+                     [["Abc:", "123"],
+                      ["Dfg:", "987"]]]
+    return STATS_VALUES
+    
+def showTrophiesScreen(page):
+    drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+    if page != 1:
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+    if page != 2:
+        drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
+    drawText("Page "+str(page)+"/2", PAGE_TEXT_X, PAGE_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Trophies", TROPHIES_TEXT_X, TROPHIES_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
-    drawText(TROPHY_PAGES[page_nr-1][0], TROPHY1_HEADING_X, TROPHY1_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText(TROPHY_PAGES[page_nr-1][1], TROPHY1_TEXT_X, TROPHY1_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
-    drawText(TROPHY_PAGES[page_nr-1][2], TROPHY2_HEADING_X, TROPHY2_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText(TROPHY_PAGES[page_nr-1][3], TROPHY2_TEXT_X, TROPHY2_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
-    drawText(TROPHY_PAGES[page_nr-1][4], TROPHY3_HEADING_X, TROPHY3_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText(TROPHY_PAGES[page_nr-1][5], TROPHY3_TEXT_X, TROPHY3_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
+    drawText(TROPHY_PAGES[page-1][0], TROPHY1_HEADING_X, TROPHY1_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+    drawText(TROPHY_PAGES[page-1][1], TROPHY1_TEXT_X, TROPHY1_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
+    drawText(TROPHY_PAGES[page-1][2], TROPHY2_HEADING_X, TROPHY2_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+    drawText(TROPHY_PAGES[page-1][3], TROPHY2_TEXT_X, TROPHY2_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
+    drawText(TROPHY_PAGES[page-1][4], TROPHY3_HEADING_X, TROPHY3_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+    drawText(TROPHY_PAGES[page-1][5], TROPHY3_TEXT_X, TROPHY3_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
 
 # POWERS
 def showPowersSelection(power):
