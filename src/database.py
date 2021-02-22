@@ -16,13 +16,13 @@ class Score:
         self.current_score = current_score
 
     def fullRow(self, stage, full_rows):
-        if(full_rows == 1):
+        if (full_rows == 1):
             self.current_score += SINGLE_ROW_POINTS * stage
             saveStat("rows_1", 1)
-        elif(full_rows == 2):
+        elif (full_rows == 2):
             self.current_score += SINGLE_ROW_POINTS * 3 * stage
             saveStat("rows_2", 1)
-        elif(full_rows == 3):
+        elif (full_rows == 3):
             self.current_score += SINGLE_ROW_POINTS * 5 * stage
             saveStat("rows_3", 1)
         else:
@@ -48,6 +48,7 @@ def optionsValues(name, change=False):
         OPTIONS_DB[name] = value
     return value
 
+
 def getStat(stat):
     try:
         # If database already has high_score entry
@@ -55,6 +56,7 @@ def getStat(stat):
     except:
         value = 0
     return value
+
 
 def saveStat(stat, new_value, compare=0):
     if compare:
@@ -64,6 +66,7 @@ def saveStat(stat, new_value, compare=0):
     else:
         # Add new value to old stat value
         STATS_DB[stat] = getStat(stat) + new_value
+
 
 def closeDB():
     STATS_DB.close()
