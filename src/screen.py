@@ -195,32 +195,23 @@ STAT_Y = [STAT1_Y + i * (HEADING1_HEIGHT + NEAR) for i in range(6)]  # Create a 
 PAGE_TEXT_X = PADDING + BTN_WIDTH + 20
 PAGE_TEXT_Y = SCREEN_HEIGHT - PADDING - BTN_HEIGHT + 13
 
-TROPHIES_TEXT_X = PADDING
-TROPHIES_TEXT_Y = PADDING + BTN_HEIGHT + FAR
+TROPHIES_TITLE_X = PADDING
+TROPHIES_TITLE_Y = PADDING + BTN_HEIGHT + FAR
 
-TROPHY1_HEADING_X = PADDING
-TROPHY1_HEADING_Y = TROPHIES_TEXT_Y + TITLE_HEIGHT + 2 * FAR
-TROPHY1_TEXT_X = TROPHY1_HEADING_X
-TROPHY1_TEXT_Y = TROPHY1_HEADING_Y + HEADING2_HEIGHT + NEAR
+TROPHY_HEADING_X = PADDING
+TROPHY_HEADING_Y = TROPHIES_TITLE_Y + TITLE_HEIGHT + 2 * FAR
+TROPHY_TEXT_X = TROPHY_HEADING_X
+TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
-TROPHY2_HEADING_X = PADDING
-TROPHY2_HEADING_Y = TROPHY1_TEXT_Y + TEXT_HEIGHT + FAR
-TROPHY2_TEXT_X = TROPHY2_HEADING_X
-TROPHY2_TEXT_Y = TROPHY2_HEADING_Y + HEADING2_HEIGHT + NEAR
+TROPHY_GAP = 96
+TROPHY_PAGES = [[["Legend", "Reach 500,000 points", "high_score", 500000],
+                 ["Master", "Reach 100,000 points", "high_score", 100000],
+                 ["Advanced", "Reach 50,000 points", "high_score", 50000],
+                 ["Novice", "Reach 10,000 points", "high_score", 50000]],
 
-TROPHY3_HEADING_X = PADDING
-TROPHY3_HEADING_Y = TROPHY2_TEXT_Y + TEXT_HEIGHT + FAR
-TROPHY3_TEXT_X = TROPHY3_HEADING_X
-TROPHY3_TEXT_Y = TROPHY3_HEADING_Y + HEADING2_HEIGHT + NEAR
-
-TROPHY_PAGES = [["Legend", "Reach 500,000 points",
-              "Master", "Reach 100,000 points",
-              "Advanced", "Reach 50,000 points"],
-
-              ["Novice", "Reach 10,000 points",
-               "Tetris", "Quadruple row clear",
-               "Clearer", "Clear 500 rows"]]
-
+                [["Tetris", "Quadruple row clear", "rows_4", 1],
+                 ["Clearer", "Clear 500 rows", "rows", 500],
+                 ["Try hard", "Get all trophies", "rows", 7]]]
 # INITIALIZE
 pygame.init()
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -244,7 +235,7 @@ def clickBox(mouse_pos, button_pos, radius):
     top_right_corner = checkCornerRad(mouse_x, mouse_y, button_x + BTN_WIDTH - radius, button_y + radius, radius)
     bottom_left_corner = checkCornerRad(mouse_x, mouse_y, button_x + radius,button_y + BTN_HEIGHT - radius, radius)
     bottom_right_corner = checkCornerRad(mouse_x, mouse_y, button_x + BTN_WIDTH - radius,
-                                            button_y + BTN_HEIGHT - radius, radius)
+                                         button_y + BTN_HEIGHT - radius, radius)
 
     if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
         return True
@@ -406,10 +397,10 @@ def showStatsMenu(page):
     
     STATS_VALUES = updateStats()
     
-    if(page==1):  # If first page, prev button blacknwhite, next colored
+    if page == 1:  # If first page, prev button blacknwhite, next colored
         drawObject(PREVIOUS_BTN_BW, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
-    elif(page==len(STATS_VALUES)):  # If last page, prev button colored, next blacknwhite
+    elif page == len(STATS_VALUES):  # If last page, prev button colored, next blacknwhite
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
     else:  # Prev and next button colored
@@ -448,19 +439,27 @@ def updateStats():
     
 def showTrophiesScreen(page):
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
-    if page != 1:
-        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
-    if page != 2:
+    if page == 1:  # If first page, prev button blacknwhite, next colored
+        drawObject(PREVIOUS_BTN_BW, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
-    drawText("Page "+str(page)+"/2", PAGE_TEXT_X, PAGE_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText("Trophies", TROPHIES_TEXT_X, TROPHIES_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    elif page == len(TROPHY_PAGES):  # If last page, prev button colored, next blacknwhite
+        drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+        drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
 
-    drawText(TROPHY_PAGES[page-1][0], TROPHY1_HEADING_X, TROPHY1_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText(TROPHY_PAGES[page-1][1], TROPHY1_TEXT_X, TROPHY1_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
-    drawText(TROPHY_PAGES[page-1][2], TROPHY2_HEADING_X, TROPHY2_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText(TROPHY_PAGES[page-1][3], TROPHY2_TEXT_X, TROPHY2_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
-    drawText(TROPHY_PAGES[page-1][4], TROPHY3_HEADING_X, TROPHY3_HEADING_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText(TROPHY_PAGES[page-1][5], TROPHY3_TEXT_X, TROPHY3_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
+    drawText("Trophies", TROPHIES_TITLE_X, TROPHIES_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    drawText("Page "+str(page)+"/2", PAGE_TEXT_X, PAGE_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+
+    for i in range(len(TROPHY_PAGES[page-1])):
+        if TROPHY_PAGES[page-1][i][3] <= getStat(TROPHY_PAGES[page-1][i][2]):
+            drawText(TROPHY_PAGES[page-1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_GAP * i,
+                     size=HEADING2_SIZE, font=HEADING_FONT)
+            drawText(TROPHY_PAGES[page-1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_GAP * i,
+                     size=TEXT_SIZE, font=TEXT_FONT)
+        else:
+            drawText(TROPHY_PAGES[page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_GAP * i,
+                     size=HEADING2_SIZE, color=GREY, font=HEADING_FONT)
+            drawText(TROPHY_PAGES[page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_GAP * i,
+                     size=TEXT_SIZE, color=GREY, font=TEXT_FONT)
 
 # POWERS
 def showPowersSelection(power):

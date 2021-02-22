@@ -21,7 +21,7 @@ class Block:
         if self.updateBoard(board) == False:  # No room for new block, so game over
             # Notify program that game is over
             pygame.event.post(pygame.event.Event(GAME_OVER))
-            self.playSound(GAME_OVER_SOUND)
+            playSound(GAME_OVER_SOUND)
 
     def move(self, board, x_step=0, y_step=0, autofall=False):
         move_success = False
@@ -41,7 +41,7 @@ class Block:
             move_success = True
 
         if move_success and not autofall:
-            self.playSound(MOVE3_SOUND)
+            playSound(MOVE3_SOUND)
 
     def rotate(self, board):
         rotate_success = False
@@ -76,7 +76,7 @@ class Block:
             rotate_success = True
         # Rotation was successful so play sound
         if rotate_success and self.shape != SHAPE_O:
-            self.playSound(ROTATE_SOUND)
+            playSound(ROTATE_SOUND)
 
     def removeCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
@@ -108,11 +108,6 @@ class Block:
         self.used_board_cells = temp_used_board_cells
         copyBoard(new_board, board)
         return True  # Block placement was successful
-
-    def playSound(self, sound):
-        if optionsValues("sound"):
-            sound.play()
-
 
 # CHILD CLASS OF "Block"
 class ShadowBlock(Block):
@@ -177,3 +172,8 @@ class BlocksBatch:
             self.newBatch()
 
         return self.blocks.pop()
+
+
+def playSound(sound):
+    if optionsValues("sound"):
+        sound.play()
