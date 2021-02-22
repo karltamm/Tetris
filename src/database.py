@@ -29,6 +29,22 @@ class Score:
             self.current_score += SINGLE_ROW_POINTS * 8 * stage
             saveStat("rows_4", 1)
         return self.current_score
+    
+    def perfectClear(self, stage, full_rows):
+        saveStat("perfect_clears", 1)
+        if (full_rows == 1):
+            self.current_score += SINGLE_ROW_POINTS * 8 * stage
+            saveStat("perfect_clears_1", 1)
+        elif (full_rows == 2):
+            self.current_score += SINGLE_ROW_POINTS * 12 * stage
+            saveStat("perfect_clears_2", 1)
+        elif (full_rows == 3):
+            self.current_score += SINGLE_ROW_POINTS * 18 * stage
+            saveStat("perfect_clears_3", 1)
+        else:
+            self.current_score += SINGLE_ROW_POINTS * 20 * stage
+            saveStat("perfect_clears_4", 1)
+        return self.current_score
 
     def drop(self, points):
         self.current_score += points

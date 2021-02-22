@@ -468,7 +468,13 @@ def updateStats():
              ["Double rows", str(getStat("rows_2"))],
              ["Triple rows", str(getStat("rows_3"))],
              ["Quadruple rows", str(getStat("rows_4"))],
-             ["Hard drops", str(getStat("hard_drops"))]]]
+             ["Hard drops", str(getStat("hard_drops"))]],
+            
+            [["Perfect clears", str(getStat("perfect_clears"))],
+             ["Single-line perfect clears", str(getStat("perfect_clears_1"))],
+             ["Double-line perfect clears", str(getStat("perfect_clears_2"))],
+             ["Triple-line perfect clears", str(getStat("perfect_clears_3"))],
+             ["Quadruple-line perfect clears", str(getStat("perfect_clears_4"))]]]
 
 
 # Trophies menu
