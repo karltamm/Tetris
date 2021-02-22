@@ -303,7 +303,7 @@ def runCountdown(countdown):
     countdown -= 1
 
     if countdown < 1:
-        playSound(REWIND_SOUND)
+        playSound(RESUME_SOUND)
         countdown_is_active = False
         game_is_running = True
         countdown = 3  # Reset countdown

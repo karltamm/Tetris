@@ -1,7 +1,6 @@
 import random
 from screen import *
 from assets import *
-from blocks import playSound
 
 # CONSTANTS
 POWERS = ["Laser", "Wishlist", "Timeless"]

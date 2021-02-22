@@ -172,8 +172,3 @@ class BlocksBatch:
             self.newBatch()
 
         return self.blocks.pop()
-
-
-def playSound(sound):
-    if optionsValues("sound"):
-        sound.play()

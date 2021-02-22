@@ -275,6 +275,9 @@ def drawTransparentOverlay():
     overlay.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
     SCREEN.blit(overlay, (0, 0))
 
+def playSound(sound):
+    if optionsValues("sound"):
+        sound.play()
 
 # GAME
 def showBoard(board):
