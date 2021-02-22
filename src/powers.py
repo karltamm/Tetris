@@ -52,7 +52,7 @@ class Power:
             self.last_block = self.current_block  # To know if user got a new block
             temporarilyRemoveCurrentBlock(self.board, self.current_block, shadow_block)
             rewindCurrentBlock(self.current_block, self.board)
-            REWIND_SOUND.play()
+            playSound(REWIND_SOUND)
 
     def stop(self):
         self.is_running = False
@@ -101,7 +101,7 @@ class Power:
     def removeSelectedRow(self):
         self.board.pop(self.row[0])
         self.board.insert(0, [0] * BOARD_WIDTH)
-        LASER_SOUND.play()
+        playSound(LASER_SOUND)
 
     # WISHLIST
     def runWishlist(self, UI_control):
@@ -132,7 +132,7 @@ class Power:
 
     def changeCurrentBlockShape(self):
         self.current_block.shape = SHAPES[self.block_under_cursor[0]]
-        APPEAR_SOUND.play()
+        playSound(APPEAR_SOUND)
 
     # TIMELESS
     def runTimeless(self, current_block):
@@ -142,7 +142,7 @@ class Power:
             if self.num_of_blocks_left > 0:
                 self.num_of_blocks_left -= 1
             else:
-                TAKEOFF_SOUND.play()
+                playSound(TAKEOFF_SOUND)
                 self.stop()
 
 

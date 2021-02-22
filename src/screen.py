@@ -171,22 +171,22 @@ OPTIONS_TITLE_Y = PAGE_TITLE_Y
 SOUND_TEXT_X = BACK_BTN_X
 SOUND_TEXT_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
 SOUND_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-SOUND_SWITCH_Y = SOUND_TEXT_Y + (HEADING2_HEIGHT - SWITCH_HEIGHT) / 2
+SOUND_SWITCH_Y = SOUND_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
 
 STAGES_TEXT_X = SOUND_TEXT_X
 STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING2_HEIGHT + FAR
 STAGES_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-STAGES_SWITCH_Y = STAGES_TEXT_Y + (HEADING2_HEIGHT - SWITCH_HEIGHT) / 2
+STAGES_SWITCH_Y = STAGES_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
 
 BLOCK_SHADOW_TEXT_X = SOUND_TEXT_X
 BLOCK_SHADOW_TEXT_Y = STAGES_TEXT_Y + HEADING2_HEIGHT + FAR
 BLOCK_SHADOW_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-BLOCK_SHADOW_SWITCH_Y = BLOCK_SHADOW_TEXT_Y + (HEADING2_HEIGHT - SWITCH_HEIGHT) / 2
+BLOCK_SHADOW_SWITCH_Y = BLOCK_SHADOW_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
 
 POWER_UPS_TEXT_X = SOUND_TEXT_X
 POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING2_HEIGHT + FAR
 POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y + (HEADING2_HEIGHT - SWITCH_HEIGHT) / 2
+POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
 
 # Stats menu
 STATS_TITLE_X = PAGE_TITLE_X
@@ -203,28 +203,20 @@ STAT_Y = [STAT1_Y + i * (TEXT_HEIGHT + FAR) for i in
 TROPHIES_TITLE_X = PAGE_TITLE_X
 TROPHIES_TITLE_Y = PAGE_TITLE_Y
 
-TROPHY1_HEADING_X = PADDING
-TROPHY1_HEADING_Y = TROPHIES_TITLE_Y + TITLE_HEIGHT + FAR
-TROPHY1_TEXT_X = TROPHY1_HEADING_X
-TROPHY1_TEXT_Y = TROPHY1_HEADING_Y + HEADING2_HEIGHT + NEAR
+TROPHY_HEADING_X = PADDING
+TROPHY_HEADING_Y = TROPHIES_TITLE_Y + TITLE_HEIGHT + FAR
+TROPHY_TEXT_X = TROPHY_HEADING_X
+TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
-TROPHY2_HEADING_X = PADDING
-TROPHY2_HEADING_Y = TROPHY1_TEXT_Y + TEXT_HEIGHT + FAR
-TROPHY2_TEXT_X = TROPHY2_HEADING_X
-TROPHY2_TEXT_Y = TROPHY2_HEADING_Y + HEADING2_HEIGHT + NEAR
+TROPHY_HEADING_GAP = HEADING2_HEIGHT + NEAR + TEXT_HEIGHT + FAR
+TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 100000],
+                 ["Advanced", "Reach 50,000 points", "high_score", 500000],
+                 ["Master", "Reach 100,000 point", "high_score", 50000],
+                 ["Novice", "Reach 10,000 points", "high_score", 50000]],
 
-TROPHY3_HEADING_X = PADDING
-TROPHY3_HEADING_Y = TROPHY2_TEXT_Y + TEXT_HEIGHT + FAR
-TROPHY3_TEXT_X = TROPHY3_HEADING_X
-TROPHY3_TEXT_Y = TROPHY3_HEADING_Y + HEADING2_HEIGHT + NEAR
-
-TROPHY_PAGES = [["Legend", "Reach 500,000 points",
-                 "Master", "Reach 100,000 points",
-                 "Advanced", "Reach 50,000 points"],
-
-                ["Novice", "Reach 10,000 points",
-                 "Tetris", "Quadruple row clear",
-                 "Clearer", "Clear 500 rows"]]
+                [["Tetris", "Quadruple row clear", "rows_4", 1],
+                 ["Clearer", "Clear 500 rows", "rows", 500],
+                 ["Try hard", "Get all trophies", "rows", 7]]]
 
 # INITIALIZE
 pygame.init()
@@ -264,7 +256,6 @@ def clickBox(mouse_pos, el_pos, switch=False):
     bottom_left_corner = checkCornerRad(mouse_x, mouse_y, el_x + corner_rad, el_y + height - corner_rad, corner_rad)
     bottom_right_corner = checkCornerRad(mouse_x, mouse_y, el_x + width - corner_rad,
                                          el_y + height - corner_rad, corner_rad)
-
     # Check for click
     if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
         return True
@@ -284,6 +275,9 @@ def drawTransparentOverlay():
     overlay.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
     SCREEN.blit(overlay, (0, 0))
 
+def playSound(sound):
+    if optionsValues("sound"):
+        sound.play()
 
 # GAME
 def showBoard(board):
@@ -441,7 +435,6 @@ def showOptionsMenu():
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
-
 # Stats menu
 def showStatsMenu(current_page):
     stats = updateStats()
@@ -479,19 +472,19 @@ def updateStats():
 
 # Trophies menu
 def showTrophiesScreen(current_page):
-    drawNavigation(current_page, num_of_pages=2)
-
+    drawNavigation(current_page, num_of_pages=len(TROPHIES))
     drawText("Trophies", TROPHIES_TITLE_X, TROPHIES_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
-    drawText(TROPHY_PAGES[current_page - 1][0], TROPHY1_HEADING_X, TROPHY1_HEADING_Y, size=HEADING2_SIZE,
-             font=HEADING_FONT)
-    drawText(TROPHY_PAGES[current_page - 1][1], TROPHY1_TEXT_X, TROPHY1_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
-    drawText(TROPHY_PAGES[current_page - 1][2], TROPHY2_HEADING_X, TROPHY2_HEADING_Y, size=HEADING2_SIZE,
-             font=HEADING_FONT)
-    drawText(TROPHY_PAGES[current_page - 1][3], TROPHY2_TEXT_X, TROPHY2_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
-    drawText(TROPHY_PAGES[current_page - 1][4], TROPHY3_HEADING_X, TROPHY3_HEADING_Y, size=HEADING2_SIZE,
-             font=HEADING_FONT)
-    drawText(TROPHY_PAGES[current_page - 1][5], TROPHY3_TEXT_X, TROPHY3_TEXT_Y, size=TEXT_SIZE, font=TEXT_FONT)
 
+    for i in range(len(TROPHIES[current_page - 1])):
+        if TROPHIES[current_page - 1][i][3] <= getStat(TROPHIES[current_page - 1][i][2]):
+            drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
+                     size=HEADING2_SIZE, font=HEADING_FONT)
+            drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i)
+        else:
+            drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
+                     size=HEADING2_SIZE, color=GREY, font=HEADING_FONT)
+            drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
+                     color=GREY)
 
 # POWERS
 def showPowersSelection(power):
@@ -583,3 +576,4 @@ def showTimelessScreen(num_of_blocks_left):
         showPowerHelpText("Next %s will not fall" % phrase)
     else:
         showPowerHelpText("Next block will fall")
+

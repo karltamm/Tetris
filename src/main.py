@@ -222,7 +222,7 @@ def startNewGame():
                         while not current_block.is_placed:
                             current_score = score_counter.drop(2)
                             current_block.move(board, y_step=1, autofall=True)
-                        current_block.playSound(MOVE_SOUND)
+                        playSound(MOVE_SOUND)
                         saveStat("hard_drops", 1)
 
                 elif event.type == pygame.KEYUP:  # If a key is released
@@ -265,7 +265,7 @@ def startNewGame():
                         fall_speed *= 0.9
 
                     # Sound effect if at least one row is cleared
-                    current_block.playSound(ROW_CLEARED_SOUND)
+                    playSound(ROW_CLEARED_SOUND)
                     
                 current_block = Block(next_block, board)
                 blocks_created += 1
@@ -306,12 +306,12 @@ def runCountdown(countdown):
     countdown -= 1
 
     if countdown < 1:
-        RESUME_SOUND.play()
+        playSound(RESUME_SOUND)
         countdown_is_active = False
         game_is_running = True
         countdown = 3  # Reset countdown
     else:
-        TICK_SOUND.play()
+        playSound(TICK_SOUND)
         countdown_is_active = True
         game_is_running = False
 
@@ -461,7 +461,7 @@ def trophies():
                         main_menu()
                     if clickBox(mouse_pos, previous_button) and page != 1:
                         page -= 1
-                    if clickBox(mouse_pos, next_button) and page != 2:
+                    if clickBox(mouse_pos, next_button) and page != len(TROPHIES):
                         page += 1
 
 
