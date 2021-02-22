@@ -17,6 +17,7 @@ SHADOW_CELL = pygame.image.load(os.path.join("assets/cells", "shadow.png"))
 
 # Colors
 LIGHT_GREY = (209, 209, 209)
+GREY = (120, 120, 120)
 DARK_GREY = (43, 43, 43)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -61,6 +62,8 @@ CANCEL_POWER_BTN = pygame.image.load(os.path.join("assets/buttons", "Cancel.png"
 BACK_BTN = pygame.image.load(os.path.join("assets/buttons", "Back.png"))
 PREVIOUS_BTN = pygame.image.load(os.path.join("assets/buttons", "Previous.png"))
 NEXT_BTN = pygame.image.load(os.path.join("assets/buttons", "Next.png"))
+PREVIOUS_BTN_BW = pygame.image.load(os.path.join("assets/buttons", "PreviousBW.png"))
+NEXT_BTN_BW = pygame.image.load(os.path.join("assets/buttons", "NextBW.png"))
 
 # Switches
 ON_SWITCH = pygame.image.load(os.path.join("assets/switches", "On.png"))
