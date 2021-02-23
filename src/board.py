@@ -43,3 +43,12 @@ def clearFullRows(board):
                 board.insert(0, [0] * BOARD_WIDTH)
 
     return full_rows
+
+def perfectClear(board):
+    perfect_clear = True
+    for row in range(BOARD_HEIGHT):
+        for col in range(BOARD_WIDTH):
+            if board[row][col] != 0:
+                perfect_clear = False
+                break
+    return perfect_clear

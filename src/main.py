@@ -250,14 +250,13 @@ def startNewGame():
                 shadow_block.clearShadow(board)  # Clear previous shadow block
                 full_rows = clearFullRows(board)
 
-                current_block = Block(next_block, board)
-                blocks_created += 1
-                next_block = getNextBlock(batch.getBlock(), next_block_area)
-
                 # Is row cleared?
                 if full_rows:
                     # Give points for cleared rows
-                    current_score = score_counter.fullRow(stage, full_rows)
+                    if perfectClear(board):
+                        current_score = score_counter.perfectClear(stage, full_rows)
+                    else:
+                        current_score = score_counter.fullRow(stage, full_rows)
 
                     # Check current stage
                     solved_rows += full_rows
@@ -267,6 +266,10 @@ def startNewGame():
 
                     # Sound effect if at least one row is cleared
                     playSound(ROW_CLEARED_SOUND)
+                    
+                current_block = Block(next_block, board)
+                blocks_created += 1
+                next_block = getNextBlock(batch.getBlock(), next_block_area)
 
         # Update screen
         CLOCK.tick(FPS)
