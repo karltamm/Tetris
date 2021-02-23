@@ -42,10 +42,13 @@ def startNewGame():
     board = createBoard()
     next_block_area = createNextBlockArea()
 
-    batch = BlocksBatch()
-    current_block = Block(batch.getBlock(), board)
+    blocks_batch = BlocksBatch()
+    current_block = Block(blocks_batch.getBlock(), board)
     shadow_block = ShadowBlock(current_block, board)
-    next_block = getNextBlock(batch.getBlock(), next_block_area)
+    next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
+
+    powers_batch = PowersBatch()
+    power = powers_batch.getPower()
 
     solved_rows = 0
     current_score = 0
@@ -54,8 +57,6 @@ def startNewGame():
         high_score = getStat("high_score_powers")
     else:
         high_score = getStat("high_score")
-
-    power = Power()
 
     # Variables for stats
     blocks_created = 0
@@ -156,7 +157,7 @@ def startNewGame():
         if power_is_active and not power.is_running:
             power.start(board_params=(board, current_block, shadow_block))
 
-            if power.game_should_run == True:
+            if power.game_should_run:
                 game_is_running = True
 
         if power.is_running:
@@ -169,20 +170,16 @@ def startNewGame():
 
             # If power.run() stopped the process
             if not power.is_running:
-                power_is_active = False
-                countdown_is_active = True
+                power_is_active, game_is_running, down_pressed, countdown_is_active = resumeGameAfterPower()
 
-                if power.game_should_run == True:
-                    down_pressed = False
-                    game_is_running = False
+            # If player has turned off power
+            if not power_is_active:
+                power.stop()
+                power_is_active, game_is_running, down_pressed, countdown_is_active = resumeGameAfterPower()
 
-        # Player has turned off power, but power process is still runnning
-        if power.is_running and not power_is_active:
-            power.stop()
-
-            if power.game_should_run == True:
-                down_pressed = False
-                game_is_running = False
+        if powers_batch.itsTimeForNextPower(solved_rows):
+            if not power.is_available:  # Only give new power when last one is used
+                power = powers_batch.getPower()
 
         # Block movement control
         if game_is_running:
@@ -262,14 +259,14 @@ def startNewGame():
                     solved_rows += full_rows
                     if solved_rows >= stage * 5 and optionsValues("stages"):
                         stage += 1
-                        fall_speed *= 0.9
+                        fall_speed *= 0.985
 
                     # Sound effect if at least one row is cleared
                     playSound(ROW_CLEARED_SOUND)
-                    
+
                 current_block = Block(next_block, board)
                 blocks_created += 1
-                next_block = getNextBlock(batch.getBlock(), next_block_area)
+                next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
 
         # Update screen
         CLOCK.tick(FPS)
@@ -316,6 +313,15 @@ def runCountdown(countdown):
         game_is_running = False
 
     return (countdown, countdown_is_active, game_is_running)
+
+
+def resumeGameAfterPower():
+    power_is_active = False
+    game_is_running = False  # Some powers need game to run
+    down_pressed = False  # If game ran, then this variable may cause glitch
+    countdown_is_active = True
+
+    return (power_is_active, game_is_running, down_pressed, countdown_is_active)
 
 
 # MAIN MENU

@@ -7,12 +7,43 @@ POWERS = ["Laser", "Wishlist", "Timeless"]
 
 
 # CLASS
-class Power:
+class PowersBatch:
     def __init__(self):
+        self.powers = []  # List of powers names
+        self.last_num_of_solved_rows = 0  # To make sure that next power is given only when enough rows have been solved
+        self.newBatch()
+
+    def newBatch(self):
+        # Generate generic batch
+        for index, power in enumerate(POWERS):
+            self.powers.append(power)
+
+        # Shuffle/randomize the order of powers
+        for i in range(10):
+            power_1 = random.randint(0, len(POWERS) - 1)
+            power_2 = random.randint(0, len(POWERS) - 1)
+
+            temp = self.powers[power_1]
+            self.powers[power_1] = self.powers[power_2]
+            self.powers[power_2] = temp
+
+    def getPower(self):
+        if len(self.powers) == 0:
+            self.newBatch()
+
+        return Power(self.powers.pop())
+
+    def itsTimeForNextPower(self, solved_rows):
+        if solved_rows - self.last_num_of_solved_rows >= 5:
+            self.last_num_of_solved_rows = solved_rows
+            return True
+
+
+class Power:
+    def __init__(self, name):
         self.is_available = True
         self.is_running = False
-        # self.name = random.choice(POWERS)
-        self.name = "Timeless"  # Only for testing!
+        self.name = name
 
         # Game state
         self.game_should_run = False
@@ -56,7 +87,7 @@ class Power:
 
     def stop(self):
         self.is_running = False
-        self.is_available = True  # TESTING!
+        self.is_available = False
 
         if self.name == "Laser":
             rewindCurrentBlock(self.current_block, self.board)
