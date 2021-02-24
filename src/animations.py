@@ -17,7 +17,8 @@ class TetrisRain:
             self.last_spawn_time = current_time
 
             # Spawn in a row
-            for x_pos in range(BOARD_CELL, SCREEN_WIDTH - BOARD_CELL, 2 * BOARD_CELL):  # Last param = horizontal spacing
+            for x_pos in range(BOARD_CELL, SCREEN_WIDTH - BOARD_CELL,
+                               2 * BOARD_CELL):  # Last param = horizontal spacing
                 # Scatter droplets vertically
                 if self.y_pos_counter == self.y_pos_max_counter:  # To avoid vertical overlapping
                     self.y_pos_counter = 0
@@ -44,7 +45,7 @@ class Droplet:
         self.x = x_pos
         self.y = y_pos
         self.image = random.choice(CELLS_IMAGES)
-        self.speed = 1  # px/per cycle (1 cycle = 1/60 seconds)
+        self.speed = 1  # px/per cycle (1 cycle = 1/FPS seconds)
 
     def fall(self):
         self.y += self.speed

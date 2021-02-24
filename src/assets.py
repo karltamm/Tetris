@@ -2,18 +2,31 @@ import pygame
 import pygame.freetype
 import os
 
+# INITIALIZE
 pygame.init()
 
+# Initialize screen for image loading (to use convert())
+SCREEN_WIDTH = 600  # px
+SCREEN_HEIGHT = 790  # px
+SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
+# FUNCTIONS
+def loadImage(folder, file_name, transparent=True):
+    return pygame.image.load(os.path.join(folder, file_name)).convert_alpha()
+
+
+# ASSETS
 # Cells
-EMPTY_CELL = pygame.image.load(os.path.join("assets/cells", "empty.png"))
-GREEN_CELL = pygame.image.load(os.path.join("assets/cells", "green.png"))
-BRONZE_CELL = pygame.image.load(os.path.join("assets/cells", "bronze.png"))
-PURPLE_CELL = pygame.image.load(os.path.join("assets/cells", "purple.png"))
-PINK_CELL = pygame.image.load(os.path.join("assets/cells", "pink.png"))
-RED_CELL = pygame.image.load(os.path.join("assets/cells", "red.png"))
-YELLOW_CELL = pygame.image.load(os.path.join("assets/cells", "yellow.png"))
-BLUE_CELL = pygame.image.load(os.path.join("assets/cells", "blue.png"))
-SHADOW_CELL = pygame.image.load(os.path.join("assets/cells", "shadow.png"))
+EMPTY_CELL = loadImage("assets/cells", "empty.png")
+SHADOW_CELL = loadImage("assets/cells", "shadow.png")
+GREEN_CELL = loadImage("assets/cells", "green.png")
+BRONZE_CELL = loadImage("assets/cells", "bronze.png")
+PURPLE_CELL = loadImage("assets/cells", "purple.png")
+PINK_CELL = loadImage("assets/cells", "pink.png")
+RED_CELL = loadImage("assets/cells", "red.png")
+YELLOW_CELL = loadImage("assets/cells", "yellow.png")
+BLUE_CELL = loadImage("assets/cells", "blue.png")
 CELLS_IMAGES = [GREEN_CELL, BRONZE_CELL, PURPLE_CELL, PINK_CELL, RED_CELL, YELLOW_CELL, BLUE_CELL]  # For animation
 
 # Colors
@@ -29,6 +42,7 @@ LIGHT_ORANGE = (252, 144, 78)
 LAVENDER = (230, 230, 250)
 NEON_GREEN = (66, 245, 114)
 RICH_YELLOW = (252, 186, 3)
+TRANSPARENT_WHITE = (255, 255, 255, 100)
 
 # Fonts
 CHATHURA_LIGHT = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-light.ttf"))
@@ -38,38 +52,37 @@ CHATHURA_BOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chat
 
 # Buttons
 # Main Menu
-START_BTN = pygame.image.load(os.path.join("assets/buttons", "Start.png"))
-OPTIONS_BTN = pygame.image.load(os.path.join("assets/buttons", "Options.png"))
-STATS_BTN = pygame.image.load(os.path.join("assets/buttons", "Stats.png"))
-TROPHIES_BTN = pygame.image.load(os.path.join("assets/buttons", "Trophies.png"))
-QUIT_BTN = pygame.image.load(os.path.join("assets/buttons", "Quit.png"))
+START_BTN = loadImage("assets/buttons", "Start.png")
+OPTIONS_BTN = loadImage("assets/buttons", "Options.png")
+STATS_BTN = loadImage("assets/buttons", "Stats.png")
+TROPHIES_BTN = loadImage("assets/buttons", "Trophies.png")
+QUIT_BTN = loadImage("assets/buttons", "Quit.png")
 
 # Game
-RESUME_BTN = pygame.image.load(os.path.join("assets/buttons", "Resume.png"))
-PAUSE_BTN = pygame.image.load(os.path.join("assets/buttons", "Pause.png"))
-END_BTN = pygame.image.load(os.path.join("assets/buttons", "End.png"))
-NEW_GAME_BTN = pygame.image.load(os.path.join("assets/buttons", "NewGame.png"))
+RESUME_BTN = loadImage("assets/buttons", "Resume.png")
+PAUSE_BTN = loadImage("assets/buttons", "Pause.png")
+END_BTN = loadImage("assets/buttons", "End.png")
+NEW_GAME_BTN = loadImage("assets/buttons", "NewGame.png")
 
 # Powers
-LASER_BTN = pygame.image.load(os.path.join("assets/buttons", "Laser.png"))
-WISHLIST_BTN = pygame.image.load(os.path.join("assets/buttons", "Wishlist.png"))
-TIMELESS_BTN = pygame.image.load(os.path.join("assets/buttons", "Timeless.png"))
-CANCEL_POWER_BTN = pygame.image.load(os.path.join("assets/buttons", "Cancel.png"))
+LASER_BTN = loadImage("assets/buttons", "Laser.png")
+WISHLIST_BTN = loadImage("assets/buttons", "Wishlist.png")
+TIMELESS_BTN = loadImage("assets/buttons", "Timeless.png")
+CANCEL_POWER_BTN = loadImage("assets/buttons", "Cancel.png")
 
 # Navigation
-BACK_BTN = pygame.image.load(os.path.join("assets/buttons", "Back.png"))
-PREVIOUS_BTN = pygame.image.load(os.path.join("assets/buttons", "Previous.png"))
-NEXT_BTN = pygame.image.load(os.path.join("assets/buttons", "Next.png"))
-PREVIOUS_BTN_BW = pygame.image.load(os.path.join("assets/buttons", "PreviousBW.png"))
-NEXT_BTN_BW = pygame.image.load(os.path.join("assets/buttons", "NextBW.png"))
+BACK_BTN = loadImage("assets/buttons", "Back.png")
+PREVIOUS_BTN = loadImage("assets/buttons", "Previous.png")
+NEXT_BTN = loadImage("assets/buttons", "Next.png")
+PREVIOUS_BTN_BW = loadImage("assets/buttons", "PreviousBW.png")
+NEXT_BTN_BW = loadImage("assets/buttons", "NextBW.png")
 
 # Switches
-ON_SWITCH = pygame.image.load(os.path.join("assets/switches", "On.png"))
-OFF_SWITCH = pygame.image.load(os.path.join("assets/switches", "Off.png"))
+ON_SWITCH = loadImage("assets/switches", "On.png")
+OFF_SWITCH = loadImage("assets/switches", "Off.png")
 
-# Images
-LOGO = pygame.image.load(os.path.join("assets", "logo.png"))
-INSTRUCTION_IMAGE = pygame.image.load(os.path.join("assets", "instruction.png"))
+# Misc
+INSTRUCTION_IMAGE = loadImage("assets", "instruction.png")
 
 # Sounds
 MOVE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move.mp3"))
@@ -90,21 +103,21 @@ REWIND_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rewind.mp3"))
 TAKEOFF_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "takeoff.mp3"))
 
 # Blocks
-BLOCK_I = pygame.image.load(os.path.join("assets/blocks", "I_block.png"))
-BLOCK_O = pygame.image.load(os.path.join("assets/blocks", "O_block.png"))
-BLOCK_L = pygame.image.load(os.path.join("assets/blocks", "L_block.png"))
-BLOCK_J = pygame.image.load(os.path.join("assets/blocks", "J_block.png"))
-BLOCK_T = pygame.image.load(os.path.join("assets/blocks", "T_block.png"))
-BLOCK_Z = pygame.image.load(os.path.join("assets/blocks", "Z_block.png"))
-BLOCK_S = pygame.image.load(os.path.join("assets/blocks", "S_block.png"))
+BLOCK_I = loadImage("assets/blocks", "I_block.png")
+BLOCK_O = loadImage("assets/blocks", "O_block.png")
+BLOCK_L = loadImage("assets/blocks", "L_block.png")
+BLOCK_J = loadImage("assets/blocks", "J_block.png")
+BLOCK_T = loadImage("assets/blocks", "T_block.png")
+BLOCK_Z = loadImage("assets/blocks", "Z_block.png")
+BLOCK_S = loadImage("assets/blocks", "S_block.png")
 BLOCK_IMAGES = [BLOCK_I, BLOCK_O, BLOCK_L, BLOCK_J, BLOCK_T, BLOCK_Z, BLOCK_S]  # Do not change the order!
 
-BLOCK_I_HL = pygame.image.load(os.path.join("assets/blocks", "I_block_HL.png"))
-BLOCK_O_HL = pygame.image.load(os.path.join("assets/blocks", "O_block_HL.png"))
-BLOCK_L_HL = pygame.image.load(os.path.join("assets/blocks", "L_block_HL.png"))
-BLOCK_J_HL = pygame.image.load(os.path.join("assets/blocks", "J_block_HL.png"))
-BLOCK_T_HL = pygame.image.load(os.path.join("assets/blocks", "T_block_HL.png"))
-BLOCK_Z_HL = pygame.image.load(os.path.join("assets/blocks", "Z_block_HL.png"))
-BLOCK_S_HL = pygame.image.load(os.path.join("assets/blocks", "S_block_HL.png"))
+BLOCK_I_HL = loadImage("assets/blocks", "I_block_HL.png")
+BLOCK_O_HL = loadImage("assets/blocks", "O_block_HL.png")
+BLOCK_L_HL = loadImage("assets/blocks", "L_block_HL.png")
+BLOCK_J_HL = loadImage("assets/blocks", "J_block_HL.png")
+BLOCK_T_HL = loadImage("assets/blocks", "T_block_HL.png")
+BLOCK_Z_HL = loadImage("assets/blocks", "Z_block_HL.png")
+BLOCK_S_HL = loadImage("assets/blocks", "S_block_HL.png")
 BLOCK_IMAGES_HL = [BLOCK_I_HL, BLOCK_O_HL, BLOCK_L_HL, BLOCK_J_HL, BLOCK_T_HL, BLOCK_Z_HL,
                    BLOCK_S_HL]  # Do not change the order!
