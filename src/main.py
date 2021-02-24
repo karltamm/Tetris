@@ -52,6 +52,7 @@ def startNewGame():
 
     powers_batch = PowersBatch()
     power = powers_batch.getPower()
+    power.is_available = False # Player has to solve rows to earn power
 
     solved_rows = 0
     current_score = 0
@@ -124,7 +125,7 @@ def startNewGame():
 
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if not power_is_active and not countdown_is_active:
+                if game_is_over or (not power_is_active and not countdown_is_active):
                     if clickBox(mouse_pos, end_button):
                         # End game and go to the main menu
                         run = False  # Stop game process
