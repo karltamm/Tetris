@@ -45,7 +45,7 @@ BTN_CORNER_RAD = 10
 SWITCH_HEIGHT = 40
 SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
-            250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
+        250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -54,7 +54,7 @@ LOGO_X = (SCREEN_WIDTH - LOGO_WIDTH) / 2
 LOGO_Y = PADDING
 
 START_BTN_X = PADDING
-START_BTN_Y = LOGO_Y + LOGO_HEIGHT + 2 * FAR
+START_BTN_Y = PADDING
 
 OPTIONS_BTN_X = PADDING
 OPTIONS_BTN_Y = START_BTN_Y + BTN_HEIGHT + NEAR
@@ -68,8 +68,8 @@ TROPHIES_BTN_Y = STATS_BTN_Y + BTN_HEIGHT + NEAR
 QUIT_BTN_X = PADDING
 QUIT_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
 
-INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 2 * FAR
-INSTRUCTION_Y = LOGO_Y + LOGO_HEIGHT + 2 * FAR
+INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 40
+INSTRUCTION_Y = START_BTN_Y
 
 # Score
 SCORE_TEXT_X = PADDING
@@ -210,13 +210,13 @@ TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
 TROPHY_HEADING_GAP = HEADING2_HEIGHT + NEAR + TEXT_HEIGHT + FAR
 TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 100000],
-                 ["Advanced", "Reach 50,000 points", "high_score", 500000],
-                 ["Master", "Reach 100,000 point", "high_score", 50000],
-                 ["Novice", "Reach 10,000 points", "high_score", 50000]],
+             ["Advanced", "Reach 50,000 points", "high_score", 500000],
+             ["Master", "Reach 100,000 point", "high_score", 50000],
+             ["Novice", "Reach 10,000 points", "high_score", 50000]],
 
-                [["Tetris", "Quadruple row clear", "rows_4", 1],
-                 ["Clearer", "Clear 500 rows", "rows", 500],
-                 ["Try hard", "Get all trophies", "rows", 7]]]
+            [["Tetris", "Quadruple row clear", "rows_4", 1],
+             ["Clearer", "Clear 500 rows", "rows", 500],
+             ["Try hard", "Get all trophies", "rows", 7]]]
 
 # INITIALIZE
 pygame.init()
@@ -270,14 +270,21 @@ def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if m
         return True
 
 
-def drawTransparentOverlay():
+def drawTransparentOverlay(opacity=200, dark=True):
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-    overlay.fill(TRANSPARENT_BLACK)  # Last number represents opacitiy [0 = no opacity]
+
+    if dark:
+        overlay.fill((0, 0, 0, opacity))
+    else:
+        overlay.fill((255, 255, 255, opacity))
+
     SCREEN.blit(overlay, (0, 0))
+
 
 def playSound(sound):
     if optionsValues("sound"):
         sound.play()
+
 
 # GAME
 def showBoard(board):
@@ -376,7 +383,7 @@ def showCountdown(countdown):
 
 # MAIN MENU
 def showMainMenu():
-    SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
+    # SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
 
     drawObject(START_BTN, START_BTN_X, START_BTN_Y)
     drawObject(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
@@ -435,6 +442,7 @@ def showOptionsMenu():
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
+
 # Stats menu
 def showStatsMenu(current_page):
     stats = updateStats()
@@ -462,7 +470,7 @@ def updateStats():
              ["Triple rows", str(getStat("rows_3"))],
              ["Quadruple rows", str(getStat("rows_4"))],
              ["Hard drops", str(getStat("hard_drops"))]],
-            
+
             [["Perfect clears", str(getStat("perfect_clears"))],
              ["Single-line perfect clears", str(getStat("perfect_clears_1"))],
              ["Double-line perfect clears", str(getStat("perfect_clears_2"))],
@@ -485,6 +493,7 @@ def showTrophiesScreen(current_page):
                      size=HEADING2_SIZE, color=GREY, font=HEADING_FONT)
             drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
                      color=GREY)
+
 
 # POWERS
 def showPowersSelection(power):
@@ -576,4 +585,3 @@ def showTimelessScreen(num_of_blocks_left):
         showPowerHelpText("Next %s will not fall" % phrase)
     else:
         showPowerHelpText("Next block will fall")
-

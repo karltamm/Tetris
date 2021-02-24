@@ -14,6 +14,7 @@ RED_CELL = pygame.image.load(os.path.join("assets/cells", "red.png"))
 YELLOW_CELL = pygame.image.load(os.path.join("assets/cells", "yellow.png"))
 BLUE_CELL = pygame.image.load(os.path.join("assets/cells", "blue.png"))
 SHADOW_CELL = pygame.image.load(os.path.join("assets/cells", "shadow.png"))
+CELLS_IMAGES = [GREEN_CELL, BRONZE_CELL, PURPLE_CELL, PINK_CELL, RED_CELL, YELLOW_CELL, BLUE_CELL]  # For animation
 
 # Colors
 LIGHT_GREY = (209, 209, 209)
@@ -28,9 +29,6 @@ LIGHT_ORANGE = (252, 144, 78)
 LAVENDER = (230, 230, 250)
 NEON_GREEN = (66, 245, 114)
 RICH_YELLOW = (252, 186, 3)
-
-TRANSPARENT_WHITE = (255, 255, 255, 100)
-TRANSPARENT_BLACK = (0, 0, 0, 200)
 
 # Fonts
 CHATHURA_LIGHT = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chathura-light.ttf"))

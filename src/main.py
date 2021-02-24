@@ -6,11 +6,13 @@ from blocks import *
 from screen import *
 from database import *
 from powers import *
+from animations import TetrisRain
 
 # INITIALIZE
 pygame.init()
 CLOCK = pygame.time.Clock()
 pygame.display.set_caption("Tetris")
+pygame.display.set_icon(BLUE_CELL)
 
 
 # GENERAL FUNCTIONS
@@ -333,11 +335,15 @@ def main_menu():
     trophies_button = (TROPHIES_BTN_X, TROPHIES_BTN_Y)
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
 
+    # Animation
+    tetris_rain = TetrisRain()
+
     run = True
     while run:
         # Update screen
         CLOCK.tick(FPS)
         SCREEN.fill(DARK_GREY)
+        tetris_rain.makeItRain()
         showMainMenu()
         pygame.display.update()
 
