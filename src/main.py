@@ -10,7 +10,6 @@ from animations import TetrisRain
 
 # INITIALIZE
 pygame.init()
-CLOCK = pygame.time.Clock()
 pygame.display.set_caption("Tetris")
 pygame.display.set_icon(BLUE_CELL)
 
@@ -34,6 +33,8 @@ def startNewGame():
     countdown = 3
 
     # UI
+    fps_controller = FPSController()
+
     activate_power_button = (ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
     cancel_power_button = (CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
     pause_button = (PAUSE_BTN_X, PAUSE_BTN_Y)
@@ -271,9 +272,9 @@ def startNewGame():
                 next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
 
         # Update screen
-        CLOCK.tick(FPS)
-        SCREEN.fill(DARK_GREY)
+        fps_controller.keepFrameDurationCorrect()
 
+        SCREEN.fill(DARK_GREY)
         showBoard(board)
         showNextBlockArea(next_block_area)
         showScore(current_score, high_score, stage)
@@ -328,20 +329,22 @@ def resumeGameAfterPower():
 
 # MAIN MENU
 def main_menu():
-    # Button positions
-    start_button = (START_BTN_X, START_BTN_Y)  # New game
-    options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)  # Options
-    stats_button = (STATS_BTN_X, STATS_BTN_Y)  # Stats
-    trophies_button = (TROPHIES_BTN_X, TROPHIES_BTN_Y)
-    quit_button = (QUIT_BTN_X, QUIT_BTN_Y)  # Quit program
+    # UI
+    fps_controller = FPSController()
 
-    # Animation
-    tetris_rain = TetrisRain()
+    start_button = (START_BTN_X, START_BTN_Y)  # New game
+    options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)
+    stats_button = (STATS_BTN_X, STATS_BTN_Y)
+    trophies_button = (TROPHIES_BTN_X, TROPHIES_BTN_Y)
+    quit_button = (QUIT_BTN_X, QUIT_BTN_Y)
+
+    tetris_rain = TetrisRain()  # Animation
 
     run = True
     while run:
         # Update screen
-        CLOCK.tick(FPS)
+        fps_controller.keepFrameDurationCorrect()
+
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showMainMenu()
@@ -375,7 +378,9 @@ def main_menu():
 
 # Options menu
 def options():
-    # Buttons and switches positions
+    # UI
+    fps_controller = FPSController()
+
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     sound_switch = (SOUND_SWITCH_X, SOUND_SWITCH_Y)
     stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
@@ -384,14 +389,15 @@ def options():
 
     run = True
     while run:
-        # UI control
-        mouse_pos = pygame.mouse.get_pos()
-
         # Update screen
-        CLOCK.tick(FPS)
+        fps_controller.keepFrameDurationCorrect()
+
         SCREEN.fill(DARK_GREY)
         showOptionsMenu()
         pygame.display.update()
+
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -414,22 +420,26 @@ def options():
 
 # Stats menu
 def stats(page=1):
-    # Buttons and switches positions
-    back_button = [BACK_BTN_X, BACK_BTN_Y]
-    previous_button = [PREVIOUS_BTN_X, PREVIOUS_BTN_Y]
-    next_button = [NEXT_BTN_X, NEXT_BTN_Y]
+    # UI
+    fps_controller = FPSController()
+
+    back_button = (BACK_BTN_X, BACK_BTN_Y)
+    previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
+    next_button = (NEXT_BTN_X, NEXT_BTN_Y)
 
     STATS_VALUES = updateStats()
 
     run = True
     while run:
-        # UI control
-        mouse_pos = pygame.mouse.get_pos()
         # Update screen
-        CLOCK.tick(FPS)
+        fps_controller.keepFrameDurationCorrect()
+
         SCREEN.fill(DARK_GREY)
         showStatsMenu(page)
         pygame.display.update()
+
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -447,20 +457,26 @@ def stats(page=1):
 
 
 def trophies():
+    # UI
+    fps_controller = FPSController()
+
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
     page = 1
+
     run = True
     while run:
-        # UI control
-        mouse_pos = pygame.mouse.get_pos()
 
         # Update screen
-        CLOCK.tick(FPS)
+        fps_controller.keepFrameDurationCorrect()
+
         SCREEN.fill(DARK_GREY)
         showTrophiesScreen(page)
         pygame.display.update()
+
+        # UI control
+        mouse_pos = pygame.mouse.get_pos()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

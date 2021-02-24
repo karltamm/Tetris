@@ -1,6 +1,7 @@
 import pygame
 import pygame.freetype
 import math
+import time
 import datetime
 from board import *
 from nextblock import *
@@ -9,8 +10,7 @@ from database import *
 
 # CONSTANTS
 # Screen
-SCREEN_WIDTH = 600  # px
-SCREEN_HEIGHT = 790  # px
+# Screen width, height and screen itself are initialized in assets.py for image loading!
 FPS = 60
 
 # Whitespace
@@ -220,7 +220,25 @@ TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 100000],
 
 # INITIALIZE
 pygame.init()
-SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
+# CLASSES
+class FPSController:
+    def __init__(self):
+        # All time measured in ms
+        self.current_time = 0
+        self.prev_time = 0
+        self.frame_duration = 1000 / FPS
+
+    def keepFrameDurationCorrect(self):
+        self.current_time = time.time() * 1000  # Convert seconds to ms
+        elapsed_time = self.current_time - self.prev_time  # How much time has elapsed since last frame?
+        needed_delay = int(self.frame_duration - elapsed_time)  # Delay length to make this frame duration match FPS
+
+        if needed_delay > 0:
+            pygame.time.delay(needed_delay)
+
+        self.prev_time = time.time() * 1000
 
 
 # GENERAL FUNCTIONS
@@ -567,7 +585,6 @@ def showLaserScreen(row):
 def highlightRow(row):
     if row is not None:
         index, row_y = row  # Unpack tuple
-
         highlight = pygame.Surface((BOARD_SCREEN_WIDTH, BOARD_CELL), pygame.SRCALPHA)
         highlight.fill(TRANSPARENT_WHITE)
         SCREEN.blit(highlight, (BOARD_X, row_y))
