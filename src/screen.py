@@ -209,14 +209,6 @@ TROPHY_TEXT_X = TROPHY_HEADING_X
 TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
 TROPHY_HEADING_GAP = HEADING2_HEIGHT + NEAR + TEXT_HEIGHT + FAR
-TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 100000],
-             ["Advanced", "Reach 50,000 points", "high_score", 500000],
-             ["Master", "Reach 100,000 point", "high_score", 50000],
-             ["Novice", "Reach 10,000 points", "high_score", 50000]],
-
-            [["Tetris", "Quadruple row clear", "rows_4", 1],
-             ["Clearer", "Clear 500 rows", "rows", 500],
-             ["Try hard", "Get all trophies", "rows", 7]]]
 
 # INITIALIZE
 pygame.init()
@@ -493,7 +485,8 @@ def updateStats():
              ["Single-line perfect clears", str(getStat("perfect_clears_1"))],
              ["Double-line perfect clears", str(getStat("perfect_clears_2"))],
              ["Triple-line perfect clears", str(getStat("perfect_clears_3"))],
-             ["Quadruple-line perfect clears", str(getStat("perfect_clears_4"))]]]
+             ["Quadruple-line perfect clears", str(getStat("perfect_clears_4"))],
+             ["Number of trophies unlocked", str(getStat("trophies"))]]]
 
 
 # Trophies menu
@@ -502,16 +495,17 @@ def showTrophiesScreen(current_page):
     drawText("Trophies", TROPHIES_TITLE_X, TROPHIES_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
     for i in range(len(TROPHIES[current_page - 1])):
-        if TROPHIES[current_page - 1][i][3] <= getStat(TROPHIES[current_page - 1][i][2]):
-            drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
-                     size=HEADING2_SIZE, font=HEADING_FONT)
-            drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i)
-        else:
-            drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
-                     size=HEADING2_SIZE, color=GREY, font=HEADING_FONT)
-            drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
-                     color=GREY)
+        color = trophyCompletion(TROPHIES[current_page - 1][i][2], TROPHIES[current_page - 1][i][3])
+        drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
+                 size=HEADING2_SIZE, color=color, font=HEADING_FONT)
+        drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
+                 color=color)
 
+def trophyCompletion(stat, value):
+    if getStat(stat) >= value :
+        return WHITE
+    else:
+        return GREY
 
 # POWERS
 def showPowersSelection(power):

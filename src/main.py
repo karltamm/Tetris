@@ -410,13 +410,13 @@ def options():
                         run = False
                         main_menu()
                     elif clickBox(mouse_pos, sound_switch, switch=True):
-                        optionsValues("sound", True)  # Second parameter changes value
+                        optionsValues("sound", change=True)
                     elif clickBox(mouse_pos, stages_switch, switch=True):
-                        optionsValues("stages", True)
+                        optionsValues("stages", change=True)
                     elif clickBox(mouse_pos, block_shadows_switch, switch=True):
-                        optionsValues("block_shadows", True)
+                        optionsValues("block_shadows", change=True)
                     elif clickBox(mouse_pos, power_ups_switch, switch=True):
-                        optionsValues("power_ups", True)
+                        optionsValues("power_ups", change=True)
 
 
 # Stats menu

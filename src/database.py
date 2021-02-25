@@ -5,6 +5,27 @@ import os
 # Score
 SINGLE_ROW_POINTS = 100
 
+# Throphies
+TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 500000],
+             ["Master", "Reach 100,000 point", "high_score", 100000],
+             ["Advanced", "Reach 50,000 points", "high_score", 50000],
+             ["Novice", "Reach 10,000 points", "high_score", 10000]],
+
+            [["Tetris", " Do 10 Quadruple row clears", "rows_4", 10],
+             ["Clear", "Clear 100 rows", "rows", 100],
+             ["Clearer", "Clear 250 rows", "rows", 250],
+             ["Clearest", "Clear 500 rows", "rows", 500]],
+
+            [["No-life", "Spend 2 hours in-game", "time_ingame", 2],
+             ["Try hard", "Get all trophies", "trophies", 7],
+             ["Clean board", "Make a quadruple-line perfect clears", "perfect_clears_4", 1],
+             ["Gamer", "Play 100 games", "games_played", 100]],
+
+            [["Long game", "Spend 10 minutes in one game", "time_ingame", 2],
+             ["", "", "", 2],
+             ["", "", "", 2],
+             ["", "", "", 2]]]
+
 # INITIALIZE
 STATS_DB = shelve.open(os.path.join("data", "stats"))
 OPTIONS_DB = shelve.open(os.path.join("data", "options"))
