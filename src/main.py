@@ -12,6 +12,7 @@ from animations import TetrisRain
 pygame.init()
 pygame.display.set_caption("Tetris")
 pygame.display.set_icon(BLUE_CELL)
+fps_controller = FPSController()
 
 
 # GENERAL FUNCTIONS
@@ -32,9 +33,6 @@ def startNewGame():
     countdown_is_active = False  # If game_running goes from False to true, then show countdown
     countdown = 3
 
-    # UI
-    fps_controller = FPSController()
-
     activate_power_button = (ACTIVATE_POWER_BTN_X, ACTIVATE_POWER_BTN_Y)
     cancel_power_button = (CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
     pause_button = (PAUSE_BTN_X, PAUSE_BTN_Y)
@@ -52,7 +50,7 @@ def startNewGame():
 
     powers_batch = PowersBatch()
     power = powers_batch.getPower()
-    power.is_available = False # Player has to solve rows to earn power
+    power.is_available = False  # Player has to solve rows to earn power
 
     solved_rows = 0
     current_score = 0
@@ -331,8 +329,6 @@ def resumeGameAfterPower():
 # MAIN MENU
 def main_menu():
     # UI
-    fps_controller = FPSController()
-
     start_button = (START_BTN_X, START_BTN_Y)  # New game
     options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)
     stats_button = (STATS_BTN_X, STATS_BTN_Y)
@@ -380,8 +376,6 @@ def main_menu():
 # Options menu
 def options():
     # UI
-    fps_controller = FPSController()
-
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     sound_switch = (SOUND_SWITCH_X, SOUND_SWITCH_Y)
     stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
@@ -422,8 +416,6 @@ def options():
 # Stats menu
 def stats(page=1):
     # UI
-    fps_controller = FPSController()
-
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
@@ -459,8 +451,6 @@ def stats(page=1):
 
 def trophies():
     # UI
-    fps_controller = FPSController()
-
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
@@ -468,7 +458,6 @@ def trophies():
 
     run = True
     while run:
-
         # Update screen
         fps_controller.keepFrameDurationCorrect()
 
@@ -494,4 +483,5 @@ def trophies():
                         page += 1
 
 
-main_menu()  # Launch main menu when program is opened
+if __name__ == "__main__":
+    main_menu()  # Launch main menu when program is opened
