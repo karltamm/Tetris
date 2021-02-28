@@ -81,6 +81,10 @@ NEXT_BTN_BW = loadImage("assets/buttons", "NextBW.png")
 ON_SWITCH = loadImage("assets/switches", "On.png")
 OFF_SWITCH = loadImage("assets/switches", "Off.png")
 
+# Sliders
+SLIDER_BG = loadImage("assets/sliders", "SliderBackground.png")
+DRAGGER = loadImage("assets/sliders", "Dragger.png")
+
 # Misc
 INSTRUCTION_IMAGE = loadImage("assets", "instruction.png")
 
