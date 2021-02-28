@@ -47,6 +47,15 @@ SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
         250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
+# Slider
+SLIDER_HEIGHT = SWITCH_HEIGHT
+SLIDER_WIDTH = 200
+
+# Toggle
+TOGGLE_HEIGHT = SWITCH_HEIGHT
+TOGGLE_WIDTH = SWITCH_WIDTH/2
+TOGGLE_CORNER_RAD = SWITCH_CORNER_RAD
+
 # Main menu
 LOGO_HEIGHT = 100
 LOGO_WIDTH = 420
@@ -170,8 +179,13 @@ OPTIONS_TITLE_Y = PAGE_TITLE_Y
 
 SOUND_TEXT_X = BACK_BTN_X
 SOUND_TEXT_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
-SOUND_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-SOUND_SWITCH_Y = SOUND_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
+SOUND_SLIDER_X = SCREEN_WIDTH - PADDING - SLIDER_WIDTH
+SOUND_SLIDER_Y = SOUND_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
+SOUND_PERCENT_X = SOUND_SLIDER_X - 70
+SOUND_PERCENT_Y = SOUND_SLIDER_Y + 9
+
+TOGGLE_ON_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+TOGGLE_OFF_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH / 2
 
 STAGES_TEXT_X = SOUND_TEXT_X
 STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING2_HEIGHT + FAR
@@ -242,20 +256,29 @@ def drawObject(object, x, y):
     SCREEN.blit(object, (x, y))
 
 
-def clickBox(mouse_pos, el_pos, switch=False):
+def clickBox(mouse_pos, el_pos=(0,0), switch=None):
+    mouse_x, mouse_y = mouse_pos
     # Determine for which UI element this clickbox is for
-    if switch:
-        width = SWITCH_WIDTH
-        height = SWITCH_HEIGHT
-        corner_rad = SWITCH_CORNER_RAD
+    if switch is not None:
+        width = TOGGLE_WIDTH
+        height = TOGGLE_HEIGHT
+        corner_rad = TOGGLE_CORNER_RAD
+        if switch == "sound":
+            el_x = SOUND_SLIDER_X + (150 * optionsValues("sound"))
+            el_y = SOUND_SLIDER_Y
+        else:
+            if optionsValues(switch):
+                el_x = TOGGLE_ON_X
+            else:
+                el_x = TOGGLE_OFF_X
+            el_y = el_pos[1]
     else:
         width = BTN_WIDTH
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
+        el_x, el_y = el_pos
 
     # Create click areas
-    mouse_x, mouse_y = mouse_pos
-    el_x, el_y = el_pos
 
     # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
@@ -292,8 +315,8 @@ def drawTransparentOverlay(opacity=200, dark=True):
 
 
 def playSound(sound):
-    if optionsValues("sound"):
-        sound.play()
+    sound.set_volume(optionsValues("sound"))
+    sound.play()
 
 
 # GAME
@@ -424,7 +447,6 @@ def drawNavigation(current_page, num_of_pages):
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
 
-
 # Options menu
 def showOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
@@ -435,10 +457,6 @@ def showOptionsMenu():
     drawText("Block shadows", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Power ups", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
-    if optionsValues("sound"):
-        drawObject(ON_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
-    elif not optionsValues("sound"):
-        drawObject(OFF_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
     if optionsValues("stages"):
         drawObject(ON_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
     elif not optionsValues("stages"):
@@ -451,6 +469,23 @@ def showOptionsMenu():
         drawObject(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+
+    drawText(str(round(optionsValues("sound") * 100)) + "%", SOUND_PERCENT_X, SOUND_PERCENT_Y)
+
+    pygame.draw.rect(SCREEN, RED, (SOUND_SLIDER_X + 16, SOUND_SLIDER_Y, 168, 40))
+    pygame.draw.rect(SCREEN, RED, (SOUND_SLIDER_X, SOUND_SLIDER_Y + 16, 200, 8))
+    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16, SOUND_SLIDER_Y + 16), 16)
+    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16, SOUND_SLIDER_Y + 24), 16)
+    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16 + 168, SOUND_SLIDER_Y + 16), 16)
+    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16 + 168, SOUND_SLIDER_Y + 24), 16)
+
+    el_x = SOUND_SLIDER_X + (150 * optionsValues("sound"))
+    pygame.draw.rect(SCREEN, LIGHT_GREY, (el_x + 16, SOUND_SLIDER_Y, 18, 40))
+    pygame.draw.rect(SCREEN, LIGHT_GREY, (el_x, SOUND_SLIDER_Y + 16, 50, 8))
+    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16, SOUND_SLIDER_Y + 16), 16)
+    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16, SOUND_SLIDER_Y + 24), 16)
+    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16 + 18, SOUND_SLIDER_Y + 16), 16)
+    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16 + 18, SOUND_SLIDER_Y + 24), 16)
 
 
 # Stats menu
@@ -493,7 +528,6 @@ def updateStats():
 def showTrophiesScreen(current_page):
     drawNavigation(current_page, num_of_pages=len(TROPHIES))
     drawText("Trophies", TROPHIES_TITLE_X, TROPHIES_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
-
     for i in range(len(TROPHIES[current_page - 1])):
         color = trophyCompletion(TROPHIES[current_page - 1][i][2], TROPHIES[current_page - 1][i][3])
         drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,

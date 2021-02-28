@@ -377,7 +377,6 @@ def main_menu():
 def options():
     # UI
     back_button = (BACK_BTN_X, BACK_BTN_Y)
-    sound_switch = (SOUND_SWITCH_X, SOUND_SWITCH_Y)
     stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
     block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     power_ups_switch = (POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
@@ -393,7 +392,6 @@ def options():
 
         # UI control
         mouse_pos = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
@@ -403,13 +401,33 @@ def options():
                     if clickBox(mouse_pos, back_button):
                         run = False
                         main_menu()
-                    elif clickBox(mouse_pos, sound_switch, switch=True):
-                        optionsValues("sound", change=True)
-                    elif clickBox(mouse_pos, stages_switch, switch=True):
+                    elif clickBox(mouse_pos, switch="sound"):
+                        x_dif = mouse_pos[0] - (SOUND_SLIDER_X + (150 * optionsValues("sound")))  # distance between mouse_x, el_x
+                        while pygame.mouse.get_pressed()[0]:  # until button released(more reliable than MOUSEBUTTONUP)
+                            fps_controller.keepFrameDurationCorrect()
+                            SCREEN.fill(DARK_GREY)
+                            showOptionsMenu()
+                            pygame.display.update()
+
+                            toggle_pos = pygame.mouse.get_pos()[0] - x_dif  # toggle pos relative to mouse pos
+                            for event in pygame.event.get():
+                                if event.type == pygame.QUIT:
+                                    closeProgram()
+
+                            if SOUND_SLIDER_X < toggle_pos < (SOUND_SLIDER_X+150):
+                                value = (toggle_pos - SOUND_SLIDER_X)/150
+                                optionsValues("sound", new_value=value)
+                            elif toggle_pos <= SOUND_SLIDER_X:
+                                value = 0
+                                optionsValues("sound", new_value=value)
+                            elif toggle_pos >= SOUND_SLIDER_X+150:
+                                value = 1
+                                optionsValues("sound", new_value=value)
+                    elif clickBox(mouse_pos, stages_switch, switch="stages"):
                         optionsValues("stages", change=True)
-                    elif clickBox(mouse_pos, block_shadows_switch, switch=True):
+                    elif clickBox(mouse_pos, block_shadows_switch, switch="block_shadows"):
                         optionsValues("block_shadows", change=True)
-                    elif clickBox(mouse_pos, power_ups_switch, switch=True):
+                    elif clickBox(mouse_pos, power_ups_switch, switch="power_ups"):
                         optionsValues("power_ups", change=True)
 
 

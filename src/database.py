@@ -5,7 +5,7 @@ import os
 # Score
 SINGLE_ROW_POINTS = 100
 
-# Throphies
+# Trophies
 TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 500000],
              ["Master", "Reach 100,000 point", "high_score", 100000],
              ["Advanced", "Reach 50,000 points", "high_score", 50000],
@@ -16,12 +16,12 @@ TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 500000],
              ["Clearer", "Clear 250 rows", "rows", 250],
              ["Clearest", "Clear 500 rows", "rows", 500]],
 
-            [["No-life", "Spend 2 hours in-game", "time_ingame", 2],
-             ["Try hard", "Get all trophies", "trophies", 7],
+            [["No-life", "Spend 2 hours in-game", "time_ingame", 7200],
+             ["Try hard", "Get all trophies", "trophies", 16],
              ["Clean board", "Make a quadruple-line perfect clears", "perfect_clears_4", 1],
              ["Gamer", "Play 100 games", "games_played", 100]],
 
-            [["Long game", "Spend 10 minutes in one game", "time_ingame", 2],
+            [["Long game", "Spend 10 minutes in one game", "", 600],
              ["", "", "", 2],
              ["", "", "", 2],
              ["", "", "", 2]]]
@@ -74,15 +74,19 @@ class Score:
 
 
 # FUNCTIONS
-def optionsValues(name, change=False):
+def optionsValues(name, change=False, new_value=None ):
     try:
         value = OPTIONS_DB[name]
     except:
-        value = True
-        OPTIONS_DB[name] = value
+        if name == "sound":
+            value = 1
+        else:
+            value = True
     if change:
         value = not value
-        OPTIONS_DB[name] = value
+    elif new_value is not None:
+        value = new_value
+    OPTIONS_DB[name] = value
     return value
 
 
