@@ -8,6 +8,7 @@ SINGLE_ROW_POINTS = 100
 # INITIALIZE
 STATS_DB = shelve.open(os.path.join("data", "stats"))
 OPTIONS_DB = shelve.open(os.path.join("data", "options"))
+SAVED_GAME_DB = shelve.open(os.path.join("data", "saved_game"))
 
 
 # CLASS
@@ -29,7 +30,7 @@ class Score:
             self.current_score += SINGLE_ROW_POINTS * 8 * stage
             saveStat("rows_4", 1)
         return self.current_score
-    
+
     def perfectClear(self, stage, full_rows):
         saveStat("perfect_clears", 1)
         if (full_rows == 1):
@@ -53,6 +54,7 @@ class Score:
 
 
 # FUNCTIONS
+# Options
 def optionsValues(name, change=False):
     try:
         value = OPTIONS_DB[name]
@@ -65,6 +67,7 @@ def optionsValues(name, change=False):
     return value
 
 
+# Stats
 def getStat(stat):
     try:
         # If database already has high_score entry
@@ -84,6 +87,16 @@ def saveStat(stat, new_value, compare=0):
         STATS_DB[stat] = getStat(stat) + new_value
 
 
+# Saved game
+def checkIfGameIsSaved():
+    try:
+        save_exsists = SAVED_GAME_DB["save_exsists"]
+    except:
+        save_exsists = False
+    return save_exsists
+
+
 def closeDB():
     STATS_DB.close()
     OPTIONS_DB.close()
+    SAVED_GAME_DB.close()

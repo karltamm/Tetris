@@ -53,6 +53,8 @@ CHATHURA_BOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chat
 # Buttons
 # Main Menu
 START_BTN = loadImage("assets/buttons", "Start.png")
+CONTINUE_BTN = loadImage("assets/buttons", "Continue.png")
+CONTINUE_BTN_BW = loadImage("assets/buttons", "ContinueBW.png")
 OPTIONS_BTN = loadImage("assets/buttons", "Options.png")
 STATS_BTN = loadImage("assets/buttons", "Stats.png")
 TROPHIES_BTN = loadImage("assets/buttons", "Trophies.png")
@@ -60,6 +62,7 @@ QUIT_BTN = loadImage("assets/buttons", "Quit.png")
 
 # Game
 RESUME_BTN = loadImage("assets/buttons", "Resume.png")
+SAVE_BTN = loadImage("assets/buttons", "Save.png")
 PAUSE_BTN = loadImage("assets/buttons", "Pause.png")
 END_BTN = loadImage("assets/buttons", "End.png")
 NEW_GAME_BTN = loadImage("assets/buttons", "NewGame.png")
@@ -105,6 +108,7 @@ TIMEUP_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup.mp3"))
 TIMEUP2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup2.mp3"))
 REWIND_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rewind.mp3"))
 TAKEOFF_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "takeoff.mp3"))
+SAVED_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "saved.mp3"))
 
 # Blocks
 BLOCK_I = loadImage("assets/blocks", "I_block.png")
