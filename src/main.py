@@ -95,7 +95,7 @@ def runGame(load_game=False):
 
     # Block automatic falling
     fall_timer = 0
-    fall_speed = 0.4  # Every X second trigger block autofall
+    fall_speed = 0.6  # Every X second trigger block autofall
 
     run = True
     while run:
@@ -244,11 +244,12 @@ def runGame(load_game=False):
 
             # Block automatic falling
             if not power.autofall_is_off:
-                fall_timer += 1
-                if fall_timer / FPS > fall_speed:
-                    fall_timer = 0
-                    if not down_pressed:
-                        current_block.move(board, y_step=1, autofall=True)
+                if (pygame.time.get_ticks() - current_block.time_since_rotation) > 100:  # Give time to rotate
+                    fall_timer += 1
+                    if fall_timer / FPS > fall_speed:
+                        fall_timer = 0
+                        if not down_pressed:
+                            current_block.move(board, y_step=1, autofall=True)
 
             # Check if user wants to move a block
             for event in events:
@@ -307,7 +308,7 @@ def runGame(load_game=False):
                     solved_rows += full_rows
                     if solved_rows >= stage * 5 and optionsValues("stages"):
                         stage += 1
-                        fall_speed *= 0.985
+                        fall_speed *= 0.97
 
                     # Sound effect if at least one row is cleared
                     playSound(ROW_CLEARED_SOUND)
@@ -342,6 +343,7 @@ def runGame(load_game=False):
             showCountdown(countdown)
             countdown, countdown_is_active, game_is_running = runCountdown(countdown)
         elif game_is_being_saved:
+            playSound(GAME_SAVE_SOUND)
             showSaveConfirmation(resume_game_if_saved)
 
             if resume_game_if_saved:

@@ -414,7 +414,6 @@ def showCountdown(countdown):
 
 
 def showSaveConfirmation(resume_game_if_saved):
-    playSound(SAVED_SOUND)
     if not resume_game_if_saved:
         showPauseMenu()
 
