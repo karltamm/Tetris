@@ -17,6 +17,7 @@ class Block:
         self.y = 0  # In which board row is top-left block cell?
         self.used_board_cells = []  # [(row, col), (row, col) etc]
         self.is_placed = False
+        self.time_since_rotation = 0
 
         if self.updateBoard(board) == False:  # No room for new block, so game over
             # Notify program that game is over
@@ -45,9 +46,9 @@ class Block:
 
     def rotate(self, board):
         rotate_success = False
+
         if self.rotation == 3:
             self.rotation = -1
-
         self.rotation += 1
 
         if self.updateBoard(board) == False:  # Rotate failed
@@ -77,6 +78,7 @@ class Block:
         # Rotation was successful so play sound
         if rotate_success and self.shape != SHAPE_O:
             playSound(ROTATE_SOUND)
+        self.time_since_rotation = pygame.time.get_ticks()
 
     def removeCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
@@ -109,14 +111,10 @@ class Block:
         copyBoard(new_board, board)
         return True  # Block placement was successful
 
+
 # CHILD CLASS OF "Block"
 class ShadowBlock(Block):
     def __init__(self, current_block, board):
-        """
-        copy.deepcopy, sest kui muidu teha -> shape = current_block.shape,
-        shape[0][0][1] = "Ananass",
-        siis ka -> current_block.shape[0][0][1] = "Ananass"
-        """
         if optionsValues("block_shadows"):  # If block shadows are turned on
             shape = copy.deepcopy(current_block.shape)
             rotation = current_block.rotation
@@ -138,8 +136,6 @@ class ShadowBlock(Block):
             # Drops shadow block down as much as possible
             while not self.is_placed:
                 self.move(board, 0, 1, autofall=True)
-
-    # TODO: Implement better functions, tidy up?
 
     def clearShadow(self, board):
         for row in range(BOARD_HEIGHT):
