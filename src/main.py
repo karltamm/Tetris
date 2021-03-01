@@ -44,6 +44,7 @@ def runGame(load_game=False):
     new_game_button = (NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
 
     # Get game ready
+    powers_are_enabled = optionsValues("power_ups")
     next_block_area = createNextBlockArea()
 
     if load_game:
@@ -80,8 +81,6 @@ def runGame(load_game=False):
         high_score = getStat("high_score_powers")
     else:
         high_score = getStat("high_score")
-
-    powers_are_enabled = optionsValues("power_ups")
 
     # Variables for stats
     blocks_created = 0
@@ -137,7 +136,7 @@ def runGame(load_game=False):
                     if power_is_active:
                         power_is_active = False
                         countdown_is_active = True
-                    elif power.is_available and game_is_running:
+                    elif powers_are_enabled and power.is_available and game_is_running:
                         power_is_active = True
                         game_is_running = False
 
@@ -167,7 +166,7 @@ def runGame(load_game=False):
                     if clickBox(pause_button):
                         game_is_running = False
                     elif clickBox(activate_power_button):
-                        if power.is_available:
+                        if powers_are_enabled and power.is_available:
                             power_is_active = True
                             game_is_running = False
                     elif clickBox(save_button) and not game_is_being_saved:
@@ -215,7 +214,10 @@ def runGame(load_game=False):
         if game_is_being_saved:
             SAVED_GAME_DB["save_exsists"] = True
 
+            shadow_block.clearShadow(board)  # To avoid glitches
             SAVED_GAME_DB["board"] = board
+            shadow_block = ShadowBlock(current_block, board)  # Restore the shadow
+
             SAVED_GAME_DB["current_block"] = current_block
             SAVED_GAME_DB["next_block"] = next_block
             SAVED_GAME_DB["blocks_batch"] = blocks_batch
@@ -321,7 +323,7 @@ def runGame(load_game=False):
         showBoard(board)
         showNextBlockArea(next_block_area)
         showScore(current_score, high_score, stage)
-        showPowersSelection(power)
+        showPowersSelection(powers_are_enabled, power)
         showGameButtons()
 
         if game_is_over:

@@ -541,10 +541,10 @@ def showTrophiesScreen(current_page):
 
 
 # POWERS
-def showPowersSelection(power):
+def showPowersSelection(powers_are_enabled, power):
     drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
 
-    if power.is_available:
+    if powers_are_enabled and power.is_available:
         if power.name == "Laser":
             button = LASER_BTN
         elif power.name == "Wishlist":
