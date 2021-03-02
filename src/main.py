@@ -77,7 +77,7 @@ def runGame(load_game=False):
         power.is_available = False  # Player has to solve rows to earn power
 
     score_counter = Score(current_score)
-    if (optionsValues("power_ups")):
+    if optionsValues("power_ups"):
         high_score = getStat("high_score_powers")
     else:
         high_score = getStat("high_score")
@@ -407,8 +407,6 @@ def main_menu():
         pygame.display.update()
 
         # UI control
-        mouse_pos = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
@@ -439,7 +437,6 @@ def main_menu():
 def options():
     # UI
     back_button = (BACK_BTN_X, BACK_BTN_Y)
-    sound_switch = (SOUND_SWITCH_X, SOUND_SWITCH_Y)
     stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
     block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     power_ups_switch = (POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
@@ -455,7 +452,6 @@ def options():
 
         # UI control
         mouse_pos = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
@@ -465,14 +461,32 @@ def options():
                     if clickBox(back_button):
                         run = False
                         main_menu()
-                    elif clickBox(sound_switch, switch=True):
-                        optionsValues("sound", True)  # Second parameter changes value
-                    elif clickBox(stages_switch, switch=True):
-                        optionsValues("stages", True)
-                    elif clickBox(block_shadows_switch, switch=True):
-                        optionsValues("block_shadows", True)
-                    elif clickBox(power_ups_switch, switch=True):
-                        optionsValues("power_ups", True)
+                    elif clickBox(element=2):  # Slider
+                        value = optionsValues("sound")
+                        # distance between mouse_x and dragger_x
+                        x_dif = mouse_pos[0] - (SOUND_DRAGGER_X + (SLIDING_DISTANCE * value))
+                        while pygame.mouse.get_pressed(3)[0]:  # Updates slider until button released
+                            fps_controller.keepFrameDurationCorrect()
+                            SCREEN.fill(DARK_GREY)
+                            showOptionsMenu()
+                            pygame.display.update()
+                            event = pygame.event.poll()
+                            if event.type == pygame.QUIT:
+                                closeProgram()
+                            dragger_pos = pygame.mouse.get_pos()[0] - x_dif  # dragger pos relative to mouse pos
+                            if SOUND_DRAGGER_X < dragger_pos < (SOUND_DRAGGER_X+SLIDING_DISTANCE):
+                                value = (dragger_pos - SOUND_DRAGGER_X)/SLIDING_DISTANCE
+                            elif dragger_pos <= SOUND_DRAGGER_X:
+                                value = 0
+                            elif dragger_pos >= SOUND_DRAGGER_X+SLIDING_DISTANCE:
+                                value = 1
+                            optionsValues("sound", new_value=value)
+                    elif clickBox(stages_switch, element=1):
+                        optionsValues("stages", change=True)
+                    elif clickBox(block_shadows_switch, element=1):
+                        optionsValues("block_shadows", change=True)
+                    elif clickBox(power_ups_switch, element=1):
+                        optionsValues("power_ups", change=True)
 
 
 # Stats menu
@@ -494,8 +508,6 @@ def stats(page=1):
         pygame.display.update()
 
         # UI control
-        mouse_pos = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
@@ -528,8 +540,6 @@ def trophies():
         pygame.display.update()
 
         # UI control
-        mouse_pos = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()

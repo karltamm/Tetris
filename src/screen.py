@@ -47,6 +47,16 @@ SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
         250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
+# Slider backround
+SLIDER_BG_HEIGHT = 30
+SLIDER_BG_WIDTH = 200
+
+# Dragger
+DRAGGER_HEIGHT = 54
+DRAGGER_WIDTH = 33
+DRAGGER_CORNER_RAD = 5
+SLIDING_DISTANCE = SLIDER_BG_WIDTH - DRAGGER_WIDTH - 8
+
 # Main menu
 LOGO_HEIGHT = 100
 LOGO_WIDTH = 420
@@ -180,8 +190,12 @@ OPTIONS_TITLE_Y = PAGE_TITLE_Y
 
 SOUND_TEXT_X = BACK_BTN_X
 SOUND_TEXT_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
-SOUND_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-SOUND_SWITCH_Y = SOUND_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
+SOUND_SLIDER_BG_X = SCREEN_WIDTH - PADDING - SLIDER_BG_WIDTH
+SOUND_SLIDER_BG_Y = SOUND_TEXT_Y + (HEADING2_HEIGHT - SLIDER_BG_HEIGHT) / 2
+SOUND_DRAGGER_X = SOUND_SLIDER_BG_X + 4
+SOUND_DRAGGER_Y = SOUND_SLIDER_BG_Y - 12
+SOUND_PERCENTAGE_X = SOUND_SLIDER_BG_X - 70
+SOUND_PERCENTAGE_Y = SOUND_SLIDER_BG_Y + 4
 
 STAGES_TEXT_X = SOUND_TEXT_X
 STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING2_HEIGHT + FAR
@@ -219,14 +233,6 @@ TROPHY_TEXT_X = TROPHY_HEADING_X
 TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
 TROPHY_HEADING_GAP = HEADING2_HEIGHT + NEAR + TEXT_HEIGHT + FAR
-TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 100000],
-             ["Advanced", "Reach 50,000 points", "high_score", 500000],
-             ["Master", "Reach 100,000 point", "high_score", 50000],
-             ["Novice", "Reach 10,000 points", "high_score", 50000]],
-
-            [["Tetris", "Quadruple row clear", "rows_4", 1],
-             ["Clearer", "Clear 500 rows", "rows", 500],
-             ["Try hard", "Get all trophies", "rows", 7]]]
 
 # INITIALIZE
 pygame.init()
@@ -260,22 +266,25 @@ def drawObject(object, x, y):
     SCREEN.blit(object, (x, y))
 
 
-def clickBox(el_pos, switch=False):
-    mouse_pos = pygame.mouse.get_pos()
-
+def clickBox(el_pos=(0, 0), element=0):  # 0-Button, 1-switch, 2-slider
+    mouse_x, mouse_y = pygame.mouse.get_pos()
     # Determine for which UI element this clickbox is for
-    if switch:
-        width = SWITCH_WIDTH
-        height = SWITCH_HEIGHT
-        corner_rad = SWITCH_CORNER_RAD
-    else:
+    if element == 0:
         width = BTN_WIDTH
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
-
-    # Create click areas
-    mouse_x, mouse_y = mouse_pos
-    el_x, el_y = el_pos  # Element position
+        el_x, el_y = el_pos  # Element position
+    elif element == 1:
+        width = SWITCH_WIDTH
+        height = SWITCH_HEIGHT
+        corner_rad = SWITCH_CORNER_RAD
+        el_x, el_y = el_pos  # Element position
+    elif element == 2:
+        width = DRAGGER_WIDTH
+        height = DRAGGER_HEIGHT
+        corner_rad = DRAGGER_CORNER_RAD
+        el_x = SOUND_SLIDER_BG_X + (SLIDING_DISTANCE * optionsValues("sound")) + 4
+        el_y = SOUND_SLIDER_BG_Y - 12
 
     # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
@@ -287,7 +296,7 @@ def clickBox(el_pos, switch=False):
     bottom_right_corner = checkCornerRad(mouse_x, mouse_y, el_x + width - corner_rad,
                                          el_y + height - corner_rad, corner_rad)
     # Check for click
-    if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
+    if height_box.collidepoint(mouse_x, mouse_y) or width_box.collidepoint(mouse_x, mouse_y):
         return True
     elif top_left_corner or top_right_corner or bottom_left_corner or bottom_right_corner:
         return True
@@ -312,8 +321,8 @@ def drawTransparentOverlay(opacity=200, dark=True):
 
 
 def playSound(sound):
-    if optionsValues("sound"):
-        sound.play()
+    sound.set_volume(optionsValues("sound"))
+    sound.play()
 
 
 # GAME
@@ -458,7 +467,6 @@ def drawNavigation(current_page, num_of_pages):
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
 
-
 # Options menu
 def showOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
@@ -469,10 +477,6 @@ def showOptionsMenu():
     drawText("Block shadows", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Power ups", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
-    if optionsValues("sound"):
-        drawObject(ON_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
-    elif not optionsValues("sound"):
-        drawObject(OFF_SWITCH, SOUND_SWITCH_X, SOUND_SWITCH_Y)
     if optionsValues("stages"):
         drawObject(ON_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
     elif not optionsValues("stages"):
@@ -485,6 +489,11 @@ def showOptionsMenu():
         drawObject(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+
+    dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
+    drawText(str(round(optionsValues("sound") * 100)) + "%", SOUND_PERCENTAGE_X, SOUND_PERCENTAGE_Y)
+    drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
+    drawObject(DRAGGER, dragger_x, SOUND_DRAGGER_Y)
 
 
 # Stats menu
@@ -519,25 +528,26 @@ def updateStats():
              ["Single-line perfect clears", str(getStat("perfect_clears_1"))],
              ["Double-line perfect clears", str(getStat("perfect_clears_2"))],
              ["Triple-line perfect clears", str(getStat("perfect_clears_3"))],
-             ["Quadruple-line perfect clears", str(getStat("perfect_clears_4"))]]]
+             ["Quadruple-line perfect clears", str(getStat("perfect_clears_4"))],
+             ["Number of trophies unlocked", str(getStat("trophies"))]]]
 
 
 # Trophies menu
 def showTrophiesScreen(current_page):
     drawNavigation(current_page, num_of_pages=len(TROPHIES))
     drawText("Trophies", TROPHIES_TITLE_X, TROPHIES_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
-
     for i in range(len(TROPHIES[current_page - 1])):
-        if TROPHIES[current_page - 1][i][3] <= getStat(TROPHIES[current_page - 1][i][2]):
-            drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
-                     size=HEADING2_SIZE, font=HEADING_FONT)
-            drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i)
-        else:
-            drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
-                     size=HEADING2_SIZE, color=GREY, font=HEADING_FONT)
-            drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
-                     color=GREY)
+        color = trophyCompletion(TROPHIES[current_page - 1][i][2], TROPHIES[current_page - 1][i][3])
+        drawText(TROPHIES[current_page - 1][i][0], TROPHY_HEADING_X, TROPHY_HEADING_Y + TROPHY_HEADING_GAP * i,
+                 size=HEADING2_SIZE, color=color, font=HEADING_FONT)
+        drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
+                 color=color)
 
+def trophyCompletion(stat, value):
+    if getStat(stat) >= value :
+        return WHITE
+    else:
+        return GREY
 
 # POWERS
 def showPowersSelection(powers_are_enabled, power):
