@@ -194,8 +194,7 @@ SOUND_SLIDER_BG_X = SCREEN_WIDTH - PADDING - SLIDER_BG_WIDTH
 SOUND_SLIDER_BG_Y = SOUND_TEXT_Y + (HEADING2_HEIGHT - SLIDER_BG_HEIGHT) / 2
 SOUND_DRAGGER_X = SOUND_SLIDER_BG_X + 4
 SOUND_DRAGGER_Y = SOUND_SLIDER_BG_Y - 12
-SOUND_PERCENTAGE_X = SOUND_SLIDER_BG_X - 70
-SOUND_PERCENTAGE_Y = SOUND_SLIDER_BG_Y + 4
+SOUND_VAL_Y = SOUND_DRAGGER_Y - 30
 
 STAGES_TEXT_X = SOUND_TEXT_X
 STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING2_HEIGHT + FAR
@@ -467,6 +466,7 @@ def drawNavigation(current_page, num_of_pages):
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
 
+
 # Options menu
 def showOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
@@ -477,21 +477,39 @@ def showOptionsMenu():
     drawText("Block shadows", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Power ups", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
+    drawOptionsSwitches()
+    drawSoundSlider()
+
+
+def drawOptionsSwitches():
     if optionsValues("stages"):
         drawObject(ON_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
     elif not optionsValues("stages"):
         drawObject(OFF_SWITCH, STAGES_SWITCH_X, STAGES_SWITCH_Y)
+
     if optionsValues("block_shadows"):
         drawObject(ON_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     elif not optionsValues("block_shadows"):
         drawObject(OFF_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
+
     if optionsValues("power_ups"):
         drawObject(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
+
+def drawSoundSlider():
     dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
-    drawText(str(round(optionsValues("sound") * 100)) + "%", SOUND_PERCENTAGE_X, SOUND_PERCENTAGE_Y)
+    sound_val = round(optionsValues("sound") * 100)
+
+    # Keep the value in the middle of the dragger
+    if sound_val == 100:
+        drawText(str(sound_val), dragger_x - 2, SOUND_VAL_Y)
+    elif sound_val > 9:
+        drawText(str(sound_val), dragger_x + 3, SOUND_VAL_Y)
+    else:
+        drawText(str(sound_val), dragger_x + 10, SOUND_VAL_Y)
+
     drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
     drawObject(DRAGGER, dragger_x, SOUND_DRAGGER_Y)
 
@@ -543,11 +561,13 @@ def showTrophiesScreen(current_page):
         drawText(TROPHIES[current_page - 1][i][1], TROPHY_TEXT_X, TROPHY_TEXT_Y + TROPHY_HEADING_GAP * i,
                  color=color)
 
+
 def trophyCompletion(stat, value):
-    if getStat(stat) >= value :
+    if getStat(stat) >= value:
         return WHITE
     else:
         return GREY
+
 
 # POWERS
 def showPowersSelection(powers_are_enabled, power):
