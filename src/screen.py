@@ -266,21 +266,20 @@ def drawObject(object, x, y):
     SCREEN.blit(object, (x, y))
 
 
-def clickBox(el_pos=(0, 0), type=0):  # 0-Button, 1-switch, 2-slider
+def clickBox(el_pos=(0, 0), element=0):  # 0-Button, 1-switch, 2-slider
     mouse_x, mouse_y = pygame.mouse.get_pos()
-
     # Determine for which UI element this clickbox is for
-    if type == 0:
+    if element == 0:
         width = BTN_WIDTH
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
         el_x, el_y = el_pos  # Element position
-    elif type == 1:
+    elif element == 1:
         width = SWITCH_WIDTH
         height = SWITCH_HEIGHT
         corner_rad = SWITCH_CORNER_RAD
         el_x, el_y = el_pos  # Element position
-    elif type == 2:
+    elif element == 2:
         width = DRAGGER_WIDTH
         height = DRAGGER_HEIGHT
         corner_rad = DRAGGER_CORNER_RAD

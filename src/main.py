@@ -461,7 +461,7 @@ def options():
                     if clickBox(back_button):
                         run = False
                         main_menu()
-                    elif clickBox(type=2):  # Slider
+                    elif clickBox(element=2):  # Slider
                         value = optionsValues("sound")
                         # distance between mouse_x and dragger_x
                         x_dif = mouse_pos[0] - (SOUND_DRAGGER_X + (SLIDING_DISTANCE * value))
@@ -481,11 +481,11 @@ def options():
                             elif dragger_pos >= SOUND_DRAGGER_X+SLIDING_DISTANCE:
                                 value = 1
                             optionsValues("sound", new_value=value)
-                    elif clickBox(stages_switch, type=1):
+                    elif clickBox(stages_switch, element=1):
                         optionsValues("stages", change=True)
-                    elif clickBox(block_shadows_switch, type=1):
+                    elif clickBox(block_shadows_switch, element=1):
                         optionsValues("block_shadows", change=True)
-                    elif clickBox(power_ups_switch, type=1):
+                    elif clickBox(power_ups_switch, element=1):
                         optionsValues("power_ups", change=True)
 
 
