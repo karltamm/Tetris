@@ -55,7 +55,7 @@ def startNewGame():
     solved_rows = 0
     current_score = 0
     score_counter = Score(current_score)
-    if (optionsValues("power_ups")):
+    if optionsValues("power_ups"):
         high_score = getStat("high_score_powers")
     else:
         high_score = getStat("high_score")
@@ -401,33 +401,31 @@ def options():
                     if clickBox(mouse_pos, back_button):
                         run = False
                         main_menu()
-                    elif clickBox(mouse_pos, switch="sound"):
-                        x_dif = mouse_pos[0] - (SOUND_SLIDER_X + (150 * optionsValues("sound")))  # distance between mouse_x, el_x
-                        while pygame.mouse.get_pressed()[0]:  # until button released(more reliable than MOUSEBUTTONUP)
+                    elif clickBox(mouse_pos, type=2):  # Slider
+                        value = optionsValues("sound")
+                        # distance between mouse_x and dragger_x
+                        x_dif = mouse_pos[0] - (SOUND_DRAGGER_X + (SLIDING_DISTANCE * value))
+                        while pygame.mouse.get_pressed(3)[0]:  # Updates slider until button released
                             fps_controller.keepFrameDurationCorrect()
                             SCREEN.fill(DARK_GREY)
                             showOptionsMenu()
                             pygame.display.update()
-
-                            toggle_pos = pygame.mouse.get_pos()[0] - x_dif  # toggle pos relative to mouse pos
-                            for event in pygame.event.get():
-                                if event.type == pygame.QUIT:
-                                    closeProgram()
-
-                            if SOUND_SLIDER_X < toggle_pos < (SOUND_SLIDER_X+150):
-                                value = (toggle_pos - SOUND_SLIDER_X)/150
-                                optionsValues("sound", new_value=value)
-                            elif toggle_pos <= SOUND_SLIDER_X:
+                            event = pygame.event.poll()
+                            if event.type == pygame.QUIT:
+                                closeProgram()
+                            dragger_pos = pygame.mouse.get_pos()[0] - x_dif  # dragger pos relative to mouse pos
+                            if SOUND_DRAGGER_X < dragger_pos < (SOUND_DRAGGER_X+SLIDING_DISTANCE):
+                                value = (dragger_pos - SOUND_DRAGGER_X)/SLIDING_DISTANCE
+                            elif dragger_pos <= SOUND_DRAGGER_X:
                                 value = 0
-                                optionsValues("sound", new_value=value)
-                            elif toggle_pos >= SOUND_SLIDER_X+150:
+                            elif dragger_pos >= SOUND_DRAGGER_X+SLIDING_DISTANCE:
                                 value = 1
-                                optionsValues("sound", new_value=value)
-                    elif clickBox(mouse_pos, stages_switch, switch="stages"):
+                            optionsValues("sound", new_value=value)
+                    elif clickBox(mouse_pos, stages_switch, type=1):
                         optionsValues("stages", change=True)
-                    elif clickBox(mouse_pos, block_shadows_switch, switch="block_shadows"):
+                    elif clickBox(mouse_pos, block_shadows_switch, type=1):
                         optionsValues("block_shadows", change=True)
-                    elif clickBox(mouse_pos, power_ups_switch, switch="power_ups"):
+                    elif clickBox(mouse_pos, power_ups_switch, type=1):
                         optionsValues("power_ups", change=True)
 
 

@@ -74,7 +74,7 @@ class Score:
 
 
 # FUNCTIONS
-def optionsValues(name, change=False, new_value=None ):
+def optionsValues(name, change=False, new_value=None):
     try:
         value = OPTIONS_DB[name]
     except:
@@ -82,12 +82,14 @@ def optionsValues(name, change=False, new_value=None ):
             value = 1
         else:
             value = True
-    if change:
+    if change:  # inverts boolean value
         value = not value
-    elif new_value is not None:
+        OPTIONS_DB[name] = value
+    elif new_value is not None:  # Changes int value
         value = new_value
-    OPTIONS_DB[name] = value
-    return value
+        OPTIONS_DB[name] = value
+    else:  # if value wasn't changed, returns it
+        return value
 
 
 def getStat(stat):

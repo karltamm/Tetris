@@ -47,14 +47,15 @@ SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
         250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
-# Slider
-SLIDER_HEIGHT = SWITCH_HEIGHT
-SLIDER_WIDTH = 200
+# Slider backround
+SLIDER_BG_HEIGHT = 30
+SLIDER_BG_WIDTH = 200
 
-# Toggle
-TOGGLE_HEIGHT = SWITCH_HEIGHT
-TOGGLE_WIDTH = SWITCH_WIDTH/2
-TOGGLE_CORNER_RAD = SWITCH_CORNER_RAD
+# Dragger
+DRAGGER_HEIGHT = 54
+DRAGGER_WIDTH = 33
+DRAGGER_CORNER_RAD = 5
+SLIDING_DISTANCE = SLIDER_BG_WIDTH - DRAGGER_WIDTH - 8
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -179,13 +180,12 @@ OPTIONS_TITLE_Y = PAGE_TITLE_Y
 
 SOUND_TEXT_X = BACK_BTN_X
 SOUND_TEXT_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
-SOUND_SLIDER_X = SCREEN_WIDTH - PADDING - SLIDER_WIDTH
-SOUND_SLIDER_Y = SOUND_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
-SOUND_PERCENT_X = SOUND_SLIDER_X - 70
-SOUND_PERCENT_Y = SOUND_SLIDER_Y + 9
-
-TOGGLE_ON_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-TOGGLE_OFF_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH / 2
+SOUND_SLIDER_BG_X = SCREEN_WIDTH - PADDING - SLIDER_BG_WIDTH
+SOUND_SLIDER_BG_Y = SOUND_TEXT_Y + (HEADING2_HEIGHT - SLIDER_BG_HEIGHT) / 2
+SOUND_DRAGGER_X = SOUND_SLIDER_BG_X + 4
+SOUND_DRAGGER_Y = SOUND_SLIDER_BG_Y - 12
+SOUND_PERCENTAGE_X = SOUND_SLIDER_BG_X - 70
+SOUND_PERCENTAGE_Y = SOUND_SLIDER_BG_Y + 4
 
 STAGES_TEXT_X = SOUND_TEXT_X
 STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING2_HEIGHT + FAR
@@ -256,31 +256,27 @@ def drawObject(object, x, y):
     SCREEN.blit(object, (x, y))
 
 
-def clickBox(mouse_pos, el_pos=(0,0), switch=None):
+def clickBox(mouse_pos, el_pos=(0, 0), type=0):  # 0-Button, 1-switch, 2-slider
     mouse_x, mouse_y = mouse_pos
     # Determine for which UI element this clickbox is for
-    if switch is not None:
-        width = TOGGLE_WIDTH
-        height = TOGGLE_HEIGHT
-        corner_rad = TOGGLE_CORNER_RAD
-        if switch == "sound":
-            el_x = SOUND_SLIDER_X + (150 * optionsValues("sound"))
-            el_y = SOUND_SLIDER_Y
-        else:
-            if optionsValues(switch):
-                el_x = TOGGLE_ON_X
-            else:
-                el_x = TOGGLE_OFF_X
-            el_y = el_pos[1]
-    else:
+    if type == 0:
         width = BTN_WIDTH
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
         el_x, el_y = el_pos
+    elif type == 1:
+        width = SWITCH_WIDTH
+        height = SWITCH_HEIGHT
+        corner_rad = SWITCH_CORNER_RAD
+        el_x, el_y = el_pos
+    elif type == 2:
+        width = DRAGGER_WIDTH
+        height = DRAGGER_HEIGHT
+        corner_rad = DRAGGER_CORNER_RAD
+        el_x = SOUND_SLIDER_BG_X + (SLIDING_DISTANCE * optionsValues("sound")) + 4
+        el_y = SOUND_SLIDER_BG_Y - 12
 
     # Create click areas
-
-    # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
     width_box = pygame.Rect(el_x, el_y + corner_rad, width, height - corner_rad * 2)
 
@@ -470,22 +466,10 @@ def showOptionsMenu():
     elif not optionsValues("power_ups"):
         drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
 
-    drawText(str(round(optionsValues("sound") * 100)) + "%", SOUND_PERCENT_X, SOUND_PERCENT_Y)
-
-    pygame.draw.rect(SCREEN, RED, (SOUND_SLIDER_X + 16, SOUND_SLIDER_Y, 168, 40))
-    pygame.draw.rect(SCREEN, RED, (SOUND_SLIDER_X, SOUND_SLIDER_Y + 16, 200, 8))
-    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16, SOUND_SLIDER_Y + 16), 16)
-    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16, SOUND_SLIDER_Y + 24), 16)
-    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16 + 168, SOUND_SLIDER_Y + 16), 16)
-    pygame.draw.circle(SCREEN, RED, (SOUND_SLIDER_X + 16 + 168, SOUND_SLIDER_Y + 24), 16)
-
-    el_x = SOUND_SLIDER_X + (150 * optionsValues("sound"))
-    pygame.draw.rect(SCREEN, LIGHT_GREY, (el_x + 16, SOUND_SLIDER_Y, 18, 40))
-    pygame.draw.rect(SCREEN, LIGHT_GREY, (el_x, SOUND_SLIDER_Y + 16, 50, 8))
-    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16, SOUND_SLIDER_Y + 16), 16)
-    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16, SOUND_SLIDER_Y + 24), 16)
-    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16 + 18, SOUND_SLIDER_Y + 16), 16)
-    pygame.draw.circle(SCREEN, LIGHT_GREY, (el_x + 16 + 18, SOUND_SLIDER_Y + 24), 16)
+    dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
+    drawText(str(round(optionsValues("sound") * 100)) + "%", SOUND_PERCENTAGE_X, SOUND_PERCENTAGE_Y)
+    drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
+    drawObject(DRAGGER, dragger_x, SOUND_DRAGGER_Y)
 
 
 # Stats menu
