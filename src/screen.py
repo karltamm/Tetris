@@ -66,16 +66,19 @@ LOGO_Y = PADDING
 START_BTN_X = PADDING
 START_BTN_Y = PADDING
 
-OPTIONS_BTN_X = PADDING
-OPTIONS_BTN_Y = START_BTN_Y + BTN_HEIGHT + NEAR
+CONTINUE_BTN_X = START_BTN_X
+CONTINUE_BTN_Y = START_BTN_Y + BTN_HEIGHT + NEAR
 
-STATS_BTN_X = PADDING
+OPTIONS_BTN_X = START_BTN_X
+OPTIONS_BTN_Y = CONTINUE_BTN_Y + BTN_HEIGHT + NEAR
+
+STATS_BTN_X = START_BTN_X
 STATS_BTN_Y = OPTIONS_BTN_Y + BTN_HEIGHT + NEAR
 
-TROPHIES_BTN_X = PADDING
+TROPHIES_BTN_X = START_BTN_X
 TROPHIES_BTN_Y = STATS_BTN_Y + BTN_HEIGHT + NEAR
 
-QUIT_BTN_X = PADDING
+QUIT_BTN_X = START_BTN_X
 QUIT_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
 
 INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 40
@@ -121,13 +124,20 @@ NEXT_BLOCK_AREA_Y = BOARD_Y
 
 # In-game buttons
 PAUSE_BTN_X = NEXT_BLOCK_TEXT_X
-PAUSE_BTN_Y = SCREEN_HEIGHT - PADDING - 2 * BTN_HEIGHT - NEAR
+PAUSE_BTN_Y = SCREEN_HEIGHT - PADDING - 3 * BTN_HEIGHT - 2 * NEAR
 
 RESUME_BTN_X = PAUSE_BTN_X
 RESUME_BTN_Y = PAUSE_BTN_Y
 
+SAVE_BTN_X = PAUSE_BTN_X
+SAVE_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
+
 END_BTN_X = PAUSE_BTN_X
-END_BTN_Y = PAUSE_BTN_Y + BTN_HEIGHT + NEAR
+END_BTN_Y = SAVE_BTN_Y + BTN_HEIGHT + NEAR
+
+# Save confirmation
+SAVED_TXT_X = (SCREEN_WIDTH - 200) / 2
+SAVED_TXT_Y = (SCREEN_HEIGHT - TITLE_HEIGHT) / 2
 
 # Powers
 POWERS_HEADING_X = NEXT_BLOCK_TEXT_X
@@ -256,19 +266,20 @@ def drawObject(object, x, y):
     SCREEN.blit(object, (x, y))
 
 
-def clickBox(mouse_pos, el_pos=(0, 0), type=0):  # 0-Button, 1-switch, 2-slider
-    mouse_x, mouse_y = mouse_pos
+def clickBox(el_pos=(0, 0), type=0):  # 0-Button, 1-switch, 2-slider
+    mouse_x, mouse_y = pygame.mouse.get_pos()
+
     # Determine for which UI element this clickbox is for
     if type == 0:
         width = BTN_WIDTH
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
-        el_x, el_y = el_pos
+        el_x, el_y = el_pos  # Element position
     elif type == 1:
         width = SWITCH_WIDTH
         height = SWITCH_HEIGHT
         corner_rad = SWITCH_CORNER_RAD
-        el_x, el_y = el_pos
+        el_x, el_y = el_pos  # Element position
     elif type == 2:
         width = DRAGGER_WIDTH
         height = DRAGGER_HEIGHT
@@ -276,7 +287,7 @@ def clickBox(mouse_pos, el_pos=(0, 0), type=0):  # 0-Button, 1-switch, 2-slider
         el_x = SOUND_SLIDER_BG_X + (SLIDING_DISTANCE * optionsValues("sound")) + 4
         el_y = SOUND_SLIDER_BG_Y - 12
 
-    # Create click areas
+    # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
     width_box = pygame.Rect(el_x, el_y + corner_rad, width, height - corner_rad * 2)
 
@@ -286,7 +297,7 @@ def clickBox(mouse_pos, el_pos=(0, 0), type=0):  # 0-Button, 1-switch, 2-slider
     bottom_right_corner = checkCornerRad(mouse_x, mouse_y, el_x + width - corner_rad,
                                          el_y + height - corner_rad, corner_rad)
     # Check for click
-    if height_box.collidepoint(mouse_pos) or width_box.collidepoint(mouse_pos):
+    if height_box.collidepoint(mouse_x, mouse_y) or width_box.collidepoint(mouse_x, mouse_y):
         return True
     elif top_left_corner or top_right_corner or bottom_left_corner or bottom_right_corner:
         return True
@@ -379,6 +390,7 @@ def showScore(score, high_score, stage):
 
 def showGameButtons():
     drawObject(PAUSE_BTN, PAUSE_BTN_X, PAUSE_BTN_Y)
+    drawObject(SAVE_BTN, SAVE_BTN_X, SAVE_BTN_Y)
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
@@ -388,6 +400,7 @@ def showPauseMenu():
 
     # Buttons
     drawObject(RESUME_BTN, RESUME_BTN_X, RESUME_BTN_Y)
+    drawObject(SAVE_BTN, SAVE_BTN_X, SAVE_BTN_Y)
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
@@ -404,23 +417,35 @@ def showGameOverScreen():
 
 def showCountdown(countdown):
     drawTransparentOverlay()
-    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT, )
 
     pygame.display.update()  # Without it, countdown is shown with delay
     pygame.time.delay(1000)  # Show current countdown for a second
 
 
-# MAIN MENU
-def showMainMenu():
-    # SCREEN.blit(LOGO, (LOGO_X, LOGO_Y))
+def showSaveConfirmation(resume_game_if_saved):
+    if not resume_game_if_saved:
+        showPauseMenu()
 
+    drawTransparentOverlay(dark=False)
+    drawText("Saved", SAVED_TXT_X, SAVED_TXT_Y, size=TITLE_SIZE, font=TITLE_FONT, color=DARK_GREY)
+    pygame.display.update()  # Without it, text wouldn't be on the screen to read
+    pygame.time.delay(1000)
+
+
+# MAIN MENU
+def showMainMenu(game_is_saved):
     drawObject(START_BTN, START_BTN_X, START_BTN_Y)
     drawObject(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
     drawObject(STATS_BTN, STATS_BTN_X, STATS_BTN_Y)
     drawObject(TROPHIES_BTN, TROPHIES_BTN_X, TROPHIES_BTN_Y)
     drawObject(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
+    drawObject(INSTRUCTION_IMAGE, INSTRUCTION_X, INSTRUCTION_Y)
 
-    SCREEN.blit(INSTRUCTION_IMAGE, (INSTRUCTION_X, INSTRUCTION_Y))
+    if game_is_saved:
+        drawObject(CONTINUE_BTN, CONTINUE_BTN_X, CONTINUE_BTN_Y)
+    else:
+        drawObject(CONTINUE_BTN_BW, CONTINUE_BTN_X, CONTINUE_BTN_Y)
 
 
 def drawNavigation(current_page, num_of_pages):
@@ -526,10 +551,10 @@ def trophyCompletion(stat, value):
         return GREY
 
 # POWERS
-def showPowersSelection(power):
+def showPowersSelection(powers_are_enabled, power):
     drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
 
-    if power.is_available:
+    if powers_are_enabled and power.is_available:
         if power.name == "Laser":
             button = LASER_BTN
         elif power.name == "Wishlist":

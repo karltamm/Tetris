@@ -53,6 +53,8 @@ CHATHURA_BOLD = pygame.freetype.Font(os.path.join("assets/fonts/chathura", "chat
 # Buttons
 # Main Menu
 START_BTN = loadImage("assets/buttons", "Start.png")
+CONTINUE_BTN = loadImage("assets/buttons", "Continue.png")
+CONTINUE_BTN_BW = loadImage("assets/buttons", "ContinueBW.png")
 OPTIONS_BTN = loadImage("assets/buttons", "Options.png")
 STATS_BTN = loadImage("assets/buttons", "Stats.png")
 TROPHIES_BTN = loadImage("assets/buttons", "Trophies.png")
@@ -60,6 +62,7 @@ QUIT_BTN = loadImage("assets/buttons", "Quit.png")
 
 # Game
 RESUME_BTN = loadImage("assets/buttons", "Resume.png")
+SAVE_BTN = loadImage("assets/buttons", "Save.png")
 PAUSE_BTN = loadImage("assets/buttons", "Pause.png")
 END_BTN = loadImage("assets/buttons", "End.png")
 NEW_GAME_BTN = loadImage("assets/buttons", "NewGame.png")
@@ -90,7 +93,6 @@ INSTRUCTION_IMAGE = loadImage("assets", "instruction.png")
 
 # Sounds
 MOVE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move.mp3"))
-MOVE2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move2.mp3"))
 MOVE3_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "move3.mp3"))
 ROTATE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rotate.mp3"))
 ROW_CLEARED_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rowcleared.mp3"))
@@ -98,13 +100,10 @@ GAME_OVER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "gameover.mp3
 RESUME_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "resume.mp3"))
 TICK_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "tick.mp3"))
 LASER_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser.mp3"))
-LASER2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser2.mp3"))
-LASER3_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "laser3.mp3"))
 APPEAR_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "appear.mp3"))
-TIMEUP_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup.mp3"))
-TIMEUP2_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "timeup2.mp3"))
 REWIND_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "rewind.mp3"))
 TAKEOFF_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "takeoff.mp3"))
+GAME_SAVE_SOUND = pygame.mixer.Sound(os.path.join("assets/sounds", "gamesave.mp3"))
 
 # Blocks
 BLOCK_I = loadImage("assets/blocks", "I_block.png")
