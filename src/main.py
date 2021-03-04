@@ -44,7 +44,7 @@ def runGame(load_game=False):
     new_game_button = (NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
 
     # Get game ready
-    powers_are_enabled = optionsValues("power_ups")
+    powers_are_enabled = optionsValues("powers")
     next_block_area = createNextBlockArea()
 
     if load_game:
@@ -77,7 +77,7 @@ def runGame(load_game=False):
         power.is_available = False  # Player has to solve rows to earn power
 
     score_counter = Score(current_score)
-    if optionsValues("power_ups"):
+    if optionsValues("powers"):
         high_score = getStat("high_score_powers")
     else:
         high_score = getStat("high_score")
@@ -113,7 +113,7 @@ def runGame(load_game=False):
                 game_is_running = False
                 game_is_over = True
                 # STATS
-                if (optionsValues("power_ups")):
+                if (optionsValues("powers")):
                     saveStat("high_score_powers", current_score, compare=1)
                 else:
                     saveStat("high_score", current_score, compare=1)
@@ -439,7 +439,7 @@ def options():
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
     block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
-    power_ups_switch = (POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+    powers_switch = (POWERS_SWITCH_X, POWERS_SWITCH_Y)
 
     run = True
     while run:
@@ -466,8 +466,8 @@ def options():
                         optionsValues("stages", change=True)
                     elif clickBox(block_shadows_switch, element=1):
                         optionsValues("block_shadows", change=True)
-                    elif clickBox(power_ups_switch, element=1):
-                        optionsValues("power_ups", change=True)
+                    elif clickBox(powers_switch, element=1):
+                        optionsValues("powers", change=True)
 
 
 def regulateSoundSlider():

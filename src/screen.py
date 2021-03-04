@@ -84,6 +84,9 @@ QUIT_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
 INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 40
 INSTRUCTION_Y = START_BTN_Y
 
+CREDITS_X = PADDING
+CREDITS_Y = SCREEN_HEIGHT - PADDING - TEXT_HEIGHT
+
 # Score
 SCORE_TEXT_X = PADDING
 SCORE_TEXT_Y = PADDING
@@ -206,10 +209,10 @@ BLOCK_SHADOW_TEXT_Y = STAGES_TEXT_Y + HEADING2_HEIGHT + FAR
 BLOCK_SHADOW_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
 BLOCK_SHADOW_SWITCH_Y = BLOCK_SHADOW_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
 
-POWER_UPS_TEXT_X = SOUND_TEXT_X
-POWER_UPS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING2_HEIGHT + FAR
-POWER_UPS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
-POWER_UPS_SWITCH_Y = POWER_UPS_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
+POWERS_TEXT_X = SOUND_TEXT_X
+POWERS_TEXT_Y = BLOCK_SHADOW_TEXT_Y + HEADING2_HEIGHT + FAR
+POWERS_SWITCH_X = SCREEN_WIDTH - PADDING - SWITCH_WIDTH
+POWERS_SWITCH_Y = POWERS_TEXT_Y + (SWITCH_HEIGHT - HEADING2_HEIGHT) / 2
 
 # Stats menu
 STATS_TITLE_X = PAGE_TITLE_X
@@ -445,6 +448,8 @@ def showMainMenu(game_is_saved):
     else:
         drawObject(CONTINUE_BTN_BW, CONTINUE_BTN_X, CONTINUE_BTN_Y)
 
+    drawText("Made by Kasper, Danel and Karl-Heinrich", CREDITS_X, CREDITS_Y)
+
 
 def drawNavigation(current_page, num_of_pages):
     # Back to main menu
@@ -475,7 +480,7 @@ def showOptionsMenu():
     drawText("Sound", SOUND_TEXT_X, SOUND_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Stages", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Block shadows", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    drawText("Power ups", POWER_UPS_TEXT_X, POWER_UPS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+    drawText("Powers", POWERS_TEXT_X, POWERS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
     drawOptionsSwitches()
     drawSoundSlider()
@@ -492,10 +497,10 @@ def drawOptionsSwitches():
     elif not optionsValues("block_shadows"):
         drawObject(OFF_SWITCH, BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
 
-    if optionsValues("power_ups"):
-        drawObject(ON_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
-    elif not optionsValues("power_ups"):
-        drawObject(OFF_SWITCH, POWER_UPS_SWITCH_X, POWER_UPS_SWITCH_Y)
+    if optionsValues("powers"):
+        drawObject(ON_SWITCH, POWERS_SWITCH_X, POWERS_SWITCH_Y)
+    elif not optionsValues("powers"):
+        drawObject(OFF_SWITCH, POWERS_SWITCH_X, POWERS_SWITCH_Y)
 
 
 def drawSoundSlider():
