@@ -27,9 +27,9 @@ TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 500000],
              ["", "", "", 2]]]
 
 # INITIALIZE
-STATS_DB = shelve.open(os.path.join("data", "stats"))
-OPTIONS_DB = shelve.open(os.path.join("data", "options"))
-SAVED_GAME_DB = shelve.open(os.path.join("data", "saved_game"))
+STATS_DB = shelve.open(os.path.join("../data", "stats"))
+OPTIONS_DB = shelve.open(os.path.join("../data", "options"))
+SAVED_GAME_DB = shelve.open(os.path.join("../data", "saved_game"))
 
 
 # CLASS
