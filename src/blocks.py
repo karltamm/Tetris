@@ -210,19 +210,3 @@ class BlocksBatch:
             self.newBatch()
 
         return self.blocks.pop()
-"""if block_cell == 8:
-                    error = False
-                    if -1 < col < BOARD_WIDTH and row < BOARD_HEIGHT:
-                        print(len(self.used_board_cells))
-                        for cell in range(len(self.used_board_cells)):  # or error == True:
-                            print("loop")
-                            if self.used_board_cells[cell] == (row, col):
-                                print("error")
-                                error = True
-                        if not error:
-                            new_board[row][col] = block_cell
-                            # temp_used_board_cells.append((row, col))
-                        else:
-                            return False  # Error: blocks can't overlap
-                    else:
-                        return False  # Error: block would be out of bounds"""
