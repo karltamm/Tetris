@@ -98,6 +98,7 @@ DRAGGER = loadImage("sliders", "Dragger.png")
 
 # Misc
 INSTRUCTION_IMAGE = loadImage("", "instruction.png")
+ICON = loadImage("icons", "icon.png")
 
 # Sounds
 MOVE_SOUND = loadSound("playing", "move.mp3")
