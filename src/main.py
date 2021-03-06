@@ -11,7 +11,7 @@ from animations import TetrisRain
 # INITIALIZE
 pygame.init()
 pygame.display.set_caption("Tetris")
-pygame.display.set_icon(BLUE_CELL)
+pygame.display.set_icon(ICON)
 fps_controller = FPSController()
 
 
