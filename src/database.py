@@ -6,25 +6,30 @@ import os
 SINGLE_ROW_POINTS = 100
 
 # Trophies
-TROPHIES = [[["Legend", "Reach 500,000 points", "high_score", 500000],
-             ["Master", "Reach 100,000 point", "high_score", 100000],
-             ["Advanced", "Reach 50,000 points", "high_score", 50000],
-             ["Novice", "Reach 10,000 points", "high_score", 10000]],
+TROPHIES = [[["Novice(classic)", "Reach 10,000 points in classic mode", "high_score", 10000],
+             ["Advanced(classic)", "Reach 50,000 points in classic mode", "high_score", 50000],
+             ["Master(classic)", "Reach 100,000 point in classic mode", "high_score", 100000],
+             ["Legend(classic)", "Reach 250,000 points in classic mode", "high_score", 250000]],
 
-            [["Tetris", " Do 10 Quadruple row clears", "rows_4", 10],
-             ["Clear", "Clear 100 rows", "rows", 100],
+            [["Novice(power-ups)", "Reach 10,000 points with power-ups", "high_score_powers", 20000],
+             ["Advanced(power-ups)", "Reach 65,000 points with power-ups", "high_score_powers", 65000],
+             ["Master(power-ups)", "Reach 125,000 point with power-ups", "high_score_powers", 125000],
+             ["Legend(power-ups)", "Reach 300,000 points with power-ups", "high_score_powers", 300000]],
+
+            [["Double", "Do 50 double row clears", "rows_2", 50],
+             ["Triple", "Do 25 triple row clears", "rows_3", 25],
+             ["Tetris", "Do 10 quadruple row clears", "rows_4", 10],
+             ["Clean board", "Make a quadruple-line perfect clear", "perfect_clears_4", 1]],
+
+            [["Clear", "Clear 100 rows", "rows", 100],
              ["Clearer", "Clear 250 rows", "rows", 250],
-             ["Clearest", "Clear 500 rows", "rows", 500]],
+             ["Clearest", "Clear 500 rows", "rows", 500],
+             ["Clear game", "Clear 100 rows in one game", "single_game_rows", 100]],
 
-            [["No-life", "Spend 2 hours in-game", "time_ingame", 7200],
+            [["Long game", "Spend 10 minutes in one game", "single_game_time_ingame", 600],
+             ["No-life", "Spend 2 hours in-game", "time_ingame", 7200],
              ["Try hard", "Get all trophies", "trophies", 16],
-             ["Clean board", "Make a quadruple-line perfect clears", "perfect_clears_4", 1],
-             ["Gamer", "Play 100 games", "games_played", 100]],
-
-            [["Long game", "Spend 10 minutes in one game", "", 600],
-             ["", "", "", 2],
-             ["", "", "", 2],
-             ["", "", "", 2]]]
+             ["Gamer", "Play 100 games", "games_played", 100]]]
 
 # INITIALIZE
 STATS_DB = shelve.open(os.path.join("../data", "stats"))

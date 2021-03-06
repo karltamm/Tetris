@@ -95,7 +95,7 @@ class Block:
                 block_cell = self.shape[self.rotation][row - self.y][col - self.x]
 
                 if block_cell != 0:
-                    if col < BOARD_WIDTH and col > -1 and row < BOARD_HEIGHT:
+                    if -1 < col < BOARD_WIDTH and row < BOARD_HEIGHT:
                         if new_board[row][col] == 0 or new_board[row][
                             col] == 8:  # No collision with cells of 0 or 8 value
                             # Cell isn't occupied by another block
@@ -128,14 +128,56 @@ class ShadowBlock(Block):
             self.shape = shape
             self.rotation = rotation
             self.x = current_block.x
-            self.y = current_block.y + 3
+            self.y = current_block.y
             self.used_board_cells = []
             self.is_placed = False
             self.board = board
 
-            # Drops shadow block down as much as possible
-            while not self.is_placed:
-                self.move(board, 0, 1, autofall=True)
+            # Drops shadow block down to position
+            self.drop(board, current_block)
+
+    def drop(self, board, current_block):
+        while not self.is_placed:
+            if self.placeShadow(board, current_block):
+                self.y += 1
+            else:
+                self.is_placed = True
+
+    def placeShadow(self, board, current_block):
+        new_board = copyBoard(board)
+        self.removeCellsFromBoard(new_board)
+        temp_used_board_cells = []
+
+        # Check whether block can be placed on board area (4x4 cells)
+        for row in range(self.y, self.y + BLOCK_HEIGHT):
+            for col in range(self.x, self.x + BLOCK_WIDTH):
+                shadow_block_cell = self.shape[self.rotation][row - self.y][col - self.x]
+                if shadow_block_cell != 0:
+                    if -1 < col < BOARD_WIDTH and row < BOARD_HEIGHT:
+                        # No collision with cells of 0 or 8 value
+                        if new_board[row][col] == 0 or new_board[row][col] == 8:
+                            # Cell isn't occupied by another block
+                            new_board[row][col] = shadow_block_cell
+                            temp_used_board_cells.append((row, col))
+                        else:  # Ignores collision with current block
+                            cb_collision = False
+                            for cb_row in range(current_block.y, current_block.y + BLOCK_HEIGHT):
+                                current_block_cell = current_block.shape[current_block.rotation][
+                                    cb_row - current_block.y][col - current_block.x]
+                                # Ignores, if shadow block collides with current block
+                                # unless placed block is in current blocks 4x4 area
+                                if cb_row == row and new_board[row][col] == current_block_cell:
+                                    cb_collision = True
+                                    break
+                            if not cb_collision:
+                                return False  # Error: blocks can't overlap
+                    else:
+                        return False  # Error: block would be out of bounds
+
+        # Block placed, board updated
+        self.used_board_cells = temp_used_board_cells
+        copyBoard(new_board, board)
+        return True  # Block placement was successful
 
     def clearShadow(self, board):
         for row in range(BOARD_HEIGHT):
@@ -168,3 +210,19 @@ class BlocksBatch:
             self.newBatch()
 
         return self.blocks.pop()
+"""if block_cell == 8:
+                    error = False
+                    if -1 < col < BOARD_WIDTH and row < BOARD_HEIGHT:
+                        print(len(self.used_board_cells))
+                        for cell in range(len(self.used_board_cells)):  # or error == True:
+                            print("loop")
+                            if self.used_board_cells[cell] == (row, col):
+                                print("error")
+                                error = True
+                        if not error:
+                            new_board[row][col] = block_cell
+                            # temp_used_board_cells.append((row, col))
+                        else:
+                            return False  # Error: blocks can't overlap
+                    else:
+                        return False  # Error: block would be out of bounds"""
