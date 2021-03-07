@@ -113,7 +113,7 @@ def runGame(load_game=False):
                 game_is_running = False
                 game_is_over = True
                 # STATS
-                if (optionsValues("powers")):
+                if optionsValues("powers"):
                     saveStat("high_score_powers", current_score, compare=1)
                 else:
                     saveStat("high_score", current_score, compare=1)
@@ -123,6 +123,10 @@ def runGame(load_game=False):
                 saveStat("blocks_created", blocks_created)
                 saveStat("time_ingame", seconds_in_game)
                 saveStat("games_played", 1)
+
+                # Single game stats
+                saveStat("single_game_rows", solved_rows, compare=1)
+                saveStat("single_game_time_ingame", seconds_in_game, compare=1)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
