@@ -408,6 +408,12 @@ def launchMainMenu():
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)
     mouse_btn_is_held_down = False
     active_button = None
+    
+    # Navigation
+    MENU_BUTTONS = (start_button, continue_button, options_button, stats_button, trophies_button, quit_button)
+    BUTTON_ACTIONS = [runGame, runGame, options, stats, trophies, closeProgram]
+    selected_index = 0
+    selected_button = MENU_BUTTONS[selected_index]
 
     tetris_rain = TetrisRain()  # Animation
     game_is_saved = checkIfGameIsSaved()
@@ -426,6 +432,7 @@ def launchMainMenu():
         else:
             activateButtonHoverState(active_button)
 
+        highlightSelected(selected_button)
         pygame.display.update()
 
         # UI control
@@ -449,7 +456,7 @@ def launchMainMenu():
             if event.type == pygame.QUIT:
                 closeProgram()
 
-            # Buttons clicks
+            # Mouse clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     mouse_btn_is_held_down = True
@@ -474,6 +481,45 @@ def launchMainMenu():
                         trophies()
                     elif active_button == quit_button:
                         closeProgram()
+
+            # Mouse navigation
+            if event.type == pygame.MOUSEMOTION:
+                if clickBox(start_button):
+                    selected_index = 0
+                    selected_button = MENU_BUTTONS[selected_index]
+                elif clickBox(continue_button) and game_is_saved:
+                    selected_index = 1
+                    selected_button = MENU_BUTTONS[selected_index]
+                elif clickBox(options_button):
+                    selected_index = 2
+                    selected_button = MENU_BUTTONS[selected_index]
+                elif clickBox(stats_button):
+                    selected_index = 3
+                    selected_button = MENU_BUTTONS[selected_index]
+                elif clickBox(trophies_button):
+                    selected_index = 4
+                    selected_button = MENU_BUTTONS[selected_index]
+                elif clickBox(quit_button):
+                    selected_index = 5
+                    selected_button = MENU_BUTTONS[selected_index]
+                        
+            # Keyboard navigation
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    if not(selected_index == len(MENU_BUTTONS)-1):
+                        selected_index += 1
+                        selected_button = MENU_BUTTONS[selected_index]
+                elif event.key == pygame.K_UP:
+                    if not(selected_index == 0):
+                        selected_index -= 1
+                        selected_button = MENU_BUTTONS[selected_index]
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    run = False
+                    if(selected_index == 1):
+                        BUTTON_ACTIONS[selected_index](game_is_saved)
+                    else:
+                        BUTTON_ACTIONS[selected_index]()
+                
 
 
 # Options menu
@@ -511,6 +557,10 @@ def options():
                         optionsValues("block_shadows", change=True)
                     elif clickBox(powers_switch, element=1):
                         optionsValues("powers", change=True)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+                    launchMainMenu()
 
 
 def regulateSoundSlider():
@@ -571,6 +621,15 @@ def stats(page=1):
                     elif clickBox(next_button) and page != len(STATS_VALUES):
                         # Cant go higher than last page
                         page += 1
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+                    launchMainMenu()
+                elif event.key == pygame.K_RIGHT and page != len(STATS_VALUES):
+                    page += 1
+                elif event.key == pygame.K_LEFT and page != 1:
+                    page -= 1
+                    
 
 
 def trophies():
@@ -603,6 +662,14 @@ def trophies():
                         page -= 1
                     if clickBox(next_button) and page != len(TROPHIES):
                         page += 1
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+                    launchMainMenu()
+                elif event.key == pygame.K_RIGHT and page != len(TROPHIES):
+                    page += 1
+                elif event.key == pygame.K_LEFT and page != 1:
+                    page -= 1
 
 
 if __name__ == "__main__":
