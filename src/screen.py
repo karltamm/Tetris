@@ -276,6 +276,8 @@ def clickBox(el_pos=(0, 0), element=0):  # 0-Button, 1-switch, 2-slider
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
         el_x, el_y = el_pos  # Element position
+
+        drawObject(CLICK_MASK, el_x, el_y)
     elif element == 1:
         width = SWITCH_WIDTH
         height = SWITCH_HEIGHT
@@ -309,6 +311,16 @@ def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if m
     ysq = math.pow(mouse_y - button_y, 2)
     if math.sqrt(xsq + ysq) < radius - 1:
         return True
+
+def activateButtonClickState(button):
+    if button is not None:
+        btn_x, btn_y = button
+        drawObject(CLICK_MASK, btn_x, btn_y)
+
+def activateButtonHoverState(button):
+    if button is not None:
+        btn_x, btn_y = button
+        drawObject(HOVER_MASK, btn_x, btn_y)
 
 
 def drawTransparentOverlay(opacity=200, dark=True):

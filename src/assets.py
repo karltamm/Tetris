@@ -62,6 +62,9 @@ CHATHURA_XBOLD = loadFont("chathura", "chathura-extrabold.ttf")
 CHATHURA_BOLD = loadFont("chathura", "chathura-bold.ttf")
 
 # Buttons
+CLICK_MASK = loadImage("buttons", "click_mask.png")
+HOVER_MASK = loadImage("buttons", "hover_mask.png")
+
 # Main Menu
 START_BTN = loadImage("buttons", "Start.png")
 CONTINUE_BTN = loadImage("buttons", "Continue.png")

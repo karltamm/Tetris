@@ -155,7 +155,7 @@ def runGame(load_game=False):
                             game_is_being_saved = True
 
             # Buttons clicks
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 if game_is_over or (not power_is_active and not countdown_is_active):
                     if clickBox(end_button):
                         # End game and go to the main menu
@@ -406,9 +406,10 @@ def launchMainMenu():
     stats_button = (STATS_BTN_X, STATS_BTN_Y)
     trophies_button = (TROPHIES_BTN_X, TROPHIES_BTN_Y)
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)
+    mouse_btn_is_held_down = False
+    active_button = None
 
     tetris_rain = TetrisRain()  # Animation
-
     game_is_saved = checkIfGameIsSaved()
 
     run = True
@@ -419,9 +420,31 @@ def launchMainMenu():
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showMainMenu(game_is_saved)
+
+        if mouse_btn_is_held_down:
+            activateButtonClickState(active_button)
+        else:
+            activateButtonHoverState(active_button)
+
         pygame.display.update()
 
         # UI control
+        # On which button is cursor?
+        if clickBox(start_button):
+            active_button = start_button
+        elif clickBox(continue_button) and game_is_saved:
+            active_button = continue_button
+        elif clickBox(options_button):
+            active_button = options_button
+        elif clickBox(stats_button):
+            active_button = stats_button
+        elif clickBox(trophies_button):
+            active_button = trophies_button
+        elif clickBox(quit_button):
+            active_button = quit_button
+        else:
+            active_button = None
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
@@ -429,22 +452,27 @@ def launchMainMenu():
             # Buttons clicks
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if clickBox(start_button):
+                    mouse_btn_is_held_down = True
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    mouse_btn_is_held_down = False
+                    if active_button == start_button:
                         run = False  # Stop main menu process
                         runGame()
-                    if clickBox(continue_button) and game_is_saved:
+                    elif active_button == continue_button and game_is_saved:
                         run = False  # Stop main menu process
                         runGame(game_is_saved)
-                    elif clickBox(options_button):
+                    elif active_button == options_button:
                         run = False  # Stop main menu process
                         options()
-                    elif clickBox(stats_button):
+                    elif active_button == stats_button:
                         run = False  # Stop main menu proccess
                         stats()
-                    elif clickBox(trophies_button):
+                    elif active_button == trophies_button:
                         run = False  # Stop main menu process
                         trophies()
-                    elif clickBox(quit_button):
+                    elif active_button == quit_button:
                         closeProgram()
 
 
@@ -470,7 +498,7 @@ def options():
             if event.type == pygame.QUIT:
                 closeProgram()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if clickBox(back_button):
                         run = False
@@ -533,7 +561,7 @@ def stats(page=1):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if clickBox(back_button):
                         run = False  # Stop main menu proccess
@@ -566,7 +594,7 @@ def trophies():
             if event.type == pygame.QUIT:
                 closeProgram()
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONUP:
                 if event.button == 1:
                     if clickBox(back_button):
                         run = False
@@ -578,6 +606,6 @@ def trophies():
 
 
 if __name__ == "__main__":
-    pygame.mixer.music.load(MUSIC5)
+    pygame.mixer.music.load(MUSIC4)
     pygame.mixer.music.play(loops=-1)
     launchMainMenu()
