@@ -23,6 +23,7 @@ def loadFont(folder, file_name):
 def loadSound(folder, file_name):
     return pygame.mixer.Sound(os.path.join("../assets/sounds", folder, file_name))
 
+
 def getMusicFilePath(file_name):
     return os.path.join("../assets/music", file_name)
 
@@ -62,6 +63,9 @@ CHATHURA_XBOLD = loadFont("chathura", "chathura-extrabold.ttf")
 CHATHURA_BOLD = loadFont("chathura", "chathura-bold.ttf")
 
 # Buttons
+CLICK_MASK = loadImage("buttons", "click_mask.png")
+HOVER_MASK = loadImage("buttons", "hover_mask.png")
+
 # Main Menu
 START_BTN = loadImage("buttons", "Start.png")
 CONTINUE_BTN = loadImage("buttons", "Continue.png")
