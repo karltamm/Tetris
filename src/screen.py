@@ -436,6 +436,11 @@ def showSaveConfirmation(resume_game_if_saved):
     drawText("Saved", SAVED_TXT_X, SAVED_TXT_Y, size=TITLE_SIZE, font=TITLE_FONT, color=DARK_GREY)
     updateScreenAndDelayNextUpdate()
 
+def highlightSelected(button):
+    overlay = pygame.Surface((BTN_WIDTH, BTN_HEIGHT))
+    overlay.set_alpha(150) # Transparency level
+    overlay.fill(BLACK)
+    drawObject(overlay, button[0], button[1])
 
 # MAIN MENU
 def showMainMenu(game_is_saved):
