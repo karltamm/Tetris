@@ -23,6 +23,7 @@ def loadFont(folder, file_name):
 def loadSound(folder, file_name):
     return pygame.mixer.Sound(os.path.join("../assets/sounds", folder, file_name))
 
+
 def getMusicFilePath(file_name):
     return os.path.join("../assets/music", file_name)
 
