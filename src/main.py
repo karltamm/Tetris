@@ -11,7 +11,7 @@ from animations import TetrisRain
 # INITIALIZE
 pygame.init()
 pygame.display.set_caption("Tetris")
-pygame.display.set_icon(ICON)
+pygame.display.set_icon(BLUE_CELL)
 fps_controller = FPSController()
 
 
@@ -143,6 +143,16 @@ def runGame(load_game=False):
                     elif powers_are_enabled and power.is_available and game_is_running:
                         power_is_active = True
                         game_is_running = False
+                
+                if event.key == pygame.K_s:
+                    if not power_is_active and not game_is_over:
+                        # Save game
+                        if game_is_running:
+                            game_is_being_saved = True
+                            resume_game_if_saved = True
+                            game_is_running = False
+                        else:
+                            game_is_being_saved = True
 
             # Buttons clicks
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -150,7 +160,7 @@ def runGame(load_game=False):
                     if clickBox(end_button):
                         # End game and go to the main menu
                         run = False  # Stop game process
-                        main_menu()
+                        launchMainMenu()
 
                 if power_is_active:
                     if clickBox(cancel_power_button):
@@ -173,7 +183,7 @@ def runGame(load_game=False):
                         if powers_are_enabled and power.is_available:
                             power_is_active = True
                             game_is_running = False
-                    elif clickBox(save_button) and not game_is_being_saved:
+                    elif clickBox(save_button):
                         game_is_being_saved = True
                         resume_game_if_saved = True
                         game_is_running = False
@@ -181,7 +191,7 @@ def runGame(load_game=False):
                     if clickBox(pause_button):
                         # Unpause the game
                         countdown_is_active = True
-                    elif clickBox(save_button) and not game_is_being_saved:
+                    elif clickBox(save_button):
                         game_is_being_saved = True
                         game_is_running = False
 
@@ -346,6 +356,7 @@ def runGame(load_game=False):
         elif countdown_is_active:
             showCountdown(countdown)
             countdown, countdown_is_active, game_is_running = runCountdown(countdown)
+            game_is_being_saved = False # If user tries to save game during countdown, ignore it
         elif game_is_being_saved:
             playSound(GAME_SAVE_SOUND)
             showSaveConfirmation(resume_game_if_saved)
@@ -387,7 +398,7 @@ def resumeGameAfterPower():
 
 
 # MAIN MENU
-def main_menu():
+def launchMainMenu():
     # UI
     start_button = (START_BTN_X, START_BTN_Y)  # New game
     continue_button = (CONTINUE_BTN_X, CONTINUE_BTN_Y)  # Load previously saved game
@@ -463,7 +474,7 @@ def options():
                 if event.button == 1:
                     if clickBox(back_button):
                         run = False
-                        main_menu()
+                        launchMainMenu()
                     elif clickBox(element=2):  # Slider
                         regulateSoundSlider()
                     elif clickBox(stages_switch, element=1):
@@ -526,7 +537,7 @@ def stats(page=1):
                 if event.button == 1:
                     if clickBox(back_button):
                         run = False  # Stop main menu proccess
-                        main_menu()
+                        launchMainMenu()
                     elif clickBox(previous_button) and page != 1:
                         page -= 1
                     elif clickBox(next_button) and page != len(STATS_VALUES):
@@ -559,7 +570,7 @@ def trophies():
                 if event.button == 1:
                     if clickBox(back_button):
                         run = False
-                        main_menu()
+                        launchMainMenu()
                     if clickBox(previous_button) and page != 1:
                         page -= 1
                     if clickBox(next_button) and page != len(TROPHIES):
@@ -567,4 +578,6 @@ def trophies():
 
 
 if __name__ == "__main__":
-    main_menu()  # Launch main menu when program is opened
+    pygame.mixer.music.load(MUSIC5)
+    pygame.mixer.music.play(loops=-1)
+    launchMainMenu()

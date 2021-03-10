@@ -326,6 +326,11 @@ def playSound(sound):
     sound.set_volume(optionsValues("sound"))
     sound.play()
 
+def updateScreenAndDelayNextUpdate(delay = 1000):
+    pygame.display.update()  # Without it, UI content wouldn't be displayed for determined time
+    pygame.time.delay(delay) # default delay is 1000 ms
+    pygame.event.clear() # Don't accept inputs during delay, because game wasn't active
+
 
 # GAME
 def showBoard(board):
@@ -418,10 +423,9 @@ def showGameOverScreen():
 
 def showCountdown(countdown):
     drawTransparentOverlay()
-    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT, )
+    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    updateScreenAndDelayNextUpdate()
 
-    pygame.display.update()  # Without it, countdown is shown with delay
-    pygame.time.delay(1000)  # Show current countdown for a second
 
 
 def showSaveConfirmation(resume_game_if_saved):
@@ -430,8 +434,7 @@ def showSaveConfirmation(resume_game_if_saved):
 
     drawTransparentOverlay(dark=False)
     drawText("Saved", SAVED_TXT_X, SAVED_TXT_Y, size=TITLE_SIZE, font=TITLE_FONT, color=DARK_GREY)
-    pygame.display.update()  # Without it, text wouldn't be on the screen to read
-    pygame.time.delay(1000)
+    updateScreenAndDelayNextUpdate()
 
 
 # MAIN MENU
