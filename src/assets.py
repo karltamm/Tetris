@@ -23,6 +23,9 @@ def loadFont(folder, file_name):
 def loadSound(folder, file_name):
     return pygame.mixer.Sound(os.path.join("../assets/sounds", folder, file_name))
 
+def getMusicFilePath(file_name):
+    return os.path.join("../assets/music", file_name)
+
 
 # ASSETS
 # Cells
@@ -66,6 +69,7 @@ CONTINUE_BTN_BW = loadImage("buttons", "ContinueBW.png")
 OPTIONS_BTN = loadImage("buttons", "Options.png")
 STATS_BTN = loadImage("buttons", "Stats.png")
 TROPHIES_BTN = loadImage("buttons", "Trophies.png")
+SHORTCUTS_BTN = loadImage("buttons", "Shortcuts.png")
 QUIT_BTN = loadImage("buttons", "Quit.png")
 
 # Game
@@ -98,7 +102,16 @@ DRAGGER = loadImage("sliders", "Dragger.png")
 
 # Misc
 INSTRUCTION_IMAGE = loadImage("", "instruction.png")
-ICON = loadImage("icons", "icon.png")
+
+# Keys
+ESC_KEY_IMG = loadImage("keys", "esc_key.png")
+C_KEY_IMG = loadImage("keys", "C_key.png")
+E_KEY_IMG = loadImage("keys", "E_key.png")
+N_KEY_IMG = loadImage("keys", "N_key.png")
+O_KEY_IMG = loadImage("keys", "O_key.png")
+P_KEY_IMG = loadImage("keys", "P_key.png")
+S_KEY_IMG = loadImage("keys", "S_key.png")
+T_KEY_IMG = loadImage("keys", "T_key.png")
 
 # Sounds
 MOVE_SOUND = loadSound("playing", "move.mp3")
@@ -113,6 +126,13 @@ LASER_SOUND = loadSound("powers", "laser.mp3")
 APPEAR_SOUND = loadSound("powers", "appear.mp3")
 REWIND_SOUND = loadSound("powers", "rewind.mp3")
 TAKEOFF_SOUND = loadSound("powers", "takeoff.mp3")
+
+# Music
+MUSIC1 = getMusicFilePath("music1.mp3")
+MUSIC2 = getMusicFilePath("music2.mp3")
+MUSIC3 = getMusicFilePath("music3.mp3")
+MUSIC4 = getMusicFilePath("music4.mp3")
+MUSIC5 = getMusicFilePath("music5.mp3")
 
 # Blocks
 BLOCK_I = loadImage("blocks", "I_block.png")
