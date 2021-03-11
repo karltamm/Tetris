@@ -491,7 +491,7 @@ def regulateSoundSlider():
 
         dragger_pos = pygame.mouse.get_pos()[0] - x_dif  # dragger pos relative to mouse pos
         if SOUND_DRAGGER_X < dragger_pos < (SOUND_DRAGGER_X + SLIDING_DISTANCE):
-            value = (dragger_pos - SOUND_DRAGGER_X) / SLIDING_DISTANCE
+            value = round((dragger_pos - SOUND_DRAGGER_X) / SLIDING_DISTANCE, 2)
         elif dragger_pos <= SOUND_DRAGGER_X:
             value = 0
         elif dragger_pos >= SOUND_DRAGGER_X + SLIDING_DISTANCE:
