@@ -81,20 +81,20 @@ class Score:
 
 # FUNCTIONS
 # Options
-def optionsValues(name, change=False, new_value=None):
+def optionsValues(option, change=False, new_value=None):
     try:
-        value = OPTIONS_DB[name]
+        value = OPTIONS_DB[option]
     except:
-        if name == "sound":
+        if option == "sound" or option == "music":
             value = 1
         else:
             value = True
     if change:  # inverts boolean value
         value = not value
-        OPTIONS_DB[name] = value
+        OPTIONS_DB[option] = value
     elif new_value is not None:  # Changes int value
         value = new_value
-        OPTIONS_DB[name] = value
+        OPTIONS_DB[option] = value
     else:  # if value wasn't changed, returns it
         return value
 
