@@ -191,13 +191,21 @@ PAGE_TITLE_Y = BACK_BTN_Y + BTN_HEIGHT + 2 * FAR
 OPTIONS_TITLE_X = PAGE_TITLE_X
 OPTIONS_TITLE_Y = PAGE_TITLE_Y
 
+MUSIC_TEXT_X = BACK_BTN_X
+MUSIC_TEXT_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
+MUSIC_SLIDER_BG_X = SCREEN_WIDTH - PADDING - SLIDER_BG_WIDTH
+MUSIC_SLIDER_BG_Y = MUSIC_TEXT_Y + (HEADING2_HEIGHT - SLIDER_BG_HEIGHT) / 2
+MUSIC_DRAGGER_X = MUSIC_SLIDER_BG_X + 4
+MUSIC_DRAGGER_Y = MUSIC_SLIDER_BG_Y - 12
+MUSIC_VAL_Y = MUSIC_SLIDER_BG_Y + 4
+
 SOUND_TEXT_X = BACK_BTN_X
-SOUND_TEXT_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
-SOUND_SLIDER_BG_X = SCREEN_WIDTH - PADDING - SLIDER_BG_WIDTH
+SOUND_TEXT_Y = MUSIC_TEXT_Y + HEADING2_HEIGHT + FAR
+SOUND_SLIDER_BG_X = MUSIC_SLIDER_BG_X
 SOUND_SLIDER_BG_Y = SOUND_TEXT_Y + (HEADING2_HEIGHT - SLIDER_BG_HEIGHT) / 2
-SOUND_DRAGGER_X = SOUND_SLIDER_BG_X + 4
+SOUND_DRAGGER_X = MUSIC_DRAGGER_X
 SOUND_DRAGGER_Y = SOUND_SLIDER_BG_Y - 12
-SOUND_VAL_Y = SOUND_DRAGGER_Y - 30
+SOUND_VAL_Y = SOUND_SLIDER_BG_Y + 4
 
 STAGES_TEXT_X = SOUND_TEXT_X
 STAGES_TEXT_Y = SOUND_TEXT_Y + HEADING2_HEIGHT + FAR
@@ -260,15 +268,20 @@ class FPSController:
 
 
 # GENERAL FUNCTIONS
-def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT):
-    font.render_to(SCREEN, (x, y), text, color, size=size)
+def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT, align_right=False):
+    if align_right:
+        text_width = font.render(text, size=size)[1].width
+        font.render_to(SCREEN, (x-text_width, y), text, color, size=size)
+    else:
+        font.render_to(SCREEN, (x, y), text, color, size=size)
+
 
 
 def drawObject(object, x, y):
     SCREEN.blit(object, (x, y))
 
 
-def clickBox(el_pos=(0, 0), element=0):  # 0-Button, 1-switch, 2-slider
+def clickBox(el_pos=(0, 0), element=0, slider_value=0):  # 0-Button, 1-switch, 2-slider
     mouse_x, mouse_y = pygame.mouse.get_pos()
     # Determine for which UI element this clickbox is for
     if element == 0:
@@ -284,11 +297,11 @@ def clickBox(el_pos=(0, 0), element=0):  # 0-Button, 1-switch, 2-slider
         corner_rad = SWITCH_CORNER_RAD
         el_x, el_y = el_pos  # Element position
     elif element == 2:
-        width = DRAGGER_WIDTH
         height = DRAGGER_HEIGHT
+        width = DRAGGER_WIDTH
         corner_rad = DRAGGER_CORNER_RAD
-        el_x = SOUND_SLIDER_BG_X + (SLIDING_DISTANCE * optionsValues("sound")) + 4
-        el_y = SOUND_SLIDER_BG_Y - 12
+        el_x = el_pos[0] + (SLIDING_DISTANCE * optionsValues(slider_value)) + 4
+        el_y = el_pos[1] - 12
 
     # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
@@ -337,8 +350,15 @@ def drawTransparentOverlay(opacity=200, dark=True):
 
 
 def playSound(sound):
-    sound.set_volume(optionsValues("sound"))
+    sound.set_volume(optionsValues("sound")/2)
     sound.play()
+
+
+def musicControl(change_volume=False):
+    pygame.mixer.music.set_volume(optionsValues("music")/2)
+    if not change_volume:
+        pygame.mixer.music.load(MUSIC3)
+        pygame.mixer.music.play(-1)
 
 
 def updateScreenAndDelayNextUpdate(delay=1000):
@@ -494,13 +514,15 @@ def showOptionsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
 
     drawText("Options", OPTIONS_TITLE_X, OPTIONS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    drawText("Music", MUSIC_TEXT_X, MUSIC_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Sound", SOUND_TEXT_X, SOUND_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Stages", STAGES_TEXT_X, STAGES_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Block shadows", BLOCK_SHADOW_TEXT_X, BLOCK_SHADOW_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
     drawText("Powers", POWERS_TEXT_X, POWERS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
     drawOptionsSwitches()
-    drawSoundSlider()
+    drawSliders("music")
+    drawSliders("sound")
 
 
 def drawOptionsSwitches():
@@ -520,21 +542,19 @@ def drawOptionsSwitches():
         drawObject(OFF_SWITCH, POWERS_SWITCH_X, POWERS_SWITCH_Y)
 
 
-def drawSoundSlider():
-    dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
-    sound_val = round(optionsValues("sound") * 100)
+def drawSliders(slider):
+    music_dragger_x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
+    sound_dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
+    music_value = round(optionsValues("music") * 100)
+    sound_value = round(optionsValues("sound") * 100)
 
-    # Keep the value in the middle of the dragger
-    if sound_val == 100:
-        drawText(str(sound_val), dragger_x - 2, SOUND_VAL_Y)
-    elif sound_val > 9:
-        drawText(str(sound_val), dragger_x + 3, SOUND_VAL_Y)
-    else:
-        drawText(str(sound_val), dragger_x + 10, SOUND_VAL_Y)
+    drawText(str(music_value), MUSIC_SLIDER_BG_X - 10, MUSIC_VAL_Y, align_right=True)
+    drawText(str(sound_value), SOUND_SLIDER_BG_X - 10, SOUND_VAL_Y, align_right=True)
 
+    drawObject(SLIDER_BG, MUSIC_SLIDER_BG_X, MUSIC_SLIDER_BG_Y)
+    drawObject(DRAGGER, music_dragger_x, MUSIC_DRAGGER_Y)
     drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
-    drawObject(DRAGGER, dragger_x, SOUND_DRAGGER_Y)
-
+    drawObject(DRAGGER, sound_dragger_x, SOUND_DRAGGER_Y)
 
 # Stats menu
 def showStatsMenu(current_page):

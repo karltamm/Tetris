@@ -560,6 +560,8 @@ def launchMainMenu():
 def options():
     # UI
     back_button = (BACK_BTN_X, BACK_BTN_Y)
+    music_slider = (MUSIC_SLIDER_BG_X, MUSIC_SLIDER_BG_Y)
+    sound_slider = (SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
     stages_switch = (STAGES_SWITCH_X, STAGES_SWITCH_Y)
     block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     powers_switch = (POWERS_SWITCH_X, POWERS_SWITCH_Y)
@@ -596,8 +598,11 @@ def options():
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_btn_is_held_down = True
-                if clickBox(element=2):  # Slider
-                    regulateSoundSlider()
+                if clickBox(music_slider, element=2, slider_value="music"):  # Slider
+                    regulateSlider("music", MUSIC_DRAGGER_X)
+                    musicControl(change_volume=True)
+                if clickBox(sound_slider, element=2, slider_value="sound"):  # Slider
+                    regulateSlider("sound", SOUND_DRAGGER_X)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
                 if clickBox(back_button):
@@ -615,10 +620,10 @@ def options():
                     launchMainMenu()
 
 
-def regulateSoundSlider():
-    value = optionsValues("sound")
+def regulateSlider(slider, dragger_x):
+    value = optionsValues(slider)
     x_dif = pygame.mouse.get_pos()[0] - (
-            SOUND_DRAGGER_X + (SLIDING_DISTANCE * value))  # distance between mouse_x and dragger_x
+            dragger_x + (SLIDING_DISTANCE * value))  # distance between mouse_x and dragger_x
 
     while pygame.mouse.get_pressed(3)[0]:  # Updates slider until button released
         fps_controller.keepFrameDurationCorrect()
@@ -631,14 +636,15 @@ def regulateSoundSlider():
             closeProgram()
 
         dragger_pos = pygame.mouse.get_pos()[0] - x_dif  # dragger pos relative to mouse pos
-        if SOUND_DRAGGER_X < dragger_pos < (SOUND_DRAGGER_X + SLIDING_DISTANCE):
-            value = (dragger_pos - SOUND_DRAGGER_X) / SLIDING_DISTANCE
-        elif dragger_pos <= SOUND_DRAGGER_X:
+        if dragger_x < dragger_pos < (dragger_x + SLIDING_DISTANCE):
+            value = round((dragger_pos - dragger_x) / SLIDING_DISTANCE, 2)
+        elif dragger_pos <= dragger_x:
             value = 0
-        elif dragger_pos >= SOUND_DRAGGER_X + SLIDING_DISTANCE:
+        elif dragger_pos >= dragger_x + SLIDING_DISTANCE:
             value = 1
-
-        optionsValues("sound", new_value=value)
+        if slider == "music":
+            musicControl(change_volume=True)
+        optionsValues(slider, new_value=value)
 
 
 # Stats menu
@@ -774,4 +780,5 @@ def trophies():
 
 
 if __name__ == "__main__":
+    musicControl()
     launchMainMenu()
