@@ -25,14 +25,15 @@ def closeProgram():
 # GAME
 def runGame(load_game=False):
     # Game states
-    game_is_running = True  # unpaused or not
+    game_is_running = True
+    game_is_paused = False
     game_is_over = False
     power_is_active = False
     game_is_being_saved = False
     resume_game_if_saved = False
 
     # Countdown
-    countdown_is_active = False  # If game_running goes from False to true, then show countdown
+    countdown_is_active = False
     countdown = 3
 
     # UI
@@ -42,6 +43,13 @@ def runGame(load_game=False):
     save_button = (SAVE_BTN_X, SAVE_BTN_Y)
     end_button = (END_BTN_X, END_BTN_Y)  # End game
     new_game_button = (NEW_GAME_BTN_X, NEW_GAME_BTN_Y)  # If game is over, this button will be shown
+
+    GAME_RUNNING_BTNS = (activate_power_button, pause_button, save_button, end_button)
+    PAUSE_MENU_BTNS = (pause_button, save_button, end_button)
+    GAME_IS_OVER_BTNS = (new_game_button, end_button)
+
+    selected_button = None
+    mouse_btn_is_held_down = False
 
     # Get game ready
     powers_are_enabled = optionsValues("powers")
@@ -74,7 +82,7 @@ def runGame(load_game=False):
 
         powers_batch = PowersBatch()
         power = powers_batch.getPower()
-        power.is_available = False  # Player has to solve rows to earn power
+        power.is_available = False  # Player has to clear rows to earn power
 
     score_counter = Score(current_score)
     if optionsValues("powers"):
@@ -128,19 +136,22 @@ def runGame(load_game=False):
                 saveStat("single_game_rows", solved_rows, compare=1)
                 saveStat("single_game_time_ingame", seconds_in_game, compare=1)
 
+            # Using keyboard
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     if not game_is_over and not countdown_is_active and not power_is_active:
                         if game_is_running:  # Pause game
                             game_is_running = False
+                            game_is_paused = True
                         else:  # Unpause
+                            game_is_paused = False
                             countdown_is_active = True
 
                 if event.key == pygame.K_p:
-                    if power_is_active:
+                    if power_is_active:  # Deactivate power
                         power_is_active = False
                         countdown_is_active = True
-                    elif powers_are_enabled and power.is_available and game_is_running:
+                    elif powers_are_enabled and power.is_available and game_is_running:  # Activate power
                         power_is_active = True
                         game_is_running = False
 
@@ -154,9 +165,13 @@ def runGame(load_game=False):
                         else:
                             game_is_being_saved = True
 
-            # Buttons clicks
+            # Using mouse
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_btn_is_held_down = True
+
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                if game_is_over or (not power_is_active and not countdown_is_active):
+                mouse_btn_is_held_down = False
+                if (game_is_running and not power_is_active) or game_is_over or game_is_paused:
                     if clickBox(end_button):
                         # End game and go to the main menu
                         run = False  # Stop game process
@@ -166,19 +181,10 @@ def runGame(load_game=False):
                     if clickBox(cancel_power_button):
                         power_is_active = False
                         countdown_is_active = True
-
-                if game_is_over:
-                    if clickBox(new_game_button):
-                        # Run following code only if game is over
-                        # new_game_button is shown when game is over
-                        # new_game_button is at the same place, where pause/unpause button (click areas overlap)
-
-                        # Start new game
-                        run = False  # End current game process
-                        runGame()
                 elif game_is_running:
                     if clickBox(pause_button):
                         game_is_running = False
+                        game_is_paused = True
                     elif clickBox(activate_power_button):
                         if powers_are_enabled and power.is_available:
                             power_is_active = True
@@ -187,13 +193,57 @@ def runGame(load_game=False):
                         game_is_being_saved = True
                         resume_game_if_saved = True
                         game_is_running = False
-                elif not game_is_running and not power_is_active:
+                elif game_is_paused:
                     if clickBox(pause_button):
-                        # Unpause the game
+                        game_is_paused = False
                         countdown_is_active = True
                     elif clickBox(save_button):
                         game_is_being_saved = True
                         game_is_running = False
+                elif game_is_over:
+                    if clickBox(new_game_button):
+                        run = False  # End current game process
+                        runGame()
+
+        # On which button is the cursor? (to determine button hover and clicked state)
+        if game_is_running:
+            for index, button in enumerate(GAME_RUNNING_BTNS):
+                if clickBox(button):
+                    if button == activate_power_button and not power.is_available:
+                        break  # "Activate power" button is not available, so don't higlight it
+
+                    selected_button = button
+                    break  # Found the button; job done
+
+                if index == len(GAME_RUNNING_BTNS) - 1:  # Cursor wasn't on any button
+                    selected_button = None
+
+        if game_is_paused:
+            for index, button in enumerate(PAUSE_MENU_BTNS):
+                if clickBox(button):
+                    selected_button = button
+                    break  # Found the button; job done
+
+                if index == len(PAUSE_MENU_BTNS) - 1:  # Cursor wasn't on any button
+                    selected_button = None
+
+        if game_is_over:
+            for index, button in enumerate(GAME_IS_OVER_BTNS):
+                if clickBox(button):
+                    selected_button = button
+                    break  # Found the button; job done
+
+                if index == len(GAME_IS_OVER_BTNS) - 1:
+                    selected_button = None  # Cursor wasn't on any button
+
+        if power_is_active:
+            if clickBox(cancel_power_button):
+                selected_button = cancel_power_button
+            else:
+                selected_button = None  # Cursor wasn't on any button
+
+        if countdown_is_active:
+            selected_button = None  # During countdown, no button is highlighted
 
         # Powers
         if powers_are_enabled:
@@ -213,12 +263,12 @@ def runGame(load_game=False):
 
                 # If power.run() stopped the process
                 if not power.is_running:
-                    power_is_active, game_is_running, down_pressed, countdown_is_active = resumeGameAfterPower()
+                    power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down = resumeGameAfterPower()
 
                 # If player has turned off power
                 if not power_is_active:
                     power.stop()
-                    power_is_active, game_is_running, down_pressed, countdown_is_active = resumeGameAfterPower()
+                    power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down = resumeGameAfterPower()
 
             if powers_batch.itsTimeForNextPower(solved_rows):
                 if not power.is_available:  # Only give new power when last one is used
@@ -245,7 +295,7 @@ def runGame(load_game=False):
 
         # Block movement control
         if game_is_running:
-            shadow_block = ShadowBlock(current_block, board)
+            shadow_block = ShadowBlock(current_block, board)  # Update shadow block on the screen
 
             # Measure time spent in game (for stats)
             timer += 1
@@ -366,8 +416,13 @@ def runGame(load_game=False):
                 resume_game_if_saved = False
 
             game_is_being_saved = False
-        elif not game_is_running:
+        elif game_is_paused:
             showPauseMenu()
+
+        if mouse_btn_is_held_down:
+            activateButtonClickState(selected_button)
+        else:
+            activateButtonHoverState(selected_button)
 
         pygame.display.update()
 
@@ -393,8 +448,9 @@ def resumeGameAfterPower():
     game_is_running = False  # Some powers need game to run
     down_pressed = False  # If game ran, then this variable may cause glitch
     countdown_is_active = True
+    mouse_btn_is_held_down = False  # Causes UI glitch if not reset
 
-    return (power_is_active, game_is_running, down_pressed, countdown_is_active)
+    return (power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down)
 
 
 # MAIN MENU
@@ -718,6 +774,4 @@ def trophies():
 
 
 if __name__ == "__main__":
-    pygame.mixer.music.load(MUSIC5)
-    pygame.mixer.music.play(loops=-1)
     launchMainMenu()
