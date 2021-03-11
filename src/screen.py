@@ -276,6 +276,8 @@ def clickBox(el_pos=(0, 0), element=0):  # 0-Button, 1-switch, 2-slider
         height = BTN_HEIGHT
         corner_rad = BTN_CORNER_RAD
         el_x, el_y = el_pos  # Element position
+
+        drawObject(CLICK_MASK, el_x, el_y)
     elif element == 1:
         width = SWITCH_WIDTH
         height = SWITCH_HEIGHT
@@ -311,6 +313,18 @@ def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if m
         return True
 
 
+def activateButtonClickState(button):
+    if button is not None:
+        btn_x, btn_y = button
+        drawObject(CLICK_MASK, btn_x, btn_y)
+
+
+def activateButtonHoverState(button):
+    if button is not None:
+        btn_x, btn_y = button
+        drawObject(HOVER_MASK, btn_x, btn_y - 1)
+
+
 def drawTransparentOverlay(opacity=200, dark=True):
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
@@ -325,6 +339,12 @@ def drawTransparentOverlay(opacity=200, dark=True):
 def playSound(sound):
     sound.set_volume(optionsValues("sound"))
     sound.play()
+
+
+def updateScreenAndDelayNextUpdate(delay=1000):
+    pygame.display.update()  # Without it, UI content wouldn't be displayed for determined time
+    pygame.time.delay(delay)  # default delay is 1000 ms
+    pygame.event.clear()  # Don't accept inputs during delay, because game wasn't active
 
 
 # GAME
@@ -418,10 +438,8 @@ def showGameOverScreen():
 
 def showCountdown(countdown):
     drawTransparentOverlay()
-    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT, )
-
-    pygame.display.update()  # Without it, countdown is shown with delay
-    pygame.time.delay(1000)  # Show current countdown for a second
+    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    updateScreenAndDelayNextUpdate()
 
 
 def showSaveConfirmation(resume_game_if_saved):
@@ -430,8 +448,7 @@ def showSaveConfirmation(resume_game_if_saved):
 
     drawTransparentOverlay(dark=False)
     drawText("Saved", SAVED_TXT_X, SAVED_TXT_Y, size=TITLE_SIZE, font=TITLE_FONT, color=DARK_GREY)
-    pygame.display.update()  # Without it, text wouldn't be on the screen to read
-    pygame.time.delay(1000)
+    updateScreenAndDelayNextUpdate()
 
 
 # MAIN MENU
