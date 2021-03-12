@@ -470,6 +470,12 @@ def showSaveConfirmation(resume_game_if_saved):
     drawText("Saved", SAVED_TXT_X, SAVED_TXT_Y, size=TITLE_SIZE, font=TITLE_FONT, color=DARK_GREY)
     updateScreenAndDelayNextUpdate()
 
+def isMouseOnGameBoard(mouse_pos):
+        # Is cursor on game board?
+        if mouse_pos[0] > BOARD_X and mouse_pos[0] < BOARD_X_END:
+            if mouse_pos[1] > BOARD_Y and mouse_pos[1] < BOARD_Y_END:
+                return True
+        return False
 
 # MAIN MENU
 def showMainMenu(game_is_saved):

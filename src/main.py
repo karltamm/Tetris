@@ -317,7 +317,25 @@ def runGame(load_game=False):
 
             # Check if user wants to move a block
             for event in events:
-                if event.type == pygame.KEYDOWN:  # If a key is pressed down
+                if event.type == pygame.MOUSEMOTION:  # If mouse movement detected
+                    if isMouseOnGameBoard(mouse_pos):  # Is mouse on game board
+                        if current_block.movedToCursor(board, mouse_pos):  # Return True if block moved to cursor
+                            shadow_block.clearShadow(board)
+                            shadow_block = ShadowBlock(current_block, board)
+                
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if isMouseOnGameBoard(mouse_pos):  # Check if mouse clicked on game board
+                        if event.button == 1:  # Left click hard drops block
+                            while not current_block.is_placed:
+                                current_score = score_counter.drop(2)
+                                current_block.move(board, y_step=1, autofall=True)
+                            playSound(MOVE_SOUND)
+                            saveStat("hard_drops", 1)
+                        elif event.button == 3:  # Right click rotates block
+                            shadow_block.clearShadow(board)
+                            current_block.rotate(board)
+
+                elif event.type == pygame.KEYDOWN:  # If a key is pressed down
                     key_timer = 0
                     if event.key == pygame.K_UP:
                         shadow_block.clearShadow(board)
