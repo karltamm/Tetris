@@ -111,6 +111,21 @@ class Block:
         copyBoard(new_board, board)
         return True  # Block placement was successful
 
+    def movedToCursor(self, board, mouse_pos):
+        for index, x_pos in enumerate(range(BOARD_X, BOARD_X_END + BOARD_CELL, BOARD_CELL)):
+            if mouse_pos[0] < x_pos:
+                # Calculate distance between cursor and current block pos
+                # index - 2 to grab the center of blocks
+                distance = abs(self.x - (index - 2))
+                if self.x > (index - 2):
+                    for _ in range(distance):
+                        self.move(board, x_step = -1)
+                elif self.x < (index - 2):
+                    for _ in range(distance):
+                        self.move(board, x_step = +1)  
+                self.updateBoard(board)
+                return True
+        return False
 
 # CHILD CLASS OF "Block"
 class ShadowBlock(Block):
