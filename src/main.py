@@ -514,7 +514,9 @@ def launchMainMenu():
 
             # Mouse clicks
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_btn_is_held_down = True
+                for button in MENU_BUTTONS:
+                    if clickBox(button):
+                        mouse_btn_is_held_down = True
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
                 if clickBox(start_button):
