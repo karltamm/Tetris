@@ -621,6 +621,7 @@ def options():
                     musicControl(change_volume=True)
                 if clickBox(sound_slider, element=2, slider_value="sound"):  # Slider
                     regulateSlider("sound", SOUND_DRAGGER_X)
+                    playSound(MOVE3_SOUND)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
                 if clickBox(back_button):
