@@ -11,7 +11,7 @@ from animations import TetrisRain
 # INITIALIZE
 pygame.init()
 pygame.display.set_caption("Tetris")
-pygame.display.set_icon(BLUE_CELL)
+pygame.display.set_icon(CLASSIC_BLUE_CELL)
 fps_controller = FPSController()
 
 
@@ -50,6 +50,8 @@ def runGame(load_game=False):
 
     selected_button = None
     mouse_btn_is_held_down = False
+
+    theme = Theme("XP")
 
     # Get game ready
     powers_are_enabled = optionsValues("powers")
@@ -118,9 +120,18 @@ def runGame(load_game=False):
 
             # If game is over
             if event.type == GAME_OVER:
+                # Play game over sound
+                if theme.name == "XP":
+                    playSound(XP_GAME_OVER_SOUND)
+                elif theme.name == "yin_yang":
+                    playSound(YIN_YANG_GAME_OVER_SOUND)
+                else:
+                    playSound(GAME_OVER_SOUND)
+
                 game_is_running = False
                 game_is_over = True
-                # STATS
+
+                # Update stats
                 if optionsValues("powers"):
                     saveStat("high_score_powers", current_score, compare=1)
                 else:
@@ -132,7 +143,6 @@ def runGame(load_game=False):
                 saveStat("time_ingame", seconds_in_game)
                 saveStat("games_played", 1)
 
-                # Single game stats
                 saveStat("single_game_rows", solved_rows, compare=1)
                 saveStat("single_game_time_ingame", seconds_in_game, compare=1)
 
@@ -322,7 +332,7 @@ def runGame(load_game=False):
                         if current_block.movedToCursor(board, mouse_pos):  # Return True if block moved to cursor
                             shadow_block.clearShadow(board)
                             shadow_block = ShadowBlock(current_block, board)
-                
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if isMouseOnGameBoard(mouse_pos):  # Check if mouse clicked on game board
                         if event.button == 1:  # Left click hard drops block
@@ -403,22 +413,22 @@ def runGame(load_game=False):
         fps_controller.keepFrameDurationCorrect()
 
         SCREEN.fill(DARK_GREY)
-        showBoard(board)
-        showNextBlockArea(next_block_area)
+        showBoard(board, theme)
+        showNextBlockArea(next_block_area, theme)
         showScore(current_score, high_score, stage)
         showPowersSelection(powers_are_enabled, power)
         showGameButtons()
 
         if game_is_over:
-            showGameOverScreen()
+            showGameOverScreen(theme)
         elif power_is_active:
             if power.name == "Laser":
-                showLaserScreen(power.row)
+                showLaserScreen(power.row, theme)
             elif power.name == "Wishlist":
-                showWishlistScreen(power.block_under_cursor)
+                showWishlistScreen(power.block_under_cursor, theme)
             elif power.name == "Timeless":
                 showTimelessScreen(power.num_of_blocks_left)
-                showNextBlockArea(next_block_area)
+                showNextBlockArea(next_block_area, theme)
 
             drawObject(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
         elif countdown_is_active:

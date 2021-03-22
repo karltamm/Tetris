@@ -29,17 +29,36 @@ def getMusicFilePath(file_name):
 
 
 # ASSETS
-# Cells
-EMPTY_CELL = loadImage("cells", "empty.png")
-SHADOW_CELL = loadImage("cells", "shadow.png")
-GREEN_CELL = loadImage("cells", "green.png")
-BRONZE_CELL = loadImage("cells", "bronze.png")
-PURPLE_CELL = loadImage("cells", "purple.png")
-PINK_CELL = loadImage("cells", "pink.png")
-RED_CELL = loadImage("cells", "red.png")
-YELLOW_CELL = loadImage("cells", "yellow.png")
-BLUE_CELL = loadImage("cells", "blue.png")
-CELLS_IMAGES = [GREEN_CELL, BRONZE_CELL, PURPLE_CELL, PINK_CELL, RED_CELL, YELLOW_CELL, BLUE_CELL]  # For animation
+# Themes
+TRANSPARENT_CELL = loadImage("themes", "transparent_cell.png")
+THEME_BG_BORDER_RADIUS = loadImage("themes", "theme_bg_border_radius.png")
+
+# Classic
+CLASSIC_EMPTY_CELL = loadImage("themes/classic/cells", "empty.png")
+CLASSIC_SHADOW_CELL = loadImage("themes/classic/cells", "shadow.png")
+CLASSIC_GREEN_CELL = loadImage("themes/classic/cells", "green.png")
+CLASSIC_BRONZE_CELL = loadImage("themes/classic/cells", "bronze.png")
+CLASSIC_PURPLE_CELL = loadImage("themes/classic/cells", "purple.png")
+CLASSIC_PINK_CELL = loadImage("themes/classic/cells", "pink.png")
+CLASSIC_RED_CELL = loadImage("themes/classic/cells", "red.png")
+CLASSIC_YELLOW_CELL = loadImage("themes/classic/cells", "yellow.png")
+CLASSIC_BLUE_CELL = loadImage("themes/classic/cells", "blue.png")
+CELLS_IMAGES = [CLASSIC_GREEN_CELL, CLASSIC_BRONZE_CELL, CLASSIC_PURPLE_CELL, CLASSIC_PINK_CELL, CLASSIC_RED_CELL,
+                CLASSIC_YELLOW_CELL, CLASSIC_BLUE_CELL]  # For animation
+
+# XP
+XP_SHADOW_CELL = CLASSIC_SHADOW_CELL
+XP_BLUE_CELL = loadImage("themes/XP", "blue_cell.png")
+XP_BG = loadImage("themes/XP", "bg.png")
+XP_GAME_OVER_SCREEN = loadImage("themes/XP", "game_over.png")
+XP_GAME_OVER_SOUND = loadSound("gamestate", "XP_gameover.mp3")
+
+# Yin yang
+YIN_YANG_SHADOW_CELL = loadImage("themes/yin_yang/cells", "shadow.png")
+YIN_YANG_BLACK_CELL = loadImage("themes/yin_yang/cells", "black.png")
+YIN_YANG_BG = loadImage("themes/yin_yang", "bg.png")
+YIN_YANG_GAME_OVER_SCREEN = loadImage("themes/yin_yang", "game_over.png")
+YIN_YANG_GAME_OVER_SOUND = loadSound("gamestate", "yin_yang_gameover.mp3")
 
 # Colors
 LIGHT_GREY = (209, 209, 209)
@@ -55,6 +74,7 @@ LAVENDER = (230, 230, 250)
 NEON_GREEN = (66, 245, 114)
 RICH_YELLOW = (252, 186, 3)
 TRANSPARENT_WHITE = (255, 255, 255, 100)
+TRANSPARENT_BLACK = (0, 0, 0, 189)
 
 # Fonts
 CHATHURA_LIGHT = loadFont("chathura", "chathura-light.ttf")
@@ -105,7 +125,7 @@ SLIDER_BG = loadImage("sliders", "SliderBackground.png")
 DRAGGER = loadImage("sliders", "Dragger.png")
 
 # Misc
-INSTRUCTION_IMAGE = loadImage("", "instruction.png")
+INSTRUCTION_IMAGE = loadImage("misc", "instruction.png")
 
 # Keys
 ESC_KEY_IMG = loadImage("keys", "esc_key.png")
@@ -138,22 +158,68 @@ MUSIC3 = getMusicFilePath("music3.mp3")
 MUSIC4 = getMusicFilePath("music4.mp3")
 MUSIC5 = getMusicFilePath("music5.mp3")
 
-# Blocks
-BLOCK_I = loadImage("blocks", "I_block.png")
-BLOCK_O = loadImage("blocks", "O_block.png")
-BLOCK_L = loadImage("blocks", "L_block.png")
-BLOCK_J = loadImage("blocks", "J_block.png")
-BLOCK_T = loadImage("blocks", "T_block.png")
-BLOCK_Z = loadImage("blocks", "Z_block.png")
-BLOCK_S = loadImage("blocks", "S_block.png")
-BLOCK_IMAGES = [BLOCK_I, BLOCK_O, BLOCK_L, BLOCK_J, BLOCK_T, BLOCK_Z, BLOCK_S]  # Do not change the order!
+# Poweup Wishlist
+# Classic theme
+CLASSIC_BLOCK_I = loadImage("themes/classic/blocks", "I_block.png")
+CLASSIC_BLOCK_O = loadImage("themes/classic/blocks", "O_block.png")
+CLASSIC_BLOCK_L = loadImage("themes/classic/blocks", "L_block.png")
+CLASSIC_BLOCK_J = loadImage("themes/classic/blocks", "J_block.png")
+CLASSIC_BLOCK_T = loadImage("themes/classic/blocks", "T_block.png")
+CLASSIC_BLOCK_Z = loadImage("themes/classic/blocks", "Z_block.png")
+CLASSIC_BLOCK_S = loadImage("themes/classic/blocks", "S_block.png")
+CLASSIC_BLOCK_IMAGES = [CLASSIC_BLOCK_I, CLASSIC_BLOCK_O, CLASSIC_BLOCK_L, CLASSIC_BLOCK_J, CLASSIC_BLOCK_T,
+                        CLASSIC_BLOCK_Z, CLASSIC_BLOCK_S]  # Do not change the order!
 
-BLOCK_I_HL = loadImage("blocks", "I_block_HL.png")
-BLOCK_O_HL = loadImage("blocks", "O_block_HL.png")
-BLOCK_L_HL = loadImage("blocks", "L_block_HL.png")
-BLOCK_J_HL = loadImage("blocks", "J_block_HL.png")
-BLOCK_T_HL = loadImage("blocks", "T_block_HL.png")
-BLOCK_Z_HL = loadImage("blocks", "Z_block_HL.png")
-BLOCK_S_HL = loadImage("blocks", "S_block_HL.png")
-BLOCK_IMAGES_HL = [BLOCK_I_HL, BLOCK_O_HL, BLOCK_L_HL, BLOCK_J_HL, BLOCK_T_HL, BLOCK_Z_HL,
-                   BLOCK_S_HL]  # Do not change the order!
+CLASSIC_BLOCK_I_HL = loadImage("themes/classic/blocks", "I_block_HL.png")
+CLASSIC_BLOCK_O_HL = loadImage("themes/classic/blocks", "O_block_HL.png")
+CLASSIC_BLOCK_L_HL = loadImage("themes/classic/blocks", "L_block_HL.png")
+CLASSIC_BLOCK_J_HL = loadImage("themes/classic/blocks", "J_block_HL.png")
+CLASSIC_BLOCK_T_HL = loadImage("themes/classic/blocks", "T_block_HL.png")
+CLASSIC_BLOCK_Z_HL = loadImage("themes/classic/blocks", "Z_block_HL.png")
+CLASSIC_BLOCK_S_HL = loadImage("themes/classic/blocks", "S_block_HL.png")
+CLASSIC_BLOCK_IMAGES_HL = [CLASSIC_BLOCK_I_HL, CLASSIC_BLOCK_O_HL, CLASSIC_BLOCK_L_HL, CLASSIC_BLOCK_J_HL,
+                           CLASSIC_BLOCK_T_HL, CLASSIC_BLOCK_Z_HL,
+                           CLASSIC_BLOCK_S_HL]  # Do not change the order!
+
+# XP theme
+XP_BLOCK_I = loadImage("themes/XP/blocks", "I_block.png")
+XP_BLOCK_O = loadImage("themes/XP/blocks", "O_block.png")
+XP_BLOCK_L = loadImage("themes/XP/blocks", "L_block.png")
+XP_BLOCK_J = loadImage("themes/XP/blocks", "J_block.png")
+XP_BLOCK_T = loadImage("themes/XP/blocks", "T_block.png")
+XP_BLOCK_Z = loadImage("themes/XP/blocks", "Z_block.png")
+XP_BLOCK_S = loadImage("themes/XP/blocks", "S_block.png")
+XP_BLOCK_IMAGES = [XP_BLOCK_I, XP_BLOCK_O, XP_BLOCK_L, XP_BLOCK_J, XP_BLOCK_T, XP_BLOCK_Z,
+                   XP_BLOCK_S]  # Do not change the order!
+
+XP_BLOCK_I_HL = loadImage("themes/XP/blocks", "I_block_HL.png")
+XP_BLOCK_O_HL = loadImage("themes/XP/blocks", "O_block_HL.png")
+XP_BLOCK_L_HL = loadImage("themes/XP/blocks", "L_block_HL.png")
+XP_BLOCK_J_HL = loadImage("themes/XP/blocks", "J_block_HL.png")
+XP_BLOCK_T_HL = loadImage("themes/XP/blocks", "T_block_HL.png")
+XP_BLOCK_Z_HL = loadImage("themes/XP/blocks", "Z_block_HL.png")
+XP_BLOCK_S_HL = loadImage("themes/XP/blocks", "S_block_HL.png")
+XP_BLOCK_IMAGES_HL = [XP_BLOCK_I_HL, XP_BLOCK_O_HL, XP_BLOCK_L_HL, XP_BLOCK_J_HL, XP_BLOCK_T_HL, XP_BLOCK_Z_HL,
+                      XP_BLOCK_S_HL]  # Do not change the order!
+
+# Yin yang theme
+YIN_YANG_BLOCK_I = loadImage("themes/yin_yang/blocks", "I_block.png")
+YIN_YANG_BLOCK_O = loadImage("themes/yin_yang/blocks", "O_block.png")
+YIN_YANG_BLOCK_L = loadImage("themes/yin_yang/blocks", "L_block.png")
+YIN_YANG_BLOCK_J = loadImage("themes/yin_yang/blocks", "J_block.png")
+YIN_YANG_BLOCK_T = loadImage("themes/yin_yang/blocks", "T_block.png")
+YIN_YANG_BLOCK_Z = loadImage("themes/yin_yang/blocks", "Z_block.png")
+YIN_YANG_BLOCK_S = loadImage("themes/yin_yang/blocks", "S_block.png")
+YIN_YANG_BLOCK_IMAGES = [YIN_YANG_BLOCK_I, YIN_YANG_BLOCK_O, YIN_YANG_BLOCK_L, YIN_YANG_BLOCK_J, YIN_YANG_BLOCK_T,
+                         YIN_YANG_BLOCK_Z, YIN_YANG_BLOCK_S]  # Do not change the order!
+
+YIN_YANG_BLOCK_I_HL = loadImage("themes/yin_yang/blocks", "I_block_HL.png")
+YIN_YANG_BLOCK_O_HL = loadImage("themes/yin_yang/blocks", "O_block_HL.png")
+YIN_YANG_BLOCK_L_HL = loadImage("themes/yin_yang/blocks", "L_block_HL.png")
+YIN_YANG_BLOCK_J_HL = loadImage("themes/yin_yang/blocks", "J_block_HL.png")
+YIN_YANG_BLOCK_T_HL = loadImage("themes/yin_yang/blocks", "T_block_HL.png")
+YIN_YANG_BLOCK_Z_HL = loadImage("themes/yin_yang/blocks", "Z_block_HL.png")
+YIN_YANG_BLOCK_S_HL = loadImage("themes/yin_yang/blocks", "S_block_HL.png")
+YIN_YANG_BLOCK_IMAGES_HL = [YIN_YANG_BLOCK_I_HL, YIN_YANG_BLOCK_O_HL, YIN_YANG_BLOCK_L_HL, YIN_YANG_BLOCK_J_HL,
+                            YIN_YANG_BLOCK_T_HL, YIN_YANG_BLOCK_Z_HL,
+                            YIN_YANG_BLOCK_S_HL]  # Do not change the order!
