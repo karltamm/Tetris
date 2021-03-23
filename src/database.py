@@ -28,7 +28,7 @@ TROPHIES = [[["Novice(classic)", "Reach 10,000 points in classic mode", "high_sc
 
             [["Long game", "Spend 10 minutes in one game", "single_game_time_ingame", 600],
              ["No-life", "Spend 2 hours in-game", "time_ingame", 7200],
-             ["Try hard", "Get all trophies", "trophies", 16],
+             ["Try hard", "Get all trophies", "trophies", 19],
              ["Gamer", "Play 100 games", "games_played", 100]]]
 
 # INITIALIZE

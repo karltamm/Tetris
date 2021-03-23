@@ -17,6 +17,7 @@ class Block:
         self.y = 0  # In which board row is top-left block cell?
         self.used_board_cells = []  # [(row, col), (row, col) etc]
         self.is_placed = False
+        self.final = False
         self.time_since_rotation = 0
 
         if self.updateBoard(board) == False:  # No room for new block, so game over
@@ -29,20 +30,24 @@ class Block:
         self.x += x_step
         self.y += y_step
 
-        if self.updateBoard(board) == False:
+        if not self.updateBoard(board):
             # Error: block couldn't be moved
             self.x -= x_step
             self.y -= y_step
 
             if x_step == 0:  # Block didn't side collide with any other block
                 self.is_placed = True  # Block can't go any lower, so it's placed
+                self.final = True
                 move_success = True
         # Move was successful so play sound
         else:
             move_success = True
-
+            self.final = False
         if move_success and not autofall:
+            self.time_since_rotation = pygame.time.get_ticks()
             playSound(MOVE3_SOUND)
+        return move_success
+
 
     def rotate(self, board):
         rotate_success = False
@@ -51,11 +56,11 @@ class Block:
             self.rotation = -1
         self.rotation += 1
 
-        if self.updateBoard(board) == False:  # Rotate failed
+        if not self.updateBoard(board):  # Rotate failed
             # If block on the leftmost side (means rotate was out of bounds)
             if self.x == -1:
                 self.x += 1
-                if self.updateBoard(board) == False:
+                if not self.updateBoard(board):
                     self.x -= 1
                 else:
                     self.rotation += 1
@@ -65,20 +70,32 @@ class Block:
                 if self.shape == SHAPE_I:
                     self.x -= 1
                 self.x -= 1
-                if self.updateBoard(board) == False:
+                if not self.updateBoard(board):
                     if self.shape == SHAPE_I:
                         self.x += 1
                     self.x += 1
                 else:
                     self.rotation += 1
                     rotate_success = True
+            else:
+                for i in range(1, 4):
+                    self.y -= i
+                    if not self.updateBoard(board):
+                        self.y += i
+                    else:
+                        self.rotation += 1
+                        rotate_success = True
+                        break
             self.rotation -= 1
+
         else:
             rotate_success = True
         # Rotation was successful so play sound
         if rotate_success and self.shape != SHAPE_O:
+            self.final = False
+            self.time_since_rotation = pygame.time.get_ticks()
             playSound(ROTATE_SOUND)
-        self.time_since_rotation = pygame.time.get_ticks()
+
 
     def removeCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
@@ -195,10 +212,10 @@ class ShadowBlock(Block):
         return True  # Block placement was successful
 
     def clearShadow(self, board):
-        for row in range(BOARD_HEIGHT):
-            for col in range(BOARD_WIDTH):
-                if board[row][col] == 8:
-                    board[row][col] = 0
+            for row in range(BOARD_HEIGHT):
+                for col in range(BOARD_WIDTH):
+                    if board[row][col] == 8:
+                        board[row][col] = 0
 
 
 class BlocksBatch:
