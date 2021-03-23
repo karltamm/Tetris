@@ -7,6 +7,7 @@ from board import *
 from nextblock import *
 from assets import *
 from database import *
+from themes import *
 
 # CONSTANTS
 # Screen
@@ -47,15 +48,25 @@ SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
         250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
-# Slider backround
+# Slider
 SLIDER_BG_HEIGHT = 30
 SLIDER_BG_WIDTH = 200
 
-# Dragger
 DRAGGER_HEIGHT = 54
 DRAGGER_WIDTH = 33
 DRAGGER_CORNER_RAD = 5
 SLIDING_DISTANCE = SLIDER_BG_WIDTH - DRAGGER_WIDTH - 8
+
+# Selector
+SELECTOR_BTN_WIDTH = 50
+SELECTOR_BTN_HEIGHT = 50
+SELECTOR_BTN_CORNER_RAD = round(15 / (
+            100 / SELECTOR_BTN_WIDTH))  # In .ai file, selector button is 100 px wide and it's border radius is 15. If the button is scaled down, makes sure that corner radius is also in right propotion
+
+SELECTION_NAME_BOX_WIDTH = 125
+SELECTION_NAME_BOX_HEIGHT = 50
+
+SELECTOR_WIDTH = 2 * SELECTOR_BTN_WIDTH + 2 * NEAR + SELECTION_NAME_BOX_WIDTH
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -78,8 +89,11 @@ STATS_BTN_Y = OPTIONS_BTN_Y + BTN_HEIGHT + NEAR
 TROPHIES_BTN_X = START_BTN_X
 TROPHIES_BTN_Y = STATS_BTN_Y + BTN_HEIGHT + NEAR
 
+THEMES_BTN_X = START_BTN_X
+THEMES_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
+
 QUIT_BTN_X = START_BTN_X
-QUIT_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
+QUIT_BTN_Y = THEMES_BTN_Y + BTN_HEIGHT + NEAR
 
 INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 40
 INSTRUCTION_Y = START_BTN_Y
@@ -235,7 +249,7 @@ STAT1_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
 STAT_Y = [STAT1_Y + i * (TEXT_HEIGHT + FAR) for i in
           range(6)]  # Create a list of stat Y values [STAT1_Y, STAT2_Y, ...STAT6_Y]
 
-# Trophies
+# Trophies menu
 TROPHIES_TITLE_X = PAGE_TITLE_X
 TROPHIES_TITLE_Y = PAGE_TITLE_Y
 
@@ -245,6 +259,19 @@ TROPHY_TEXT_X = TROPHY_HEADING_X
 TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
 TROPHY_HEADING_GAP = HEADING2_HEIGHT + NEAR + TEXT_HEIGHT + FAR
+
+# Themes menu
+THEMES_TITLE_X = PAGE_TITLE_X
+THEMES_TITLE_Y = PAGE_TITLE_Y
+
+THEME_NAME_BOX_WIDTH = 150
+THEME_NAME_BOX_HEIGHT = 60
+
+THEME_OPTION_X = THEMES_TITLE_X
+THEME_OPTION_NAME_BOX_X = THEME_OPTION_X + BTN_WIDTH + NEAR
+THEME_OPTION_HEIGHT = THEME_NAME_BOX_HEIGHT + FAR
+
+THEME_1ST_OPTION_Y = THEMES_TITLE_Y + TITLE_HEIGHT + FAR
 
 # INITIALIZE
 pygame.init()
@@ -270,18 +297,22 @@ class FPSController:
 
 
 # GENERAL FUNCTIONS
+def txtArea(text, size=TEXT_SIZE, font=TEXT_FONT):
+    return font.render(text, size=size)[1]
+
+
 def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT, align_right=False):
     if align_right:
-        text_width = font.render(text, size=size)[1].width
-        font.render_to(SCREEN, (x - text_width, y), text, color, size=size)
+        font.render_to(SCREEN, (x - txtArea(text).width, y), text, color, size=size)
     else:
         font.render_to(SCREEN, (x, y), text, color, size=size)
 
 
 def drawObject(object, x, y):
-    SCREEN.blit(object, (x, y))
+    return SCREEN.blit(object, (x, y))
 
 
+# Detecting clicks on UI element
 def clickBox(el_pos=(0, 0), element=0, slider_value=0):  # 0-Button, 1-switch, 2-slider
     mouse_x, mouse_y = pygame.mouse.get_pos()
     # Determine for which UI element this clickbox is for
@@ -303,6 +334,11 @@ def clickBox(el_pos=(0, 0), element=0, slider_value=0):  # 0-Button, 1-switch, 2
         corner_rad = DRAGGER_CORNER_RAD
         el_x = el_pos[0] + (SLIDING_DISTANCE * optionsValues(slider_value)) + 4
         el_y = el_pos[1] - 12
+    elif element == 3:
+        height = SELECTOR_BTN_HEIGHT
+        width = SELECTOR_BTN_WIDTH
+        corner_rad = SELECTOR_BTN_CORNER_RAD
+        el_x, el_y = el_pos  # Element position
 
     # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
@@ -327,6 +363,7 @@ def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if m
         return True
 
 
+# Setting UI element states
 def activateButtonClickState(button):
     if button is not None:
         btn_x, btn_y = button
@@ -339,17 +376,16 @@ def activateButtonHoverState(button):
         drawObject(HOVER_MASK, btn_x, btn_y - 1)
 
 
-def drawTransparentOverlay(opacity=200, dark=True):
-    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-
-    if dark:
-        overlay.fill((0, 0, 0, opacity))
-    else:
-        overlay.fill((255, 255, 255, opacity))
-
-    SCREEN.blit(overlay, (0, 0))
+def activateSelectorClickState(selector, side):
+    if selector is not None:
+        selector_x, selector_y = selector
+        if side == "left":
+            drawObject(L_SELECTOR_CLICKED, selector_x, selector_y)
+        else:
+            drawObject(R_SELECTOR_CLICKED, selector_x, selector_y)
 
 
+# Sound
 def playSound(sound):
     sound.set_volume(optionsValues("sound") / 2)
     sound.play()
@@ -362,6 +398,18 @@ def musicControl(change_volume=False):
         pygame.mixer.music.play(-1)
 
 
+# Misc
+def drawTransparentOverlay(opacity=200, dark=True):
+    overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+
+    if dark:
+        overlay.fill((0, 0, 0, opacity))
+    else:
+        overlay.fill((255, 255, 255, opacity))
+
+    SCREEN.blit(overlay, (0, 0))
+
+
 def updateScreenAndDelayNextUpdate(delay=1000):
     pygame.display.update()  # Without it, UI content wouldn't be displayed for determined time
     pygame.time.delay(delay)  # default delay is 1000 ms
@@ -369,59 +417,6 @@ def updateScreenAndDelayNextUpdate(delay=1000):
 
 
 # GAME
-class Theme:
-    def __init__(self, theme):
-
-        if theme == "classic":
-            self.name = theme
-
-            self.T_cell = CLASSIC_RED_CELL
-            self.S_cell = CLASSIC_BLUE_CELL
-            self.I_cell = CLASSIC_GREEN_CELL
-            self.Z_cell = CLASSIC_YELLOW_CELL
-            self.J_cell = CLASSIC_PINK_CELL
-            self.L_cell = CLASSIC_PURPLE_CELL
-            self.O_cell = CLASSIC_BRONZE_CELL
-            self.empty_cell = CLASSIC_EMPTY_CELL
-            self.shadow_cell = CLASSIC_SHADOW_CELL
-
-            self.bg = None
-            self.block_images = CLASSIC_BLOCK_IMAGES
-            self.block_images_hl = CLASSIC_BLOCK_IMAGES_HL
-        elif theme == "XP":
-            self.name = theme
-
-            self.T_cell = XP_BLUE_CELL
-            self.S_cell = XP_BLUE_CELL
-            self.I_cell = XP_BLUE_CELL
-            self.Z_cell = XP_BLUE_CELL
-            self.J_cell = XP_BLUE_CELL
-            self.L_cell = XP_BLUE_CELL
-            self.O_cell = XP_BLUE_CELL
-            self.empty_cell = TRANSPARENT_CELL
-            self.shadow_cell = XP_SHADOW_CELL
-
-            self.bg = XP_BG
-            self.block_images = XP_BLOCK_IMAGES
-            self.block_images_hl = XP_BLOCK_IMAGES_HL
-        elif theme == "yin_yang":
-            self.name = theme
-
-            self.T_cell = YIN_YANG_BLACK_CELL
-            self.S_cell = YIN_YANG_BLACK_CELL
-            self.I_cell = YIN_YANG_BLACK_CELL
-            self.Z_cell = YIN_YANG_BLACK_CELL
-            self.J_cell = YIN_YANG_BLACK_CELL
-            self.L_cell = YIN_YANG_BLACK_CELL
-            self.O_cell = YIN_YANG_BLACK_CELL
-            self.empty_cell = TRANSPARENT_CELL
-            self.shadow_cell = YIN_YANG_SHADOW_CELL
-
-            self.bg = YIN_YANG_BG
-            self.block_images = YIN_YANG_BLOCK_IMAGES
-            self.block_images_hl = YIN_YANG_BLOCK_IMAGES_HL
-
-
 def showBoard(board, theme):
     if theme.bg is not None:
         drawObject(theme.bg, BOARD_X, BOARD_Y)
@@ -517,7 +512,7 @@ def showGameOverScreen(theme):
     # Message
     if theme.name == "XP":
         drawObject(XP_GAME_OVER_SCREEN, BOARD_X, BOARD_Y)
-    elif theme.name == "yin_yang":
+    elif theme.name == "Yin-Yang":
         drawObject(YIN_YANG_GAME_OVER_SCREEN, BOARD_X, BOARD_Y)
     else:
         drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
@@ -556,6 +551,7 @@ def showMainMenu(game_is_saved):
     drawObject(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
     drawObject(STATS_BTN, STATS_BTN_X, STATS_BTN_Y)
     drawObject(TROPHIES_BTN, TROPHIES_BTN_X, TROPHIES_BTN_Y)
+    drawObject(THEMES_BTN, THEMES_BTN_X, THEMES_BTN_Y)
     drawObject(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
     drawObject(INSTRUCTION_IMAGE, INSTRUCTION_X, INSTRUCTION_Y)
 
@@ -691,6 +687,36 @@ def trophyCompletion(stat, value):
         return GREY
 
 
+# Themes menu
+def themeButtonsPos(i):
+    return (THEME_OPTION_X, THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT)
+
+
+def showThemesScreen(themes):
+    drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+    drawText("Themes", OPTIONS_TITLE_X, OPTIONS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
+
+    for i, j in enumerate(themes):
+        if themes[j]["unlocked"]:
+            theme_button = ACTIVATE_THEME_BTN
+        else:
+            theme_button = DISABLED_THEME_BTN
+
+        if themes[j]["active"]:
+            theme_name_box = THEME_SELECTED_OPTION_BOX
+            theme_button = pygame.Surface((0, 0))  # No button for active theme
+        else:
+            theme_name_box = THEME_OPTION_BOX
+
+        option_y = THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT
+        drawObject(theme_button, THEME_OPTION_X, option_y)
+        drawObject(theme_name_box, THEME_OPTION_NAME_BOX_X, option_y)
+
+        name_x = THEME_OPTION_NAME_BOX_X + (THEME_NAME_BOX_WIDTH - txtArea(themes[j]["name"]).width) / 2
+        name_y = option_y + (THEME_NAME_BOX_HEIGHT - txtArea(themes[j]["name"]).height) / 2
+        drawText(themes[j]["name"], name_x, name_y)
+
+
 # POWERS
 def showPowersSelection(powers_are_enabled, power):
     drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
@@ -766,7 +792,7 @@ def highlightRow(row, theme):
         index, row_y = row  # Unpack tuple
         highlight = pygame.Surface((BOARD_SCREEN_WIDTH, BOARD_CELL), pygame.SRCALPHA)
 
-        if theme.name == "yin_yang":
+        if theme.name == "Yin-Yang":
             highlight.fill(TRANSPARENT_BLACK)
         else:
             highlight.fill(TRANSPARENT_WHITE)

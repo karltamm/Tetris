@@ -28,8 +28,7 @@ def getMusicFilePath(file_name):
     return os.path.join("../assets/music", file_name)
 
 
-# ASSETS
-# Themes
+# THEMES
 TRANSPARENT_CELL = loadImage("themes", "transparent_cell.png")
 THEME_BG_BORDER_RADIUS = loadImage("themes", "theme_bg_border_radius.png")
 
@@ -60,7 +59,7 @@ YIN_YANG_BG = loadImage("themes/yin_yang", "bg.png")
 YIN_YANG_GAME_OVER_SCREEN = loadImage("themes/yin_yang", "game_over.png")
 YIN_YANG_GAME_OVER_SOUND = loadSound("gamestate", "yin_yang_gameover.mp3")
 
-# Colors
+# COLORS
 LIGHT_GREY = (209, 209, 209)
 GREY = (120, 120, 120)
 DARK_GREY = (43, 43, 43)
@@ -76,13 +75,13 @@ RICH_YELLOW = (252, 186, 3)
 TRANSPARENT_WHITE = (255, 255, 255, 100)
 TRANSPARENT_BLACK = (0, 0, 0, 189)
 
-# Fonts
+# FONTS
 CHATHURA_LIGHT = loadFont("chathura", "chathura-light.ttf")
 CHATHURA_RG = loadFont("chathura", "chathura-regular.ttf")
 CHATHURA_XBOLD = loadFont("chathura", "chathura-extrabold.ttf")
 CHATHURA_BOLD = loadFont("chathura", "chathura-bold.ttf")
 
-# Buttons
+# BUTTONS
 CLICK_MASK = loadImage("buttons", "click_mask.png")
 HOVER_MASK = loadImage("buttons", "hover_mask.png")
 
@@ -93,6 +92,7 @@ CONTINUE_BTN_BW = loadImage("buttons", "ContinueBW.png")
 OPTIONS_BTN = loadImage("buttons", "Options.png")
 STATS_BTN = loadImage("buttons", "Stats.png")
 TROPHIES_BTN = loadImage("buttons", "Trophies.png")
+THEMES_BTN = loadImage("buttons", "Themes.png")
 SHORTCUTS_BTN = loadImage("buttons", "Shortcuts.png")
 QUIT_BTN = loadImage("buttons", "Quit.png")
 
@@ -116,18 +116,24 @@ NEXT_BTN = loadImage("buttons", "Next.png")
 PREVIOUS_BTN_BW = loadImage("buttons", "PreviousBW.png")
 NEXT_BTN_BW = loadImage("buttons", "NextBW.png")
 
-# Switches
+# SWITCHES
 ON_SWITCH = loadImage("switches", "On.png")
 OFF_SWITCH = loadImage("switches", "Off.png")
 
-# Sliders
+# SLIDERS
 SLIDER_BG = loadImage("sliders", "SliderBackground.png")
 DRAGGER = loadImage("sliders", "Dragger.png")
 
-# Misc
+# THEME OPTIONS
+THEME_OPTION_BOX = loadImage("themes/list", "ListOption.png")
+THEME_SELECTED_OPTION_BOX = loadImage("themes/list", "SelectedOption.png")
+ACTIVATE_THEME_BTN = loadImage("buttons", "ThemeActivate.png")
+DISABLED_THEME_BTN = loadImage("buttons", "ThemeDisabled.png")
+
+# MISC
 INSTRUCTION_IMAGE = loadImage("misc", "instruction.png")
 
-# Keys
+# KEYBOARD
 ESC_KEY_IMG = loadImage("keys", "esc_key.png")
 C_KEY_IMG = loadImage("keys", "C_key.png")
 E_KEY_IMG = loadImage("keys", "E_key.png")
@@ -137,7 +143,7 @@ P_KEY_IMG = loadImage("keys", "P_key.png")
 S_KEY_IMG = loadImage("keys", "S_key.png")
 T_KEY_IMG = loadImage("keys", "T_key.png")
 
-# Sounds
+# SOUNDS
 MOVE_SOUND = loadSound("playing", "move.mp3")
 MOVE3_SOUND = loadSound("playing", "move3.mp3")
 ROTATE_SOUND = loadSound("playing", "rotate.mp3")
@@ -151,14 +157,10 @@ APPEAR_SOUND = loadSound("powers", "appear.mp3")
 REWIND_SOUND = loadSound("powers", "rewind.mp3")
 TAKEOFF_SOUND = loadSound("powers", "takeoff.mp3")
 
-# Music
-MUSIC1 = getMusicFilePath("music1.mp3")
-MUSIC2 = getMusicFilePath("music2.mp3")
+# MUSIC
 MUSIC3 = getMusicFilePath("music3.mp3")
-MUSIC4 = getMusicFilePath("music4.mp3")
-MUSIC5 = getMusicFilePath("music5.mp3")
 
-# Poweup Wishlist
+# POWERS
 # Classic theme
 CLASSIC_BLOCK_I = loadImage("themes/classic/blocks", "I_block.png")
 CLASSIC_BLOCK_O = loadImage("themes/classic/blocks", "O_block.png")
