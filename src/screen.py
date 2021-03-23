@@ -61,7 +61,7 @@ SLIDING_DISTANCE = SLIDER_BG_WIDTH - DRAGGER_WIDTH - 8
 SELECTOR_BTN_WIDTH = 50
 SELECTOR_BTN_HEIGHT = 50
 SELECTOR_BTN_CORNER_RAD = round(15 / (
-            100 / SELECTOR_BTN_WIDTH))  # In .ai file, selector button is 100 px wide and it's border radius is 15. If the button is scaled down, makes sure that corner radius is also in right propotion
+        100 / SELECTOR_BTN_WIDTH))  # In .ai file, selector button is 100 px wide and it's border radius is 15. If the button is scaled down, makes sure that corner radius is also in right propotion
 
 SELECTION_NAME_BOX_WIDTH = 125
 SELECTION_NAME_BOX_HEIGHT = 50
@@ -688,7 +688,7 @@ def trophyCompletion(stat, value):
 
 
 # Themes menu
-def themeButtonsPos(i):
+def themeButtonPos(i):
     return (THEME_OPTION_X, THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT)
 
 

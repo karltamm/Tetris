@@ -52,7 +52,7 @@ def runGame(load_game=False):
     selected_button = None
     mouse_btn_is_held_down = False
 
-    theme = Theme("Classic")
+    theme = Theme(optionsValues("theme"))
 
     # Get game ready
     powers_are_enabled = optionsValues("powers")
@@ -497,7 +497,7 @@ def launchMainMenu():
 
     # Navigation
     MENU_BUTTONS = (
-    start_button, continue_button, options_button, stats_button, trophies_button, themes_button, quit_button)
+        start_button, continue_button, options_button, stats_button, trophies_button, themes_button, quit_button)
     BUTTON_ACTIONS = (runGame, runGame, options, stats, trophies, themes, closeProgram)
     selected_index = 0
     selected_button = MENU_BUTTONS[selected_index]
@@ -645,11 +645,11 @@ def options():
                     run = False
                     launchMainMenu()
                 elif clickBox(stages_switch, element=1):
-                    optionsValues("stages", change=True)
+                    optionsValues("stages", invert=True)
                 elif clickBox(block_shadows_switch, element=1):
-                    optionsValues("block_shadows", change=True)
+                    optionsValues("block_shadows", invert=True)
                 elif clickBox(powers_switch, element=1):
-                    optionsValues("powers", change=True)
+                    optionsValues("powers", invert=True)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
@@ -819,15 +819,14 @@ def trophies():
 def themes():
     # UI
     back_button = (BACK_BTN_X, BACK_BTN_Y)
-    classic_button = themeButtonsPos(0)
-    yin_yang_button = themeButtonsPos(1)
-    xp_button = themeButtonsPos(2)
+    classic_button = themeButtonPos(0)
+    yin_yang_button = themeButtonPos(1)
+    xp_button = themeButtonPos(2)
 
     selected_button = None
     mouse_btn_is_held_down = False
 
     themes_info = getThemesInfo()
-    themes_info[0]["active"] = True
 
     run = True
     while run:
@@ -866,9 +865,19 @@ def themes():
                 mouse_btn_is_held_down = True
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
+                selected_button = None
+
                 if clickBox(back_button):
                     run = False
                     launchMainMenu()
+                elif clickBox(classic_button) and not themes_info[0]["active"]:
+                    optionsValues("theme", new_value="Classic")
+                elif clickBox(yin_yang_button) and not themes_info[1]["active"]:
+                    optionsValues("theme", new_value="Yin-Yang")
+                elif clickBox(xp_button) and not themes_info[2]["active"]:
+                    optionsValues("theme", new_value="XP")
+
+                themes_info = getThemesInfo()
 
             # Using keyboard
             elif event.type == pygame.KEYDOWN:

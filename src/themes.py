@@ -1,4 +1,5 @@
 from assets import *
+from database import *
 
 # CONSTANTS
 THEMES = ("Classic", "Yin-Yang", "XP")
@@ -60,11 +61,18 @@ class Theme:
 # FUNCTIONS
 def getThemesInfo():
     themes_info = {}
+    active_theme = optionsValues("theme")
+
     for i, name in enumerate(THEMES):
+        if name == active_theme:
+            is_active = True
+        else:
+            is_active = False
+
         themes_info[i] = {
             "name": name,
             "unlocked": True,
-            "active": False
+            "active": is_active
         }
 
     return themes_info
