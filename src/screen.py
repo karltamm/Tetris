@@ -207,23 +207,28 @@ PAGE_TITLE_X = BACK_BTN_X
 PAGE_TITLE_Y = BACK_BTN_Y + BTN_HEIGHT + 2 * FAR
 
 # Shortcuts menu
-SHORTCUTS_BACKGROUND_SIZE = (520, 490)
-SHORTCUTS_BACKGROUND = pygame.Surface(SHORTCUTS_BACKGROUND_SIZE, pygame.SRCALPHA)
-pygame.draw.rect(SHORTCUTS_BACKGROUND, (0, 0, 0, 128), (0, 0, SHORTCUTS_BACKGROUND_SIZE[0], SHORTCUTS_BACKGROUND_SIZE[1]), border_radius = 10)
-SHORTCUTS_BACKGROUND_X = PAGE_TITLE_X - 20
-SHORTCUTS_BACKGROUND_Y = PAGE_TITLE_Y - 20
+SC_KEYS = (ESC_KEY_IMG, P_KEY_IMG, S_KEY_IMG, E_KEY_IMG)
+SC_TXT = ("Pause/unpause", "Activate/deactivate power", "Save game", "End game")
+
+KEY_WIDTH = 50
+KEY_HEIGHT = 54
+
+# SHORTCUTS_BACKGROUND_SIZE = (412, 432)
+# SHORTCUTS_BACKGROUND = pygame.Surface(SHORTCUTS_BACKGROUND_SIZE, pygame.SRCALPHA)
+# pygame.draw.rect(SHORTCUTS_BACKGROUND, (0, 0, 0, 128), (0, 0, SHORTCUTS_BACKGROUND_SIZE[0], SHORTCUTS_BACKGROUND_SIZE[1]), border_radius = 15)
+# SHORTCUTS_BACKGROUND_X = PAGE_TITLE_X
+# SHORTCUTS_BACKGROUND_Y = PAGE_TITLE_Y
 
 SHORTCUTS_TITLE_X = PAGE_TITLE_X
 SHORTCUTS_TITLE_Y = PAGE_TITLE_Y
-SHORTCUTS_TYPE_X = BACK_BTN_X
+
+SHORTCUTS_TYPE_X = SHORTCUTS_TITLE_X
 SHORTCUTS_TYPE_Y = SHORTCUTS_TITLE_Y + TITLE_HEIGHT + FAR
 
-SHORTCUTS_ROW_1 = BACK_BTN_X
-SHORTCUTS_ROW_2 = BACK_BTN_X + 200
-SHORTCUTS_COL_1_TEXT = SHORTCUTS_TYPE_Y + HEADING2_HEIGHT + FAR
-SHORTCUTS_COL_1_KEY = SHORTCUTS_COL_1_TEXT + HEADING2_HEIGHT
-SHORTCUTS_COL_2_TEXT = SHORTCUTS_COL_1_KEY + 135
-SHORTCUTS_COL_2_KEY = SHORTCUTS_COL_2_TEXT + HEADING2_HEIGHT
+SC_ROW_X = SHORTCUTS_TYPE_X
+SC_ROW_TXT_X = SC_ROW_X + KEY_WIDTH + NEAR
+SC_ROW_HEIGHT = KEY_HEIGHT + NEAR
+SC_ROW1_Y = SHORTCUTS_TYPE_Y + HEADING2_HEIGHT + FAR
 
 # Options menu
 OPTIONS_TITLE_X = PAGE_TITLE_X
@@ -291,9 +296,10 @@ THEME_NAME_BOX_HEIGHT = 60
 
 THEME_OPTION_X = THEMES_TITLE_X
 THEME_OPTION_NAME_BOX_X = THEME_OPTION_X + BTN_WIDTH + NEAR
+THEME_OPTION_HELP_TXT_X = THEME_OPTION_NAME_BOX_X + THEME_NAME_BOX_WIDTH + NEAR
+THEME_OPTION_HELP_TXT_SIZE = 40
 THEME_OPTION_HEIGHT = THEME_NAME_BOX_HEIGHT + FAR
-
-THEME_1ST_OPTION_Y = THEMES_TITLE_Y + TITLE_HEIGHT + FAR
+THEME_OPTION1_Y = THEMES_TITLE_Y + TITLE_HEIGHT + FAR
 
 # INITIALIZE
 pygame.init()
@@ -610,21 +616,15 @@ def drawNavigation(current_page, num_of_pages):
 # Shortcuts menu
 def showShortcutsMenu():
     drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
-    drawObject(SHORTCUTS_BACKGROUND, SHORTCUTS_BACKGROUND_X, SHORTCUTS_BACKGROUND_Y)
+    # drawObject(SHORTCUTS_BACKGROUND, SHORTCUTS_BACKGROUND_X, SHORTCUTS_BACKGROUND_Y)
     drawText("Shortcuts", SHORTCUTS_TITLE_X, SHORTCUTS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
-    drawText("IN-GAME SHORTCUTS", SHORTCUTS_TYPE_X, SHORTCUTS_TYPE_Y, size=HEADING2_SIZE, font=HEADING_FONT)
-    
-    drawText("Pause/unpause", SHORTCUTS_ROW_1, SHORTCUTS_COL_1_TEXT)
-    drawObject(ESC_KEY_IMG, SHORTCUTS_ROW_1, SHORTCUTS_COL_1_KEY)
-    
-    drawText("Activate/deactivate power", SHORTCUTS_ROW_2, SHORTCUTS_COL_1_TEXT)
-    drawObject(P_KEY_IMG, SHORTCUTS_ROW_2, SHORTCUTS_COL_1_KEY)
-    
-    drawText("Save game", SHORTCUTS_ROW_1, SHORTCUTS_COL_2_TEXT)
-    drawObject(S_KEY_IMG, SHORTCUTS_ROW_1, SHORTCUTS_COL_2_KEY)
-    
-    drawText("End game", SHORTCUTS_ROW_2, SHORTCUTS_COL_2_TEXT)
-    drawObject(E_KEY_IMG, SHORTCUTS_ROW_2, SHORTCUTS_COL_2_KEY)
+    drawText("In-game", SHORTCUTS_TYPE_X, SHORTCUTS_TYPE_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+
+    for i in range(len(SC_KEYS)):
+        row_y = SC_ROW1_Y + i * SC_ROW_HEIGHT
+        text_y = row_y + (KEY_HEIGHT - txtArea(SC_TXT[i]).height) / 2
+        drawObject(SC_KEYS[i], SC_ROW_X, row_y)
+        drawText(SC_TXT[i], SC_ROW_TXT_X, text_y)
 
 
 # Options menu
@@ -729,6 +729,7 @@ def trophyCompletion(stat, value):
     else:
         return GREY
 
+
 def unlockedTrophies():
     unlocked = 0
     for i in range(len(TROPHIES)):
@@ -737,9 +738,10 @@ def unlockedTrophies():
                 unlocked += 1
     saveStat("trophies", unlocked, compare=1)
 
+
 # Themes menu
 def themeButtonPos(i):
-    return (THEME_OPTION_X, THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT)
+    return (THEME_OPTION_X, THEME_OPTION1_Y + i * THEME_OPTION_HEIGHT)
 
 
 def showThemesScreen(themes):
@@ -747,10 +749,17 @@ def showThemesScreen(themes):
     drawText("Themes", OPTIONS_TITLE_X, OPTIONS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
     for i, j in enumerate(themes):
+        option_y = THEME_OPTION1_Y + i * THEME_OPTION_HEIGHT
+        name_x = THEME_OPTION_NAME_BOX_X + (THEME_NAME_BOX_WIDTH - txtArea(themes[j]["name"]).width) / 2
+        name_y = option_y + (THEME_NAME_BOX_HEIGHT - txtArea(themes[j]["name"]).height) / 2
+
         if themes[j]["unlocked"]:
             theme_button = ACTIVATE_THEME_BTN
         else:
             theme_button = DISABLED_THEME_BTN
+            message = "Need %d more trophies" % (themes[j]["trophies_needed"])
+            text_y = option_y + (THEME_NAME_BOX_HEIGHT - txtArea(message, size=THEME_OPTION_HELP_TXT_SIZE).height) / 2
+            drawText(message, THEME_OPTION_HELP_TXT_X, text_y, size=THEME_OPTION_HELP_TXT_SIZE)
 
         if themes[j]["active"]:
             theme_name_box = THEME_SELECTED_OPTION_BOX
@@ -758,12 +767,8 @@ def showThemesScreen(themes):
         else:
             theme_name_box = THEME_OPTION_BOX
 
-        option_y = THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT
         drawObject(theme_button, THEME_OPTION_X, option_y)
         drawObject(theme_name_box, THEME_OPTION_NAME_BOX_X, option_y)
-
-        name_x = THEME_OPTION_NAME_BOX_X + (THEME_NAME_BOX_WIDTH - txtArea(themes[j]["name"]).width) / 2
-        name_y = option_y + (THEME_NAME_BOX_HEIGHT - txtArea(themes[j]["name"]).height) / 2
         drawText(themes[j]["name"], name_x, name_y)
 
 
