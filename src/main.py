@@ -145,10 +145,9 @@ def runGame(load_game=False):
                 saveStat("blocks_created", blocks_created)
                 saveStat("time_ingame", seconds_in_game)
                 saveStat("games_played", 1)
-                unlockedTrophies()
-
                 saveStat("single_game_rows", solved_rows, compare=1)
                 saveStat("single_game_time_ingame", seconds_in_game, compare=1)
+                unlockedTrophies()
 
             # Using keyboard
             if event.type == pygame.KEYDOWN:
