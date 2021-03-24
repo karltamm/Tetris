@@ -7,6 +7,7 @@ from board import *
 from nextblock import *
 from assets import *
 from database import *
+from themes import *
 
 # CONSTANTS
 # Screen
@@ -47,15 +48,25 @@ SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
         250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
-# Slider backround
+# Slider
 SLIDER_BG_HEIGHT = 30
 SLIDER_BG_WIDTH = 200
 
-# Dragger
 DRAGGER_HEIGHT = 54
 DRAGGER_WIDTH = 33
 DRAGGER_CORNER_RAD = 5
 SLIDING_DISTANCE = SLIDER_BG_WIDTH - DRAGGER_WIDTH - 8
+
+# Selector
+SELECTOR_BTN_WIDTH = 50
+SELECTOR_BTN_HEIGHT = 50
+SELECTOR_BTN_CORNER_RAD = round(15 / (
+        100 / SELECTOR_BTN_WIDTH))  # In .ai file, selector button is 100 px wide and it's border radius is 15. If the button is scaled down, makes sure that corner radius is also in right propotion
+
+SELECTION_NAME_BOX_WIDTH = 125
+SELECTION_NAME_BOX_HEIGHT = 50
+
+SELECTOR_WIDTH = 2 * SELECTOR_BTN_WIDTH + 2 * NEAR + SELECTION_NAME_BOX_WIDTH
 
 # Main menu
 LOGO_HEIGHT = 100
@@ -78,8 +89,11 @@ STATS_BTN_Y = OPTIONS_BTN_Y + BTN_HEIGHT + NEAR
 TROPHIES_BTN_X = START_BTN_X
 TROPHIES_BTN_Y = STATS_BTN_Y + BTN_HEIGHT + NEAR
 
+THEMES_BTN_X = START_BTN_X
+THEMES_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
+
 QUIT_BTN_X = START_BTN_X
-QUIT_BTN_Y = TROPHIES_BTN_Y + BTN_HEIGHT + NEAR
+QUIT_BTN_Y = THEMES_BTN_Y + BTN_HEIGHT + NEAR
 
 INSTRUCTION_X = START_BTN_X + BTN_WIDTH + 40
 INSTRUCTION_Y = START_BTN_Y
@@ -117,6 +131,8 @@ BOARD_Y = HIGH_SCORE_VAL_Y + TEXT_HEIGHT + FAR
 
 BOARD_X_END = BOARD_X + BOARD_SCREEN_WIDTH
 BOARD_Y_END = BOARD_Y + BOARD_SCREEN_HEIGHT
+
+BOARD_BG_BORDER_RADIUS_Y = BOARD_Y - 10
 
 # Next block area
 NEXT_BLOCK_TEXT_X = BOARD_X_END + PADDING
@@ -233,7 +249,7 @@ STAT1_Y = OPTIONS_TITLE_Y + TITLE_HEIGHT + FAR
 STAT_Y = [STAT1_Y + i * (TEXT_HEIGHT + FAR) for i in
           range(6)]  # Create a list of stat Y values [STAT1_Y, STAT2_Y, ...STAT6_Y]
 
-# Trophies
+# Trophies menu
 TROPHIES_TITLE_X = PAGE_TITLE_X
 TROPHIES_TITLE_Y = PAGE_TITLE_Y
 
@@ -243,6 +259,19 @@ TROPHY_TEXT_X = TROPHY_HEADING_X
 TROPHY_TEXT_Y = TROPHY_HEADING_Y + HEADING2_HEIGHT + NEAR
 
 TROPHY_HEADING_GAP = HEADING2_HEIGHT + NEAR + TEXT_HEIGHT + FAR
+
+# Themes menu
+THEMES_TITLE_X = PAGE_TITLE_X
+THEMES_TITLE_Y = PAGE_TITLE_Y
+
+THEME_NAME_BOX_WIDTH = 150
+THEME_NAME_BOX_HEIGHT = 60
+
+THEME_OPTION_X = THEMES_TITLE_X
+THEME_OPTION_NAME_BOX_X = THEME_OPTION_X + BTN_WIDTH + NEAR
+THEME_OPTION_HEIGHT = THEME_NAME_BOX_HEIGHT + FAR
+
+THEME_1ST_OPTION_Y = THEMES_TITLE_Y + TITLE_HEIGHT + FAR
 
 # INITIALIZE
 pygame.init()
@@ -268,19 +297,22 @@ class FPSController:
 
 
 # GENERAL FUNCTIONS
+def txtArea(text, size=TEXT_SIZE, font=TEXT_FONT):
+    return font.render(text, size=size)[1]
+
+
 def drawText(text, x, y, size=TEXT_SIZE, color=WHITE, font=TEXT_FONT, align_right=False):
     if align_right:
-        text_width = font.render(text, size=size)[1].width
-        font.render_to(SCREEN, (x-text_width, y), text, color, size=size)
+        font.render_to(SCREEN, (x - txtArea(text).width, y), text, color, size=size)
     else:
         font.render_to(SCREEN, (x, y), text, color, size=size)
 
 
-
 def drawObject(object, x, y):
-    SCREEN.blit(object, (x, y))
+    return SCREEN.blit(object, (x, y))
 
 
+# Detecting clicks on UI element
 def clickBox(el_pos=(0, 0), element=0, slider_value=0):  # 0-Button, 1-switch, 2-slider
     mouse_x, mouse_y = pygame.mouse.get_pos()
     # Determine for which UI element this clickbox is for
@@ -302,6 +334,11 @@ def clickBox(el_pos=(0, 0), element=0, slider_value=0):  # 0-Button, 1-switch, 2
         corner_rad = DRAGGER_CORNER_RAD
         el_x = el_pos[0] + (SLIDING_DISTANCE * optionsValues(slider_value)) + 4
         el_y = el_pos[1] - 12
+    elif element == 3:
+        height = SELECTOR_BTN_HEIGHT
+        width = SELECTOR_BTN_WIDTH
+        corner_rad = SELECTOR_BTN_CORNER_RAD
+        el_x, el_y = el_pos  # Element position
 
     # Two rects that cover everything but rounded corners
     height_box = pygame.Rect(el_x + corner_rad, el_y, width - corner_rad * 2, height)
@@ -326,6 +363,7 @@ def checkCornerRad(mouse_x, mouse_y, button_x, button_y, radius):  # Checks if m
         return True
 
 
+# Setting UI element states
 def activateButtonClickState(button):
     if button is not None:
         btn_x, btn_y = button
@@ -338,6 +376,29 @@ def activateButtonHoverState(button):
         drawObject(HOVER_MASK, btn_x, btn_y - 1)
 
 
+def activateSelectorClickState(selector, side):
+    if selector is not None:
+        selector_x, selector_y = selector
+        if side == "left":
+            drawObject(L_SELECTOR_CLICKED, selector_x, selector_y)
+        else:
+            drawObject(R_SELECTOR_CLICKED, selector_x, selector_y)
+
+
+# Sound
+def playSound(sound):
+    sound.set_volume(optionsValues("sound") / 2)
+    sound.play()
+
+
+def musicControl(change_volume=False):
+    pygame.mixer.music.set_volume(optionsValues("music") / 2)
+    if not change_volume:
+        pygame.mixer.music.load(MUSIC)
+        pygame.mixer.music.play(-1)
+
+
+# Misc
 def drawTransparentOverlay(opacity=200, dark=True):
     overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 
@@ -349,18 +410,6 @@ def drawTransparentOverlay(opacity=200, dark=True):
     SCREEN.blit(overlay, (0, 0))
 
 
-def playSound(sound):
-    sound.set_volume(optionsValues("sound")/2)
-    sound.play()
-
-
-def musicControl(change_volume=False):
-    pygame.mixer.music.set_volume(optionsValues("music")/2)
-    if not change_volume:
-        pygame.mixer.music.load(MUSIC3)
-        pygame.mixer.music.play(-1)
-
-
 def updateScreenAndDelayNextUpdate(delay=1000):
     pygame.display.update()  # Without it, UI content wouldn't be displayed for determined time
     pygame.time.delay(delay)  # default delay is 1000 ms
@@ -368,48 +417,60 @@ def updateScreenAndDelayNextUpdate(delay=1000):
 
 
 # GAME
-def showBoard(board):
+def showBoard(board, theme):
+    if theme.bg is not None:
+        drawObject(theme.bg, BOARD_X, BOARD_Y)
+        makeGameBoardBordersRound()
+
     for row in range(BOARD_HEIGHT):
         for col in range(BOARD_WIDTH):
             if board[row][col] == 0:
-                SCREEN.blit(EMPTY_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.empty_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 1:
-                SCREEN.blit(GREEN_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.I_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 2:
-                SCREEN.blit(BRONZE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.O_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 3:
-                SCREEN.blit(PURPLE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.L_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 4:
-                SCREEN.blit(PINK_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.J_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 5:
-                SCREEN.blit(RED_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.T_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 6:
-                SCREEN.blit(YELLOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.Z_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 7:
-                SCREEN.blit(BLUE_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.S_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
             elif board[row][col] == 8:
-                SCREEN.blit(SHADOW_CELL, (BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL))
+                drawObject(theme.shadow_cell, BOARD_X + col * BOARD_CELL, BOARD_Y + row * BOARD_CELL)
 
 
-def showNextBlockArea(next_block_area):
+def makeGameBoardBordersRound():
+    drawObject(THEME_BG_BORDER_RADIUS, BOARD_X, BOARD_BG_BORDER_RADIUS_Y)
+
+
+def showNextBlockArea(next_block_area, theme):
     for row in range(NEXT_BLOCK_AREA_HEIGHT):
         for col in range(NEXT_BLOCK_AREA_WIDTH):
             if next_block_area[row][col] == 0:
-                SCREEN.blit(EMPTY_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(CLASSIC_EMPTY_CELL, NEXT_BLOCK_AREA_X + col * BOARD_CELL,
+                           NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 1:
-                SCREEN.blit(GREEN_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.I_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 2:
-                SCREEN.blit(BRONZE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.O_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 3:
-                SCREEN.blit(PURPLE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.L_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 4:
-                SCREEN.blit(PINK_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.J_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 5:
-                SCREEN.blit(RED_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.T_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 6:
-                SCREEN.blit(YELLOW_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.Z_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
             elif next_block_area[row][col] == 7:
-                SCREEN.blit(BLUE_CELL, (NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL))
+                drawObject(theme.S_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL, NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
+            elif next_block_area[row][col] == 8:
+                drawObject(theme.shadow_cell, NEXT_BLOCK_AREA_X + col * BOARD_CELL,
+                           NEXT_BLOCK_AREA_Y + row * BOARD_CELL)
 
     drawText("Next", NEXT_BLOCK_TEXT_X, NEXT_BLOCK_TEXT_Y, size=HEADING1_SIZE)
 
@@ -445,11 +506,16 @@ def showPauseMenu():
     drawObject(END_BTN, END_BTN_X, END_BTN_Y)
 
 
-def showGameOverScreen():
+def showGameOverScreen(theme):
     drawTransparentOverlay()
 
     # Message
-    drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+    if theme.name == "XP":
+        drawObject(XP_GAME_OVER_SCREEN, BOARD_X, BOARD_Y)
+    elif theme.name == "Yin-Yang":
+        drawObject(YIN_YANG_GAME_OVER_SCREEN, BOARD_X, BOARD_Y)
+    else:
+        drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
 
     # Buttons
     drawObject(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
@@ -470,12 +536,14 @@ def showSaveConfirmation(resume_game_if_saved):
     drawText("Saved", SAVED_TXT_X, SAVED_TXT_Y, size=TITLE_SIZE, font=TITLE_FONT, color=DARK_GREY)
     updateScreenAndDelayNextUpdate()
 
+
 def isMouseOnGameBoard(mouse_pos):
-        # Is cursor on game board?
-        if mouse_pos[0] > BOARD_X and mouse_pos[0] < BOARD_X_END:
-            if mouse_pos[1] > BOARD_Y and mouse_pos[1] < BOARD_Y_END:
-                return True
-        return False
+    # Is cursor on game board?
+    if mouse_pos[0] > BOARD_X and mouse_pos[0] < BOARD_X_END:
+        if mouse_pos[1] > BOARD_Y and mouse_pos[1] < BOARD_Y_END:
+            return True
+    return False
+
 
 # MAIN MENU
 def showMainMenu(game_is_saved):
@@ -483,6 +551,7 @@ def showMainMenu(game_is_saved):
     drawObject(OPTIONS_BTN, OPTIONS_BTN_X, OPTIONS_BTN_Y)
     drawObject(STATS_BTN, STATS_BTN_X, STATS_BTN_Y)
     drawObject(TROPHIES_BTN, TROPHIES_BTN_X, TROPHIES_BTN_Y)
+    drawObject(THEMES_BTN, THEMES_BTN_X, THEMES_BTN_Y)
     drawObject(QUIT_BTN, QUIT_BTN_X, QUIT_BTN_Y)
     drawObject(INSTRUCTION_IMAGE, INSTRUCTION_X, INSTRUCTION_Y)
 
@@ -562,6 +631,7 @@ def drawSliders(slider):
     drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
     drawObject(DRAGGER, sound_dragger_x, SOUND_DRAGGER_Y)
 
+
 # Stats menu
 def showStatsMenu(current_page):
     stats = updateStats()
@@ -624,6 +694,36 @@ def unlockedTrophies():
                 unlocked += 1
     saveStat("trophies", unlocked, compare=1)
 
+# Themes menu
+def themeButtonPos(i):
+    return (THEME_OPTION_X, THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT)
+
+
+def showThemesScreen(themes):
+    drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
+    drawText("Themes", OPTIONS_TITLE_X, OPTIONS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
+
+    for i, j in enumerate(themes):
+        if themes[j]["unlocked"]:
+            theme_button = ACTIVATE_THEME_BTN
+        else:
+            theme_button = DISABLED_THEME_BTN
+
+        if themes[j]["active"]:
+            theme_name_box = THEME_SELECTED_OPTION_BOX
+            theme_button = pygame.Surface((0, 0))  # No button for active theme
+        else:
+            theme_name_box = THEME_OPTION_BOX
+
+        option_y = THEME_1ST_OPTION_Y + i * THEME_OPTION_HEIGHT
+        drawObject(theme_button, THEME_OPTION_X, option_y)
+        drawObject(theme_name_box, THEME_OPTION_NAME_BOX_X, option_y)
+
+        name_x = THEME_OPTION_NAME_BOX_X + (THEME_NAME_BOX_WIDTH - txtArea(themes[j]["name"]).width) / 2
+        name_y = option_y + (THEME_NAME_BOX_HEIGHT - txtArea(themes[j]["name"]).height) / 2
+        drawText(themes[j]["name"], name_x, name_y)
+
+
 # POWERS
 def showPowersSelection(powers_are_enabled, power):
     drawText("Power", POWERS_HEADING_X, POWERS_HEADING_Y, size=HEADING1_SIZE, font=HEADING_FONT)
@@ -667,37 +767,43 @@ def highlightBoard():
 
 
 # Wishlist
-def showWishlistScreen(block_under_cursor):
+def showWishlistScreen(block_under_cursor, theme):
     highlightBoard()
     showPowerHelpText("Click on a block to use it")
-    displayBlocksSelection()
-    highlightBlockUnderCursor(block_under_cursor)
+    displayBlocksSelection(theme)
+    highlightBlockUnderCursor(block_under_cursor, theme)
 
 
-def displayBlocksSelection():
-    for i, block in enumerate(BLOCK_IMAGES):
+def displayBlocksSelection(theme):
+    for i, block in enumerate(theme.block_images):
         SCREEN.blit(block, (BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * i))
 
 
-def highlightBlockUnderCursor(block_under_cursor):
+def highlightBlockUnderCursor(block_under_cursor, theme):
     if block_under_cursor is not None:
         index, block_area = block_under_cursor  # Unpack tuple
 
-        SCREEN.blit(BLOCK_IMAGES_HL[index], (BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * index))
+        SCREEN.blit(theme.block_images_hl[index], (BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * index))
 
 
 # Laser
-def showLaserScreen(row):
+def showLaserScreen(row, theme):
     highlightBoard()
-    highlightRow(row)
+    highlightRow(row, theme)
+    makeGameBoardBordersRound()
     showPowerHelpText("Click on a row to remove it")
 
 
-def highlightRow(row):
+def highlightRow(row, theme):
     if row is not None:
         index, row_y = row  # Unpack tuple
         highlight = pygame.Surface((BOARD_SCREEN_WIDTH, BOARD_CELL), pygame.SRCALPHA)
-        highlight.fill(TRANSPARENT_WHITE)
+
+        if theme.name == "Yin-Yang":
+            highlight.fill(TRANSPARENT_BLACK)
+        else:
+            highlight.fill(TRANSPARENT_WHITE)
+
         SCREEN.blit(highlight, (BOARD_X, row_y))
 
 

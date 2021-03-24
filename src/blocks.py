@@ -20,10 +20,8 @@ class Block:
         self.is_locked = False
         self.time_since_movement = 0
 
-        if self.updateBoard(board) == False:  # No room for new block, so game over
-            # Notify program that game is over
-            pygame.event.post(pygame.event.Event(GAME_OVER))
-            playSound(GAME_OVER_SOUND)
+        if self.updateBoard(board) == False:  # No room for new block
+            pygame.event.post(pygame.event.Event(GAME_OVER))  # Notify program that game is over
 
     def move(self, board, x_step=0, y_step=0, autofall=False):
         move_success = False
@@ -136,13 +134,14 @@ class Block:
                 distance = abs(self.x - (index - 2))
                 if self.x > (index - 2):
                     for _ in range(distance):
-                        self.move(board, x_step = -1)
+                        self.move(board, x_step=-1)
                 elif self.x < (index - 2):
                     for _ in range(distance):
-                        self.move(board, x_step = +1)  
+                        self.move(board, x_step=+1)
                 self.updateBoard(board)
                 return True
         return False
+
 
 # CHILD CLASS OF "Block"
 class ShadowBlock(Block):
