@@ -17,8 +17,8 @@ class Block:
         self.y = 0  # In which board row is top-left block cell?
         self.used_board_cells = []  # [(row, col), (row, col) etc]
         self.is_placed = False
-        self.final = False
-        self.time_since_rotation = 0
+        self.is_locked = False
+        self.time_since_movement = 0
 
         if self.updateBoard(board) == False:  # No room for new block, so game over
             # Notify program that game is over
@@ -37,14 +37,14 @@ class Block:
 
             if x_step == 0:  # Block didn't side collide with any other block
                 self.is_placed = True  # Block can't go any lower, so it's placed
-                self.final = True
+                self.is_locked = True  # Block can't be moved anymore
                 move_success = True
         # Move was successful so play sound
         else:
             move_success = True
-            self.final = False
+            self.is_locked = False
         if move_success and not autofall:
-            self.time_since_rotation = pygame.time.get_ticks()
+            self.time_since_movement = pygame.time.get_ticks()
             playSound(MOVE3_SOUND)
         return move_success
 
@@ -92,8 +92,8 @@ class Block:
             rotate_success = True
         # Rotation was successful so play sound
         if rotate_success and self.shape != SHAPE_O:
-            self.final = False
-            self.time_since_rotation = pygame.time.get_ticks()
+            self.is_locked = False
+            self.time_since_movement = pygame.time.get_ticks()
             playSound(ROTATE_SOUND)
 
 

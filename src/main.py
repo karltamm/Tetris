@@ -304,7 +304,6 @@ def runGame(load_game=False):
                 timer = 0
                 seconds_in_game += 1
 
-            hard_drop = False
             # For holding down keys
             key_timer += 1
             # Block automatic falling
@@ -326,7 +325,6 @@ def runGame(load_game=False):
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if isMouseOnGameBoard(mouse_pos):  # Check if mouse clicked on game board
                         if event.button == 1:  # Left click hard drops block
-                            hard_drop = True
                             while not current_block.is_placed:
                                 current_score = score_counter.drop(2)
                                 current_block.move(board, y_step=1, autofall=True)
@@ -348,7 +346,6 @@ def runGame(load_game=False):
                     elif event.key == pygame.K_LEFT:
                         left_pressed = True
                     elif event.key == pygame.K_SPACE:  # Pressing space instantly drops current block
-                        hard_drop = True
                         while not current_block.is_placed:
                             current_score = score_counter.drop(2)
                             current_block.move(board, y_step=1, autofall=True)
@@ -379,7 +376,8 @@ def runGame(load_game=False):
 
             # Is current block placed?
             if current_block.is_placed:
-                if ((pygame.time.get_ticks() - current_block.time_since_rotation) > 200 or hard_drop) and current_block.final:
+                # If block hasn't been moved in 250 ms
+                if (pygame.time.get_ticks() - current_block.time_since_movement) > 250 and current_block.is_locked:
                     shadow_block.clearShadow(board)  # Clear previous shadow block
                     full_rows = clearFullRows(board)
 
