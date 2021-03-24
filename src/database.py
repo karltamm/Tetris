@@ -11,7 +11,7 @@ TROPHIES = [[["Novice(classic)", "Reach 10,000 points in classic mode", "high_sc
              ["Master(classic)", "Reach 100,000 point in classic mode", "high_score", 100000],
              ["Legend(classic)", "Reach 250,000 points in classic mode", "high_score", 250000]],
 
-            [["Novice(power-ups)", "Reach 10,000 points with power-ups", "high_score_powers", 20000],
+            [["Novice(power-ups)", "Reach 20,000 points with power-ups", "high_score_powers", 20000],
              ["Advanced(power-ups)", "Reach 65,000 points with power-ups", "high_score_powers", 65000],
              ["Master(power-ups)", "Reach 125,000 point with power-ups", "high_score_powers", 125000],
              ["Legend(power-ups)", "Reach 300,000 points with power-ups", "high_score_powers", 300000]],
@@ -28,7 +28,7 @@ TROPHIES = [[["Novice(classic)", "Reach 10,000 points in classic mode", "high_sc
 
             [["Long game", "Spend 10 minutes in one game", "single_game_time_ingame", 600],
              ["No-life", "Spend 2 hours in-game", "time_ingame", 7200],
-             ["Try hard", "Get all trophies", "trophies", 16],
+             ["Try hard", "Get all trophies", "trophies", 19],
              ["Gamer", "Play 100 games", "games_played", 100]]]
 
 # INITIALIZE
