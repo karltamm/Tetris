@@ -686,6 +686,13 @@ def trophyCompletion(stat, value):
     else:
         return GREY
 
+def unlockedTrophies():
+    unlocked = 0
+    for i in range(len(TROPHIES)):
+        for j in range(len(TROPHIES[i])):
+            if trophyCompletion(TROPHIES[i][j][2], TROPHIES[i][j][3]) == WHITE:
+                unlocked += 1
+    saveStat("trophies", unlocked, compare=1)
 
 # Themes menu
 def themeButtonPos(i):

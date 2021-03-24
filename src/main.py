@@ -145,9 +145,9 @@ def runGame(load_game=False):
                 saveStat("blocks_created", blocks_created)
                 saveStat("time_ingame", seconds_in_game)
                 saveStat("games_played", 1)
-
                 saveStat("single_game_rows", solved_rows, compare=1)
                 saveStat("single_game_time_ingame", seconds_in_game, compare=1)
+                unlockedTrophies()
 
             # Using keyboard
             if event.type == pygame.KEYDOWN:
@@ -318,15 +318,13 @@ def runGame(load_game=False):
 
             # For holding down keys
             key_timer += 1
-
             # Block automatic falling
             if not power.autofall_is_off:
-                if (pygame.time.get_ticks() - current_block.time_since_rotation) > 100:  # Give time to rotate
-                    fall_timer += 1
-                    if fall_timer / FPS > fall_speed:
-                        fall_timer = 0
-                        if not down_pressed:
-                            current_block.move(board, y_step=1, autofall=True)
+                fall_timer += 1
+                if fall_timer / FPS > fall_speed:
+                    fall_timer = 0
+                    if not down_pressed:
+                        current_block.move(board, y_step=1, autofall=True)
 
             # Check if user wants to move a block
             for event in events:
@@ -375,41 +373,46 @@ def runGame(load_game=False):
                         left_pressed = False
 
             # Move blocks
-            if down_pressed and key_timer % 4 == 0:
+            if down_pressed and key_timer % 4 == 0 and not current_block.is_placed:
                 current_block.move(board, y_step=1)
+                fall_timer = 0
                 current_score = score_counter.drop(1)  # Give points for faster drops
+
             elif right_pressed and key_timer % 10 == 0:
-                shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
-                current_block.move(board, x_step=1)
+                if current_block.move(board, x_step=1):  # If move unsuccessful shadow won't flicker
+                    shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
+
             elif left_pressed and key_timer % 10 == 0:
-                shadow_block.clearShadow(board)
-                current_block.move(board, x_step=-1)
+                if current_block.move(board, x_step=-1):
+                    shadow_block.clearShadow(board)
 
             # Is current block placed?
             if current_block.is_placed:
-                shadow_block.clearShadow(board)  # Clear previous shadow block
-                full_rows = clearFullRows(board)
+                # If block hasn't been moved in 250 ms
+                if (pygame.time.get_ticks() - current_block.time_since_movement) > 250 and current_block.is_locked:
+                    shadow_block.clearShadow(board)  # Clear previous shadow block
+                    full_rows = clearFullRows(board)
 
-                # Is row cleared?
-                if full_rows:
-                    # Give points for cleared rows
-                    if perfectClear(board):
-                        current_score = score_counter.perfectClear(stage, full_rows)
-                    else:
-                        current_score = score_counter.fullRow(stage, full_rows)
+                    # Is row cleared?
+                    if full_rows:
+                        # Give points for cleared rows
+                        if perfectClear(board):
+                            current_score = score_counter.perfectClear(stage, full_rows)
+                        else:
+                            current_score = score_counter.fullRow(stage, full_rows)
 
-                    # Check current stage
-                    solved_rows += full_rows
-                    if solved_rows >= stage * 5 and optionsValues("stages"):
-                        stage += 1
-                        fall_speed *= 0.97
+                        # Check current stage
+                        solved_rows += full_rows
+                        if solved_rows >= stage * 5 and optionsValues("stages"):
+                            stage += 1
+                            fall_speed *= 0.97
 
-                    # Sound effect if at least one row is cleared
-                    playSound(ROW_CLEARED_SOUND)
+                        # Sound effect if at least one row is cleared
+                        playSound(ROW_CLEARED_SOUND)
 
-                current_block = Block(next_block, board)
-                blocks_created += 1
-                next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
+                    current_block = Block(next_block, board)
+                    blocks_created += 1
+                    next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
 
         # Update screen
         fps_controller.keepFrameDurationCorrect()
