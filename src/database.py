@@ -81,18 +81,21 @@ class Score:
 
 # FUNCTIONS
 # Options
-def optionsValues(option, change=False, new_value=None):
+def optionsValues(option, invert=False, new_value=None):
     try:
         value = OPTIONS_DB[option]
-    except:
+    except:  # No such option saved in database, so create new value
         if option == "sound" or option == "music":
             value = 1
+        elif option == "theme":
+            value = 0
         else:
             value = True
-    if change:  # inverts boolean value
+
+    if invert:
         value = not value
         OPTIONS_DB[option] = value
-    elif new_value is not None:  # Changes int value
+    elif new_value is not None:
         value = new_value
         OPTIONS_DB[option] = value
     else:  # if value wasn't changed, returns it

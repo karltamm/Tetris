@@ -148,7 +148,7 @@ class Power:
                         self.stop()
 
     def createBlockSelection(self):
-        for index, block_image in enumerate(BLOCK_IMAGES):
+        for index, block_image in enumerate(CLASSIC_BLOCK_IMAGES):
             block_area = block_image.get_rect()
             block_area.topleft = ((BLOCK_SELECTION_X, BLOCK_SELECTION_Y + BLOCK_IMAGE_SPACING * index))
             self.block_selection.append((index, block_area))

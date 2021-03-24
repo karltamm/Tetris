@@ -7,11 +7,12 @@ from screen import *
 from database import *
 from powers import *
 from animations import TetrisRain
+from themes import *
 
 # INITIALIZE
 pygame.init()
 pygame.display.set_caption("Tetris")
-pygame.display.set_icon(BLUE_CELL)
+pygame.display.set_icon(CLASSIC_BLUE_CELL)
 fps_controller = FPSController()
 
 
@@ -50,6 +51,8 @@ def runGame(load_game=False):
 
     selected_button = None
     mouse_btn_is_held_down = False
+
+    theme = Theme(optionsValues("theme"))
 
     # Get game ready
     powers_are_enabled = optionsValues("powers")
@@ -118,9 +121,20 @@ def runGame(load_game=False):
 
             # If game is over
             if event.type == GAME_OVER:
+                # Play game over sound
+                if theme.name == "XP":
+                    playSound(XP_GAME_OVER_SOUND)
+                elif theme.name == "Yin-Yang":
+                    playSound(YIN_YANG_GAME_OVER_SOUND)
+                else:
+                    playSound(GAME_OVER_SOUND)
+
                 game_is_running = False
                 game_is_over = True
-                # STATS
+
+                SAVED_GAME_DB["save_exsists"] = False  # Previous game save can't be used as a checkpoint
+
+                # Update stats
                 if optionsValues("powers"):
                     saveStat("high_score_powers", current_score, compare=1)
                 else:
@@ -132,7 +146,6 @@ def runGame(load_game=False):
                 saveStat("time_ingame", seconds_in_game)
                 saveStat("games_played", 1)
 
-                # Single game stats
                 saveStat("single_game_rows", solved_rows, compare=1)
                 saveStat("single_game_time_ingame", seconds_in_game, compare=1)
 
@@ -322,7 +335,7 @@ def runGame(load_game=False):
                         if current_block.movedToCursor(board, mouse_pos):  # Return True if block moved to cursor
                             shadow_block.clearShadow(board)
                             shadow_block = ShadowBlock(current_block, board)
-                
+
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if isMouseOnGameBoard(mouse_pos):  # Check if mouse clicked on game board
                         if event.button == 1:  # Left click hard drops block
@@ -364,8 +377,7 @@ def runGame(load_game=False):
             # Move blocks
             if down_pressed and key_timer % 4 == 0:
                 current_block.move(board, y_step=1)
-                # Give points for faster drops
-                current_score = score_counter.drop(1)
+                current_score = score_counter.drop(1)  # Give points for faster drops
             elif right_pressed and key_timer % 10 == 0:
                 shadow_block.clearShadow(board)  # Player movement = Delete shadow block on last position
                 current_block.move(board, x_step=1)
@@ -403,22 +415,22 @@ def runGame(load_game=False):
         fps_controller.keepFrameDurationCorrect()
 
         SCREEN.fill(DARK_GREY)
-        showBoard(board)
-        showNextBlockArea(next_block_area)
+        showBoard(board, theme)
+        showNextBlockArea(next_block_area, theme)
         showScore(current_score, high_score, stage)
         showPowersSelection(powers_are_enabled, power)
         showGameButtons()
 
         if game_is_over:
-            showGameOverScreen()
+            showGameOverScreen(theme)
         elif power_is_active:
             if power.name == "Laser":
-                showLaserScreen(power.row)
+                showLaserScreen(power.row, theme)
             elif power.name == "Wishlist":
-                showWishlistScreen(power.block_under_cursor)
+                showWishlistScreen(power.block_under_cursor, theme)
             elif power.name == "Timeless":
                 showTimelessScreen(power.num_of_blocks_left)
-                showNextBlockArea(next_block_area)
+                showNextBlockArea(next_block_area, theme)
 
             drawObject(CANCEL_POWER_BTN, CANCEL_POWER_BTN_X, CANCEL_POWER_BTN_Y)
         elif countdown_is_active:
@@ -479,14 +491,16 @@ def launchMainMenu():
     options_button = (OPTIONS_BTN_X, OPTIONS_BTN_Y)
     stats_button = (STATS_BTN_X, STATS_BTN_Y)
     trophies_button = (TROPHIES_BTN_X, TROPHIES_BTN_Y)
+    themes_button = (THEMES_BTN_X, THEMES_BTN_Y)
     quit_button = (QUIT_BTN_X, QUIT_BTN_Y)
 
     tetris_rain = TetrisRain()  # Animation
     game_is_saved = checkIfGameIsSaved()
 
     # Navigation
-    MENU_BUTTONS = (start_button, continue_button, options_button, stats_button, trophies_button, quit_button)
-    BUTTON_ACTIONS = (runGame, runGame, options, stats, trophies, closeProgram)
+    MENU_BUTTONS = (
+        start_button, continue_button, options_button, stats_button, trophies_button, themes_button, quit_button)
+    BUTTON_ACTIONS = (runGame, runGame, options, stats, trophies, themes, closeProgram)
     selected_index = 0
     selected_button = MENU_BUTTONS[selected_index]
     mouse_btn_is_held_down = False
@@ -534,6 +548,9 @@ def launchMainMenu():
                 elif clickBox(trophies_button):
                     run = False  # Stop main menu process
                     trophies()
+                elif clickBox(themes_button):
+                    run = False  # Stop main menu process
+                    themes()
                 elif clickBox(quit_button):
                     closeProgram()
 
@@ -554,8 +571,11 @@ def launchMainMenu():
                 elif clickBox(trophies_button):
                     selected_index = 4
                     selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(quit_button):
+                elif clickBox(themes_button):
                     selected_index = 5
+                    selected_button = MENU_BUTTONS[selected_index]
+                elif clickBox(quit_button):
+                    selected_index = 6
                     selected_button = MENU_BUTTONS[selected_index]
 
             # Keyboard navigation
@@ -563,10 +583,16 @@ def launchMainMenu():
                 if event.key == pygame.K_DOWN:
                     if not (selected_index == len(MENU_BUTTONS) - 1):
                         selected_index += 1
+                        if selected_index == 1 and not game_is_saved:
+                            selected_index += 1  # Skip "Continue" button if there is no game save
+
                         selected_button = MENU_BUTTONS[selected_index]
                 elif event.key == pygame.K_UP:
                     if not (selected_index == 0):
                         selected_index -= 1
+                        if selected_index == 1 and not game_is_saved:
+                            selected_index -= 1  # Skip "Continue" button if there is no game save
+
                         selected_button = MENU_BUTTONS[selected_index]
                 elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     run = False
@@ -630,11 +656,11 @@ def options():
                     run = False
                     launchMainMenu()
                 elif clickBox(stages_switch, element=1):
-                    optionsValues("stages", change=True)
+                    optionsValues("stages", invert=True)
                 elif clickBox(block_shadows_switch, element=1):
-                    optionsValues("block_shadows", change=True)
+                    optionsValues("block_shadows", invert=True)
                 elif clickBox(powers_switch, element=1):
-                    optionsValues("powers", change=True)
+                    optionsValues("powers", invert=True)
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
@@ -798,6 +824,118 @@ def trophies():
                     page += 1
                 elif event.key == pygame.K_LEFT and page != 1:
                     page -= 1
+
+
+# Themes menu
+def themes():
+    # UI
+    back_button = (BACK_BTN_X, BACK_BTN_Y)
+    classic_button = themeButtonPos(0)
+    yin_yang_button = themeButtonPos(1)
+    xp_button = themeButtonPos(2)
+    THEME_BUTTONS = (classic_button, yin_yang_button, xp_button)
+
+    selected_index = 0
+    selected_button = None
+    mouse_btn_is_held_down = False
+
+    themes_info = getThemesInfo()
+
+    # Determine which button is auto-selected on menu launch
+    for i, button in enumerate(THEME_BUTTONS):
+        if not themes_info[i]["active"]:
+            selected_index = i
+            selected_button = THEME_BUTTONS[selected_index]
+            break
+
+    run = True
+    while run:
+        # Update screen
+        fps_controller.keepFrameDurationCorrect()
+
+        SCREEN.fill(DARK_GREY)
+        showThemesScreen(themes_info)
+
+        if mouse_btn_is_held_down:
+            activateButtonClickState(selected_button)
+        else:
+            activateButtonHoverState(selected_button)
+
+        pygame.display.update()
+
+        # UI control
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                closeProgram()
+
+            # Using a mouse
+            if event.type == pygame.MOUSEMOTION:
+                if clickBox(classic_button) and not themes_info[0]["active"]:
+                    selected_index = 0
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif clickBox(yin_yang_button) and not themes_info[1]["active"]:
+                    selected_index = 1
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif clickBox(xp_button) and not themes_info[2]["active"]:
+                    selected_index = 2
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif clickBox(back_button):
+                    selected_button = back_button
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_btn_is_held_down = True
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                mouse_btn_is_held_down = False
+                selected_button = None
+                if clickBox(back_button):
+                    run = False
+                    launchMainMenu()
+                elif clickBox(classic_button) and not themes_info[0]["active"]:
+                    optionsValues("theme", new_value=0)
+                elif clickBox(yin_yang_button) and not themes_info[1]["active"]:
+                    optionsValues("theme", new_value=1)
+                elif clickBox(xp_button) and not themes_info[2]["active"]:
+                    optionsValues("theme", new_value=2)
+                themes_info = getThemesInfo()
+
+            # Using keyboard
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    start_index = copy.copy(
+                        selected_index)  # If no suitable button to select, go back to original index
+                    no_button_changed = True
+
+                    while selected_index < len(THEME_BUTTONS) - 1:
+                        selected_index += 1
+                        if not themes_info[selected_index]["active"]:
+                            selected_button = THEME_BUTTONS[selected_index]
+                            no_button_changed = False
+                            break
+
+                    if no_button_changed:
+                        selected_index = start_index
+                elif event.key == pygame.K_UP:
+                    start_index = copy.copy(
+                        selected_index)  # If no suitable button to select, go back to original index
+                    no_button_changed = True
+
+                    while selected_index > 0:
+                        selected_index -= 1
+                        if not themes_info[selected_index]["active"]:
+                            selected_button = THEME_BUTTONS[selected_index]
+                            no_button_changed = False
+                            break
+
+                    if no_button_changed:
+                        selected_index = start_index
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    optionsValues("theme", new_value=selected_index)
+                    themes_info = getThemesInfo()
+                    selected_index = (selected_index + 1) % 3
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif event.key == pygame.K_ESCAPE:
+                    run = False
+                    launchMainMenu()
 
 
 if __name__ == "__main__":
