@@ -394,7 +394,7 @@ def playSound(sound):
 def musicControl(change_volume=False):
     pygame.mixer.music.set_volume(optionsValues("music") / 2)
     if not change_volume:
-        pygame.mixer.music.load(MUSIC3)
+        pygame.mixer.music.load(MUSIC)
         pygame.mixer.music.play(-1)
 
 

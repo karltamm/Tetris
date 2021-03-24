@@ -135,13 +135,9 @@ INSTRUCTION_IMAGE = loadImage("misc", "instruction.png")
 
 # KEYBOARD
 ESC_KEY_IMG = loadImage("keys", "esc_key.png")
-C_KEY_IMG = loadImage("keys", "C_key.png")
 E_KEY_IMG = loadImage("keys", "E_key.png")
-N_KEY_IMG = loadImage("keys", "N_key.png")
-O_KEY_IMG = loadImage("keys", "O_key.png")
 P_KEY_IMG = loadImage("keys", "P_key.png")
 S_KEY_IMG = loadImage("keys", "S_key.png")
-T_KEY_IMG = loadImage("keys", "T_key.png")
 
 # SOUNDS
 MOVE_SOUND = loadSound("playing", "move.mp3")
@@ -158,7 +154,7 @@ REWIND_SOUND = loadSound("powers", "rewind.mp3")
 TAKEOFF_SOUND = loadSound("powers", "takeoff.mp3")
 
 # MUSIC
-MUSIC3 = getMusicFilePath("music3.mp3")
+MUSIC = getMusicFilePath("music.mp3")
 
 # POWERS
 # Classic theme
