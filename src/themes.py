@@ -7,9 +7,9 @@ THEMES = ("Classic", "Yin-Yang", "XP")
 
 # CLASSES
 class Theme:
-    def __init__(self, name):
-        if name == "Classic":
-            self.name = name
+    def __init__(self, theme_index):
+        if theme_index == 0:
+            self.name = "Classic"
 
             self.T_cell = CLASSIC_RED_CELL
             self.S_cell = CLASSIC_BLUE_CELL
@@ -24,24 +24,8 @@ class Theme:
             self.bg = None
             self.block_images = CLASSIC_BLOCK_IMAGES
             self.block_images_hl = CLASSIC_BLOCK_IMAGES_HL
-        elif name == "XP":
-            self.name = name
-
-            self.T_cell = XP_BLUE_CELL
-            self.S_cell = XP_BLUE_CELL
-            self.I_cell = XP_BLUE_CELL
-            self.Z_cell = XP_BLUE_CELL
-            self.J_cell = XP_BLUE_CELL
-            self.L_cell = XP_BLUE_CELL
-            self.O_cell = XP_BLUE_CELL
-            self.empty_cell = TRANSPARENT_CELL
-            self.shadow_cell = XP_SHADOW_CELL
-
-            self.bg = XP_BG
-            self.block_images = XP_BLOCK_IMAGES
-            self.block_images_hl = XP_BLOCK_IMAGES_HL
-        elif name == "Yin-Yang":
-            self.name = name
+        elif theme_index == 1:
+            self.name = "Yin-Yang"
 
             self.T_cell = YIN_YANG_BLACK_CELL
             self.S_cell = YIN_YANG_BLACK_CELL
@@ -56,15 +40,31 @@ class Theme:
             self.bg = YIN_YANG_BG
             self.block_images = YIN_YANG_BLOCK_IMAGES
             self.block_images_hl = YIN_YANG_BLOCK_IMAGES_HL
+        elif theme_index == 2:
+            self.name = "XP"
+
+            self.T_cell = XP_BLUE_CELL
+            self.S_cell = XP_BLUE_CELL
+            self.I_cell = XP_BLUE_CELL
+            self.Z_cell = XP_BLUE_CELL
+            self.J_cell = XP_BLUE_CELL
+            self.L_cell = XP_BLUE_CELL
+            self.O_cell = XP_BLUE_CELL
+            self.empty_cell = TRANSPARENT_CELL
+            self.shadow_cell = XP_SHADOW_CELL
+
+            self.bg = XP_BG
+            self.block_images = XP_BLOCK_IMAGES
+            self.block_images_hl = XP_BLOCK_IMAGES_HL
 
 
 # FUNCTIONS
 def getThemesInfo():
     themes_info = {}
-    active_theme = optionsValues("theme")
+    active_theme_index = optionsValues("theme")
 
     for i, name in enumerate(THEMES):
-        if name == active_theme:
+        if i == active_theme_index:
             is_active = True
         else:
             is_active = False

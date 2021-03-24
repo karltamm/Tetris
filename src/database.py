@@ -88,7 +88,7 @@ def optionsValues(option, invert=False, new_value=None):
         if option == "sound" or option == "music":
             value = 1
         elif option == "theme":
-            value = "Classic"
+            value = 0
         else:
             value = True
 
