@@ -132,6 +132,8 @@ def runGame(load_game=False):
                 game_is_running = False
                 game_is_over = True
 
+                SAVED_GAME_DB["save_exsists"] = False  # Previous game save can't be used as a checkpoint
+
                 # Update stats
                 if optionsValues("powers"):
                     saveStat("high_score_powers", current_score, compare=1)
@@ -579,10 +581,16 @@ def launchMainMenu():
                 if event.key == pygame.K_DOWN:
                     if not (selected_index == len(MENU_BUTTONS) - 1):
                         selected_index += 1
+                        if selected_index == 1 and not game_is_saved:
+                            selected_index += 1  # Skip "Continue" button if there is no game save
+
                         selected_button = MENU_BUTTONS[selected_index]
                 elif event.key == pygame.K_UP:
                     if not (selected_index == 0):
                         selected_index -= 1
+                        if selected_index == 1 and not game_is_saved:
+                            selected_index -= 1  # Skip "Continue" button if there is no game save
+
                         selected_button = MENU_BUTTONS[selected_index]
                 elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     run = False
@@ -822,11 +830,20 @@ def themes():
     classic_button = themeButtonPos(0)
     yin_yang_button = themeButtonPos(1)
     xp_button = themeButtonPos(2)
+    THEME_BUTTONS = (classic_button, yin_yang_button, xp_button)
 
+    selected_index = 0
     selected_button = None
     mouse_btn_is_held_down = False
 
     themes_info = getThemesInfo()
+
+    # Determine which button is auto-selected on menu launch
+    for i, button in enumerate(THEME_BUTTONS):
+        if not themes_info[i]["active"]:
+            selected_index = i
+            selected_button = THEME_BUTTONS[selected_index]
+            break
 
     run = True
     while run:
@@ -844,44 +861,76 @@ def themes():
         pygame.display.update()
 
         # UI control
-        # On which button is the cursor?
-        if clickBox(back_button):
-            selected_button = back_button
-        elif clickBox(classic_button) and not themes_info[0]["active"]:
-            selected_button = classic_button
-        elif clickBox(yin_yang_button) and not themes_info[1]["active"]:
-            selected_button = yin_yang_button
-        elif clickBox(xp_button) and not themes_info[2]["active"]:
-            selected_button = xp_button
-        else:
-            selected_button = None
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 closeProgram()
 
             # Using a mouse
+            if event.type == pygame.MOUSEMOTION:
+                if clickBox(classic_button) and not themes_info[0]["active"]:
+                    selected_index = 0
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif clickBox(yin_yang_button) and not themes_info[1]["active"]:
+                    selected_index = 1
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif clickBox(xp_button) and not themes_info[2]["active"]:
+                    selected_index = 2
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif clickBox(back_button):
+                    selected_button = back_button
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_btn_is_held_down = True
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
                 selected_button = None
-
                 if clickBox(back_button):
                     run = False
                     launchMainMenu()
                 elif clickBox(classic_button) and not themes_info[0]["active"]:
-                    optionsValues("theme", new_value="Classic")
+                    optionsValues("theme", new_value=0)
                 elif clickBox(yin_yang_button) and not themes_info[1]["active"]:
-                    optionsValues("theme", new_value="Yin-Yang")
+                    optionsValues("theme", new_value=1)
                 elif clickBox(xp_button) and not themes_info[2]["active"]:
-                    optionsValues("theme", new_value="XP")
-
+                    optionsValues("theme", new_value=2)
                 themes_info = getThemesInfo()
 
             # Using keyboard
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_DOWN:
+                    start_index = copy.copy(
+                        selected_index)  # If no suitable button to select, go back to original index
+                    no_button_changed = True
+
+                    while selected_index < len(THEME_BUTTONS) - 1:
+                        selected_index += 1
+                        if not themes_info[selected_index]["active"]:
+                            selected_button = THEME_BUTTONS[selected_index]
+                            no_button_changed = False
+                            break
+
+                    if no_button_changed:
+                        selected_index = start_index
+                elif event.key == pygame.K_UP:
+                    start_index = copy.copy(
+                        selected_index)  # If no suitable button to select, go back to original index
+                    no_button_changed = True
+
+                    while selected_index > 0:
+                        selected_index -= 1
+                        if not themes_info[selected_index]["active"]:
+                            selected_button = THEME_BUTTONS[selected_index]
+                            no_button_changed = False
+                            break
+
+                    if no_button_changed:
+                        selected_index = start_index
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    optionsValues("theme", new_value=selected_index)
+                    themes_info = getThemesInfo()
+                    selected_index = (selected_index + 1) % 3
+                    selected_button = THEME_BUTTONS[selected_index]
+                elif event.key == pygame.K_ESCAPE:
                     run = False
                     launchMainMenu()
 
