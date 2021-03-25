@@ -348,8 +348,9 @@ def runGame(load_game=False):
                             playSound(MOVE_SOUND)
                             saveStat("hard_drops", 1)
                         elif event.button == 3:  # Right click rotates block
-                            shadow_block.clearShadow(board)
                             current_block.rotate(board)
+                            if current_block.movedToCursor(board, mouse_pos): # Move block to cursor after rotation
+                                shadow_block.clearShadow(board)
 
                 elif event.type == pygame.KEYDOWN:  # If a key is pressed down
                     key_timer = 0
