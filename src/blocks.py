@@ -63,6 +63,14 @@ class Block:
                 else:
                     self.rotation += 1
                     rotate_success = True
+            # for I shape to rotate near right edge
+            elif (self.x == 7 and self.shape == SHAPE_I):
+                self.x -= 1
+                if not self.updateBoard(board):
+                    self.x += 1
+                else:
+                    self.rotation += 1
+                    rotate_success = True
             # If block on the rightmost side
             elif self.x == 8:
                 if self.shape == SHAPE_I:
