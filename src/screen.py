@@ -572,6 +572,22 @@ def isMouseOnGameBoard(mouse_pos):
             return True
     return False
 
+def getPosOnMouse(mouse_pos, shape):
+    # Return what Block's self.x is under mouse
+    for index, x_pos in enumerate(range(BOARD_X, BOARD_X_END + BOARD_CELL, BOARD_CELL)):
+        if mouse_pos[0] < x_pos:
+            position = (index - 2)  # For cursor to grab center of block
+            if (position == -1):  # Edge cases for unique shapes
+                if (shape == SHAPES[1]):  # Shape - O
+                    position = -1
+                else:
+                    position = 0
+            if (position == 7 or position == 8):
+                if (shape == SHAPES[0]):  # Shape - I
+                    position = 6
+                else:
+                    position = 7
+            return position
 
 # MAIN MENU
 def showMainMenu(game_is_saved):

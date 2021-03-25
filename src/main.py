@@ -415,7 +415,10 @@ def runGame(load_game=False):
                         # Sound effect if at least one row is cleared
                         playSound(ROW_CLEARED_SOUND)
 
-                    current_block = Block(next_block, board)
+                    if isMouseOnGameBoard(mouse_pos):
+                        current_block = Block(next_block, board, getPosOnMouse(mouse_pos, next_block))
+                    else:
+                        current_block = Block(next_block, board)
                     blocks_created += 1
                     next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
 

@@ -10,10 +10,10 @@ GAME_OVER = pygame.USEREVENT + 1
 
 # CLASS
 class Block:
-    def __init__(self, shape, board):
+    def __init__(self, shape, board, x_pos=4):
         self.shape = shape
         self.rotation = 0
-        self.x = 4  # In which board column is top-left block cell?
+        self.x = x_pos  # In which board column is top-left block cell?
         self.y = 0  # In which board row is top-left block cell?
         self.used_board_cells = []  # [(row, col), (row, col) etc]
         self.is_placed = False
