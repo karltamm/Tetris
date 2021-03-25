@@ -911,6 +911,7 @@ def themes(tetris_rain):
     yin_yang_button = themeButtonPos(1)
     xp_button = themeButtonPos(2)
     THEME_BUTTONS = (classic_button, yin_yang_button, xp_button)
+    THEME_PREVIEWS = (CLASSIC_PREVIEW, YIN_YANG_PREVIEW, XP_PREVIEW)
 
     selected_index = -1
     selected_button = None
@@ -933,6 +934,10 @@ def themes(tetris_rain):
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showThemesScreen(themes_info)
+
+        for i in range(len(THEME_BUTTONS)):
+            if (selected_button == THEME_BUTTONS[i]):
+                showThemePreview(THEME_PREVIEWS[i])
 
         if mouse_btn_is_held_down:
             activateButtonClickState(selected_button)

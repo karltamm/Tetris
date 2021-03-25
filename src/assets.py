@@ -33,6 +33,7 @@ TRANSPARENT_CELL = loadImage("themes", "transparent_cell.png")
 THEME_BG_BORDER_RADIUS = loadImage("themes", "theme_bg_border_radius.png")
 
 # Classic
+CLASSIC_PREVIEW = loadImage("themes/classic/", "preview.png")
 CLASSIC_EMPTY_CELL = loadImage("themes/classic/cells", "empty.png")
 CLASSIC_SHADOW_CELL = loadImage("themes/classic/cells", "shadow.png")
 CLASSIC_GREEN_CELL = loadImage("themes/classic/cells", "green.png")
@@ -46,6 +47,7 @@ CELLS_IMAGES = [CLASSIC_GREEN_CELL, CLASSIC_BRONZE_CELL, CLASSIC_PURPLE_CELL, CL
                 CLASSIC_YELLOW_CELL, CLASSIC_BLUE_CELL]  # For animation
 
 # XP
+XP_PREVIEW = loadImage("themes/XP", "preview.png")
 XP_SHADOW_CELL = CLASSIC_SHADOW_CELL
 XP_BLUE_CELL = loadImage("themes/XP", "blue_cell.png")
 XP_BG = loadImage("themes/XP", "bg.png")
@@ -53,6 +55,7 @@ XP_GAME_OVER_SCREEN = loadImage("themes/XP", "game_over.png")
 XP_GAME_OVER_SOUND = loadSound("gamestate", "XP_gameover.mp3")
 
 # Yin yang
+YIN_YANG_PREVIEW = loadImage("themes/yin_yang", "preview.png")
 YIN_YANG_SHADOW_CELL = loadImage("themes/yin_yang/cells", "shadow.png")
 YIN_YANG_BLACK_CELL = loadImage("themes/yin_yang/cells", "black.png")
 YIN_YANG_BG = loadImage("themes/yin_yang", "bg.png")

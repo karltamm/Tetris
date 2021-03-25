@@ -787,6 +787,8 @@ def showThemesScreen(themes):
         drawObject(theme_name_box, THEME_OPTION_NAME_BOX_X, option_y)
         drawText(themes[j]["name"], name_x, name_y)
 
+def showThemePreview(theme_preview):
+    drawObject(theme_preview, 392, 275)
 
 # POWERS
 def showPowersSelection(powers_are_enabled, power):
