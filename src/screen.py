@@ -179,14 +179,7 @@ BLOCK_SELECTION_X = BOARD_X_END + (SCREEN_WIDTH - BOARD_X_END - BLOCK_IMAGE_AREA
 BLOCK_SELECTION_Y = PADDING
 BLOCK_IMAGE_SPACING = BLOCK_IMAGE_AREA + NEAR
 
-# Countdown
-COUNTDOWN_X = BOARD_X + (BOARD_SCREEN_WIDTH - 10) / 2
-COUNTDOWN_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
-
 # Game over screen
-GAME_OVER_TEXT_X = BOARD_X + (BOARD_SCREEN_WIDTH - 280) / 2
-GAME_OVER_TEXT_Y = BOARD_Y + (BOARD_SCREEN_HEIGHT - TITLE_HEIGHT) / 2
-
 NEW_GAME_BTN_X = PAUSE_BTN_X
 NEW_GAME_BTN_Y = PAUSE_BTN_Y
 
@@ -207,8 +200,8 @@ PAGE_TITLE_X = BACK_BTN_X
 PAGE_TITLE_Y = BACK_BTN_Y + BTN_HEIGHT + 2 * FAR
 
 # Shortcuts menu
-SC_KEYS = (ESC_KEY_IMG, P_KEY_IMG, S_KEY_IMG, E_KEY_IMG)
-SC_TXT = ("Pause/unpause", "Activate/deactivate power", "Save game", "End game")
+SC_KEYS = (ESC_KEY_IMG, P_KEY_IMG, S_KEY_IMG, E_KEY_IMG, N_KEY_IMG)
+SC_TXT = ("Pause/unpause", "Activate/deactivate power", "Save game", "End game", "New game (if game is over)")
 
 KEY_WIDTH = 50
 KEY_HEIGHT = 54
@@ -543,7 +536,10 @@ def showGameOverScreen(theme):
     elif theme.name == "Yin-Yang":
         drawObject(YIN_YANG_GAME_OVER_SCREEN, BOARD_X, BOARD_Y)
     else:
-        drawText("Game Over", GAME_OVER_TEXT_X, GAME_OVER_TEXT_Y, size=TITLE_SIZE, font=TITLE_FONT)
+        txt_area = txtArea("Game Over", size=TITLE_SIZE, font=TITLE_FONT)
+        x_pos = BOARD_X + (BOARD_SCREEN_WIDTH - txt_area.width) / 2
+        y_pos = BOARD_Y + (BOARD_SCREEN_HEIGHT - txt_area.height) / 2
+        drawText("Game Over", x_pos, y_pos, size=TITLE_SIZE, font=TITLE_FONT)
 
     # Buttons
     drawObject(NEW_GAME_BTN, NEW_GAME_BTN_X, NEW_GAME_BTN_Y)
@@ -552,7 +548,12 @@ def showGameOverScreen(theme):
 
 def showCountdown(countdown):
     drawTransparentOverlay()
-    drawText(str(countdown), COUNTDOWN_X, COUNTDOWN_Y, size=TITLE_SIZE, font=TITLE_FONT)
+
+    txt_area = txtArea(str(countdown), size=TITLE_SIZE, font=TITLE_FONT)
+    x_pos = BOARD_X + (BOARD_SCREEN_WIDTH - txt_area.width) / 2
+    y_pos = BOARD_Y + (BOARD_SCREEN_HEIGHT - txt_area.height) / 2
+    drawText(str(countdown), x_pos, y_pos, size=TITLE_SIZE, font=TITLE_FONT)
+
     updateScreenAndDelayNextUpdate()
 
 
@@ -572,6 +573,7 @@ def isMouseOnGameBoard(mouse_pos):
             return True
     return False
 
+
 def getPosOnMouse(mouse_pos, shape):
     # Return what Block's self.x is under mouse
     for index, x_pos in enumerate(range(BOARD_X, BOARD_X_END + BOARD_CELL, BOARD_CELL)):
@@ -588,6 +590,7 @@ def getPosOnMouse(mouse_pos, shape):
                 else:
                     position = 7
             return position
+
 
 # MAIN MENU
 def showMainMenu(game_is_saved):
