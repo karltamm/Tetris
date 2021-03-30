@@ -141,6 +141,7 @@ ESC_KEY_IMG = loadImage("keys", "esc_key.png")
 E_KEY_IMG = loadImage("keys", "E_key.png")
 P_KEY_IMG = loadImage("keys", "P_key.png")
 S_KEY_IMG = loadImage("keys", "S_key.png")
+N_KEY_IMG = loadImage("keys", "N_key.png")
 
 # SOUNDS
 MOVE_SOUND = loadSound("playing", "move.mp3")

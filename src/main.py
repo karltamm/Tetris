@@ -183,6 +183,11 @@ def runGame(load_game=False):
                     run = False  # Stop game process
                     launchMainMenu()
 
+                if event.key == pygame.K_n and game_is_over:
+                    # Start a new game
+                    run = False  # End current game process
+                    runGame()
+
             # Using mouse
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_btn_is_held_down = True
