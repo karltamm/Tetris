@@ -723,10 +723,10 @@ def options(tetris_rain):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_btn_is_held_down = True
                 if clickBox(music_slider, element=2, slider_value="music"):  # Slider
-                    regulateSlider("music", MUSIC_DRAGGER_X)
+                    regulateSlider("music", MUSIC_DRAGGER_X, tetris_rain)
                     musicControl(change_volume=True)
                 if clickBox(sound_slider, element=2, slider_value="sound"):  # Slider
-                    regulateSlider("sound", SOUND_DRAGGER_X)
+                    regulateSlider("sound", SOUND_DRAGGER_X, tetris_rain)
                     playSound(MOVE3_SOUND)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
@@ -745,7 +745,7 @@ def options(tetris_rain):
                     launchMainMenu(tetris_rain)
 
 
-def regulateSlider(slider, dragger_x):
+def regulateSlider(slider, dragger_x, bg_animation):
     value = optionsValues(slider)
     x_dif = pygame.mouse.get_pos()[0] - (
             dragger_x + (SLIDING_DISTANCE * value))  # distance between mouse_x and dragger_x
@@ -753,6 +753,7 @@ def regulateSlider(slider, dragger_x):
     while pygame.mouse.get_pressed(3)[0]:  # Updates slider until button released
         fps_controller.keepFrameDurationCorrect()
         SCREEN.fill(DARK_GREY)
+        bg_animation.makeItRain()
         showOptionsMenu()
         pygame.display.update()
 
@@ -913,20 +914,21 @@ def themes(tetris_rain):
     classic_button = themeButtonPos(0)
     yin_yang_button = themeButtonPos(1)
     xp_button = themeButtonPos(2)
-    THEME_BUTTONS = (classic_button, yin_yang_button, xp_button)
-    THEME_PREVIEWS = (CLASSIC_PREVIEW, YIN_YANG_PREVIEW, XP_PREVIEW)
+    theme_buttons = (classic_button, yin_yang_button, xp_button)
 
     selected_index = -1
     selected_button = None
     mouse_btn_is_held_down = False
+    button_autoselected = False
+    mouse_was_clicked = False
 
     themes_info = getThemesInfo()
 
     # Determine which button is auto-selected on menu launch
-    for i in range(len(THEME_BUTTONS)):
+    for i in range(len(theme_buttons)):
         if themes_info[i]["unlocked"] and not themes_info[i]["active"]:
             selected_index = i
-            selected_button = THEME_BUTTONS[selected_index]
+            selected_button = theme_buttons[selected_index]
             break
 
     run = True
@@ -938,11 +940,7 @@ def themes(tetris_rain):
         tetris_rain.makeItRain()
         showThemesScreen(themes_info)
 
-        for i in range(len(THEME_BUTTONS)):
-            if (selected_button == THEME_BUTTONS[i]):
-                showThemePreview(THEME_PREVIEWS[i])
-
-        if mouse_btn_is_held_down:
+        if mouse_btn_is_held_down and not button_autoselected:
             activateButtonClickState(selected_button)
         else:
             activateButtonHoverState(selected_button)
@@ -955,34 +953,11 @@ def themes(tetris_rain):
                 closeProgram()
 
             # Using a mouse
-            if event.type == pygame.MOUSEMOTION:
-                if clickBox(classic_button):
-                    if themes_info[0]["unlocked"] and not themes_info[0]["active"]:
-                        selected_index = 0
-                        selected_button = THEME_BUTTONS[selected_index]
-                elif clickBox(yin_yang_button):
-                    if themes_info[1]["unlocked"] and not themes_info[1]["active"]:
-                        selected_index = 1
-                        selected_button = THEME_BUTTONS[selected_index]
-                elif clickBox(xp_button):
-                    if themes_info[2]["unlocked"] and not themes_info[2]["active"]:
-                        selected_index = 2
-                        selected_button = THEME_BUTTONS[selected_index]
-                elif clickBox(back_button):
-                    selected_button = back_button
-                else:
-                    # If mouse isn't on any button, make suitable theme option button "selected"
-                    for i in range(len(THEME_BUTTONS)):
-                        if themes_info[i]["unlocked"] and not themes_info[i]["active"]:
-                            selected_index = i
-                            selected_button = THEME_BUTTONS[selected_index]
-                            break
-
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 mouse_btn_is_held_down = True
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
-                selected_button = None
+                mouse_was_clicked = True
                 if clickBox(back_button):
                     run = False
                     launchMainMenu(tetris_rain)
@@ -997,6 +972,38 @@ def themes(tetris_rain):
                         optionsValues("theme", new_value=2)
                 themes_info = getThemesInfo()
 
+            # Which button is selected/active? On which button is cursor?
+            if event.type == pygame.MOUSEMOTION or mouse_was_clicked:
+                mouse_was_clicked = False
+                button_autoselected = False
+                selected_button = None
+
+                if clickBox(classic_button):
+                    if themes_info[0]["unlocked"] and not themes_info[0]["active"]:
+                        selected_index = 0
+                        selected_button = theme_buttons[selected_index]
+                elif clickBox(yin_yang_button):
+                    if themes_info[1]["unlocked"] and not themes_info[1]["active"]:
+                        selected_index = 1
+                        selected_button = theme_buttons[selected_index]
+                elif clickBox(xp_button):
+                    if themes_info[2]["unlocked"] and not themes_info[2]["active"]:
+                        selected_index = 2
+                        selected_button = theme_buttons[selected_index]
+                elif clickBox(back_button):
+                    selected_button = back_button
+
+                # If mouse isn't on any button, make suitable theme option button "selected"
+                if not selected_button:
+                    for i in range(len(theme_buttons)):
+                        if themes_info[i]["unlocked"] and not themes_info[i]["active"]:
+                            selected_index = i
+                            selected_button = theme_buttons[selected_index]
+
+                            button_autoselected = True
+                            mouse_btn_is_held_down = False
+                            break
+
             # Using keyboard
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN:
@@ -1004,10 +1011,10 @@ def themes(tetris_rain):
                         selected_index)  # If no suitable button to select, go back to original index
                     no_button_changed = True
 
-                    while selected_index < len(THEME_BUTTONS) - 1:
+                    while selected_index < len(theme_buttons) - 1:
                         selected_index += 1
                         if themes_info[selected_index]["unlocked"] and not themes_info[selected_index]["active"]:
-                            selected_button = THEME_BUTTONS[selected_index]
+                            selected_button = theme_buttons[selected_index]
                             no_button_changed = False
                             break
 
@@ -1021,7 +1028,7 @@ def themes(tetris_rain):
                     while selected_index > 0:
                         selected_index -= 1
                         if themes_info[selected_index]["unlocked"] and not themes_info[selected_index]["active"]:
-                            selected_button = THEME_BUTTONS[selected_index]
+                            selected_button = theme_buttons[selected_index]
                             no_button_changed = False
                             break
 
@@ -1036,7 +1043,7 @@ def themes(tetris_rain):
                         if not themes_info[selected_index]["unlocked"]:  # If selected_index indicates a disabled button
                             selected_index = (selected_index + 1) % 3
 
-                        selected_button = THEME_BUTTONS[selected_index]
+                        selected_button = theme_buttons[selected_index]
                 elif event.key == pygame.K_ESCAPE:
                     run = False
                     launchMainMenu(tetris_rain)
