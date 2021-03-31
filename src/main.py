@@ -520,7 +520,6 @@ def launchMainMenu(tetris_rain=TetrisRain()):
         quit_button)
     BUTTON_ACTIONS = (runGame, runGame, shortcuts, options, stats, trophies, themes, closeProgram)
     selected_index = 0
-    selected_button = MENU_BUTTONS[selected_index]
     mouse_btn_is_held_down = False
 
     run = True
@@ -531,6 +530,7 @@ def launchMainMenu(tetris_rain=TetrisRain()):
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showMainMenu(game_is_saved)
+        selected_button = MENU_BUTTONS[selected_index]
 
         if mouse_btn_is_held_down:
             activateButtonClickState(selected_button)
@@ -576,30 +576,12 @@ def launchMainMenu(tetris_rain=TetrisRain()):
 
             # Mouse navigation
             if event.type == pygame.MOUSEMOTION:
-                if clickBox(start_button):
-                    selected_index = 0
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(continue_button) and game_is_saved:
-                    selected_index = 1
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(shortcuts_button):
-                    selected_index = 2
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(options_button):
-                    selected_index = 3
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(stats_button):
-                    selected_index = 4
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(trophies_button):
-                    selected_index = 5
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(themes_button):
-                    selected_index = 6
-                    selected_button = MENU_BUTTONS[selected_index]
-                elif clickBox(quit_button):
-                    selected_index = 7
-                    selected_button = MENU_BUTTONS[selected_index]
+                for index, btn in enumerate(MENU_BUTTONS):
+                    if clickBox(btn):
+                        if index == 1 and not game_is_saved:
+                            break
+                        else:
+                            selected_index = index
 
             # Keyboard navigation
             elif event.type == pygame.KEYDOWN:
@@ -619,7 +601,11 @@ def launchMainMenu(tetris_rain=TetrisRain()):
                             selected_index -= 1  # Skip "Continue" button if there is no game save
 
                         selected_button = MENU_BUTTONS[selected_index]
-                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:  # Key highlight effect on select btn hold down
+                    mouse_btn_is_held_down = True
+            
+            elif event.type == pygame.KEYUP:  # Go to selection on key release
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     run = False
                     if selected_index == 1:
                         BUTTON_ACTIONS[selected_index](game_is_saved)
@@ -635,7 +621,7 @@ def shortcuts(tetris_rain):
     back_button = (BACK_BTN_X, BACK_BTN_Y)
 
     mouse_btn_is_held_down = False
-    selected_button = None
+    selected_button = back_button
 
     run = True
     while run:
@@ -658,14 +644,9 @@ def shortcuts(tetris_rain):
             if event.type == pygame.QUIT:
                 closeProgram()
 
-            if event.type == pygame.MOUSEMOTION:
-                if clickBox(back_button):
-                    selected_button = back_button
-                else:
-                    selected_button = None
-
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click down
-                mouse_btn_is_held_down = True
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left click down
+                if clickBox(selected_button):
+                    mouse_btn_is_held_down = True
 
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:  # Left click up
                 mouse_btn_is_held_down = False
@@ -675,6 +656,13 @@ def shortcuts(tetris_rain):
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    run = False
+                    launchMainMenu(tetris_rain)
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    mouse_btn_is_held_down = True
+                
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     run = False
                     launchMainMenu(tetris_rain)
 
@@ -689,8 +677,10 @@ def options(tetris_rain):
     block_shadows_switch = (BLOCK_SHADOW_SWITCH_X, BLOCK_SHADOW_SWITCH_Y)
     powers_switch = (POWERS_SWITCH_X, POWERS_SWITCH_Y)
 
-    selected_button = None
+    MENU_BUTTONS = (back_button, music_slider, sound_slider, stages_switch, block_shadows_switch, powers_switch)
+    selected_index = 0
     mouse_btn_is_held_down = False
+    vol_change = False
 
     run = True
     while run:
@@ -700,11 +690,26 @@ def options(tetris_rain):
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showOptionsMenu()
+        selected_button = MENU_BUTTONS[selected_index]
+
+        if selected_index != 0:
+            mouse_btn_is_held_down = False
 
         if mouse_btn_is_held_down:
             activateButtonClickState(selected_button)
         else:
-            activateButtonHoverState(selected_button)
+            if selected_index > 2:
+                activateSwitchHoverState(selected_button)
+            elif selected_index > 0:
+                activateSliderHoverState(selected_button)
+            else:
+                activateButtonHoverState(selected_button)
+
+        if vol_change:
+            if selected_index == 1:
+                regulateSliderKeyboard("music", vol_amount, tetris_rain)
+            elif selected_index == 2:
+                regulateSliderKeyboard("sound", vol_amount, tetris_rain)
 
         pygame.display.update()
 
@@ -715,13 +720,13 @@ def options(tetris_rain):
 
             # Using a mouse
             if event.type == pygame.MOUSEMOTION:
-                if clickBox(back_button):
-                    selected_button = back_button
-                else:
-                    selected_button = None
+                for index, btn in enumerate(MENU_BUTTONS):
+                    if clickBox(btn):
+                        selected_index = index
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_btn_is_held_down = True
+                if clickBox(back_button):
+                    mouse_btn_is_held_down = True
                 if clickBox(music_slider, element=2, slider_value="music"):  # Slider
                     regulateSlider("music", MUSIC_DRAGGER_X, tetris_rain)
                     musicControl(change_volume=True)
@@ -739,10 +744,43 @@ def options(tetris_rain):
                     optionsValues("block_shadows", invert=True)
                 elif clickBox(powers_switch, element=1):
                     optionsValues("powers", invert=True)
+                    
+            # Using keyboard
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     launchMainMenu(tetris_rain)
+                elif event.key == pygame.K_DOWN and selected_index != len(MENU_BUTTONS) - 1:
+                    selected_index += 1
+                elif event.key == pygame.K_UP and selected_index != 0:
+                    selected_index -= 1
+                elif event.key == pygame.K_LEFT:
+                    vol_change = True
+                    vol_amount = -0.01
+                elif event.key == pygame.K_RIGHT:
+                    vol_change = True
+                    vol_amount = 0.01
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    if selected_index == 0:
+                        mouse_btn_is_held_down = True
+                    elif selected_index == 3:
+                        optionsValues("stages", invert=True)
+                    elif selected_index == 4:
+                        optionsValues("block_shadows", invert=True)
+                    elif selected_index == 5:
+                        optionsValues("powers", invert=True)
+            
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    vol_change = False
+                    if selected_index == 2:
+                        playSound(MOVE3_SOUND)
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    mouse_btn_is_held_down = False
+                    if selected_index == 0:
+                        run = False
+                        launchMainMenu(tetris_rain)
+
 
 
 def regulateSlider(slider, dragger_x, bg_animation):
@@ -772,6 +810,17 @@ def regulateSlider(slider, dragger_x, bg_animation):
             musicControl(change_volume=True)
         optionsValues(slider, new_value=value)
 
+def regulateSliderKeyboard(slider, vol_change, bg_animation):
+    value = optionsValues(slider)
+    
+    value += vol_change
+    if value < 0:
+        value = 0
+    elif value > 1:
+        value = 1
+    if slider == "music":
+        musicControl(change_volume=True)
+    optionsValues(slider, new_value=value)
 
 # Stats menu
 def stats(tetris_rain, page=1):
@@ -779,11 +828,12 @@ def stats(tetris_rain, page=1):
     back_button = (BACK_BTN_X, BACK_BTN_Y)
     previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
-
-    selected_button = None
-    mouse_btn_is_held_down = False
-
     STATS_VALUES = updateStats()
+    
+    # Navigation
+    MENU_BUTTONS = (back_button, previous_button, next_button)
+    selected_index = 0
+    mouse_btn_is_held_down = False
 
     run = True
     while run:
@@ -793,6 +843,7 @@ def stats(tetris_rain, page=1):
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showStatsMenu(page)
+        selected_button = MENU_BUTTONS[selected_index]
 
         if mouse_btn_is_held_down:
             activateButtonClickState(selected_button)
@@ -804,13 +855,11 @@ def stats(tetris_rain, page=1):
         # UI control
         # On which button is the cursor?
         if clickBox(back_button):
-            selected_button = back_button
+            selected_index = 0  # Back btn
         elif clickBox(previous_button) and page != 1:
-            selected_button = previous_button
+            selected_index = 1  # Previous page
         elif clickBox(next_button) and page != len(STATS_VALUES):
-            selected_button = next_button
-        else:
-            selected_button = None
+            selected_index = 2  # Next page
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -818,7 +867,8 @@ def stats(tetris_rain, page=1):
 
             # Using a mouse
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_btn_is_held_down = True
+                if clickBox(selected_button):
+                    mouse_btn_is_held_down = True
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
                 if clickBox(back_button):
@@ -826,19 +876,48 @@ def stats(tetris_rain, page=1):
                     launchMainMenu(tetris_rain)
                 elif clickBox(previous_button) and page != 1:
                     page -= 1
+                    if page == 1:
+                        selected_index = 2
                 elif clickBox(next_button) and page != len(STATS_VALUES):
                     # Cant go higher than last page
                     page += 1
+                    if page == len(STATS_VALUES):
+                        selected_index = 1
 
             # Using keyboard
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     launchMainMenu(tetris_rain)
+                elif event.key == pygame.K_UP:
+                    selected_index = 0
+                elif event.key == pygame.K_DOWN:
+                    if page != 1:
+                        selected_index = 1
+                    else:
+                        selected_index = 2
                 elif event.key == pygame.K_RIGHT and page != len(STATS_VALUES):
-                    page += 1
+                    selected_index = 2
                 elif event.key == pygame.K_LEFT and page != 1:
-                    page -= 1
+                    selected_index = 1
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    mouse_btn_is_held_down = True
+
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    mouse_btn_is_held_down = False
+                    if selected_index == 0:
+                        run = False
+                        launchMainMenu(tetris_rain)
+                    elif selected_index == 1:
+                        page -= 1
+                        if page == 1:
+                            selected_index += 1
+                    elif selected_index == 2:
+                        page += 1
+                        if page == len(STATS_VALUES):
+                            selected_index -= 1
+                
 
 
 def trophies(tetris_rain):
@@ -847,7 +926,9 @@ def trophies(tetris_rain):
     previous_button = (PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
     next_button = (NEXT_BTN_X, NEXT_BTN_Y)
 
-    selected_button = None
+    # Navigation
+    MENU_BUTTONS = (back_button, previous_button, next_button)
+    selected_index = 0
     mouse_btn_is_held_down = False
 
     page = 1
@@ -860,6 +941,7 @@ def trophies(tetris_rain):
         SCREEN.fill(DARK_GREY)
         tetris_rain.makeItRain()
         showTrophiesScreen(page)
+        selected_button = MENU_BUTTONS[selected_index]
 
         if mouse_btn_is_held_down:
             activateButtonClickState(selected_button)
@@ -871,13 +953,11 @@ def trophies(tetris_rain):
         # UI control
         # On which button is the cursor?
         if clickBox(back_button):
-            selected_button = back_button
+            selected_index = 0  # Back btn
         elif clickBox(previous_button) and page != 1:
-            selected_button = previous_button
+            selected_index = 1  # Previous page
         elif clickBox(next_button) and page != len(TROPHIES):
-            selected_button = next_button
-        else:
-            selected_button = None
+            selected_index = 2  # Next page
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -885,7 +965,8 @@ def trophies(tetris_rain):
 
             # Using a mouse
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_btn_is_held_down = True
+                if clickBox(selected_button):
+                    mouse_btn_is_held_down = True
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 mouse_btn_is_held_down = False
                 if clickBox(back_button):
@@ -893,18 +974,46 @@ def trophies(tetris_rain):
                     launchMainMenu(tetris_rain)
                 if clickBox(previous_button) and page != 1:
                     page -= 1
+                    if page == 1:
+                        selected_index = 2
                 if clickBox(next_button) and page != len(TROPHIES):
                     page += 1
+                    if page == len(TROPHIES):
+                        selected_index = 1
 
             # Using keyboard
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     launchMainMenu(tetris_rain)
+                elif event.key == pygame.K_UP:
+                    selected_index = 0
+                elif event.key == pygame.K_DOWN:
+                    if page != 1:
+                        selected_index = 1
+                    else:
+                        selected_index = 2
                 elif event.key == pygame.K_RIGHT and page != len(TROPHIES):
-                    page += 1
+                    selected_index = 2
                 elif event.key == pygame.K_LEFT and page != 1:
-                    page -= 1
+                    selected_index = 1
+                elif event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    mouse_btn_is_held_down = True
+
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
+                    mouse_btn_is_held_down = False
+                    if selected_index == 0:
+                        run = False
+                        launchMainMenu(tetris_rain)
+                    elif selected_index == 1:
+                        page -= 1
+                        if page == 1:
+                            selected_index += 1
+                    elif selected_index == 2:
+                        page += 1
+                        if page == len(TROPHIES):
+                            selected_index -= 1
 
 
 # Themes menu

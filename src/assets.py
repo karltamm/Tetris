@@ -119,10 +119,12 @@ NEXT_BTN_BW = loadImage("buttons", "NextBW.png")
 # SWITCHES
 ON_SWITCH = loadImage("switches", "On.png")
 OFF_SWITCH = loadImage("switches", "Off.png")
+SWITCH_MASK = loadImage("switches", "switch_mask.png")
 
 # SLIDERS
 SLIDER_BG = loadImage("sliders", "SliderBackground.png")
 DRAGGER = loadImage("sliders", "Dragger.png")
+SLIDER_MASK = loadImage("sliders", "slider_mask.png")
 
 # THEME OPTIONS
 THEME_OPTION_BOX = loadImage("themes/list", "ListOption.png")
