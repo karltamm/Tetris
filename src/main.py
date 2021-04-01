@@ -355,8 +355,9 @@ def runGame(load_game=False):
                 elif event.type == pygame.KEYDOWN:  # If a key is pressed down
                     key_timer = 0
                     if event.key == pygame.K_UP:
-                        shadow_block.clearShadow(board)
-                        current_block.rotate(board)
+                        if current_block.shape != SHAPE_O:
+                            shadow_block.clearShadow(board)
+                            current_block.rotate(board)
                     elif event.key == pygame.K_DOWN:
                         down_pressed = True
                     elif event.key == pygame.K_RIGHT:
@@ -380,9 +381,11 @@ def runGame(load_game=False):
 
             # Move blocks
             if down_pressed and key_timer % 4 == 0 and not current_block.is_placed:
-                current_block.move(board, y_step=1)
-                fall_timer = 0
-                current_score = score_counter.drop(1)  # Give points for faster drops
+                if current_block.move(board, y_step=1):  # if move successful
+                    fall_timer = 0
+                    if current_block.y >= current_block.lowest_y:
+                        current_block.lowest_y = current_block.y + 1
+                        current_score = score_counter.drop(1)  # Give points for faster drops
 
             elif right_pressed and key_timer % 10 == 0:
                 if current_block.move(board, x_step=1):  # If move unsuccessful shadow won't flicker
@@ -395,7 +398,7 @@ def runGame(load_game=False):
             # Is current block placed?
             if current_block.is_placed:
                 # If block hasn't been moved in 250 ms
-                if (pygame.time.get_ticks() - current_block.time_since_movement) > 250 and current_block.is_locked:
+                if (pygame.time.get_ticks() - current_block.time_since_movement) > 250:
                     shadow_block.clearShadow(board)  # Clear previous shadow block
                     full_rows = clearFullRows(board)
 
