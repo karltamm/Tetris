@@ -403,17 +403,17 @@ def activateButtonHoverState(button):
         drawObject(HOVER_MASK, btn_x, btn_y - 1)
 
 
-def activateSwitchHoverState(button):
-    if button is not None:
-        btn_x, btn_y = button
-        drawObject(SWITCH_MASK, btn_x - SWITCH_MASK_OFFSET_X, btn_y - SWITCH_MASK_OFFSET_Y)
+def activateSwitchHoverState(switch):
+    if switch is not None:
+        switch_x, switch_y = switch
+        drawObject(SWITCH_MASK, switch_x - SWITCH_MASK_OFFSET_X, switch_y - SWITCH_MASK_OFFSET_Y)
         drawOptionsSwitches()
 
 
-def activateSliderHoverState(button):
-    if button is not None:
-        btn_x, btn_y = button
-        drawObject(SLIDER_MASK, btn_x - SLIDER_MASK_OFFSET_X, btn_y - SLIDER_MASK_OFFSET_Y)
+def activateSliderHoverState(slider):
+    if slider is not None:
+        slider_x, slider_y = slider
+        drawObject(SLIDER_MASK, slider_x - SLIDER_MASK_OFFSET_X, slider_y - SLIDER_MASK_OFFSET_Y)
         drawSliders()
 
 
