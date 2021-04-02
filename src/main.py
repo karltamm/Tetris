@@ -107,6 +107,7 @@ def runGame(load_game=False):
     # Block automatic falling
     fall_timer = 0
     fall_speed = 0.6  # Every X second trigger block autofall
+    autofall_failed = 0  # Nr of failed autofall attempts
 
     run = True
     while run:
@@ -286,12 +287,14 @@ def runGame(load_game=False):
 
                 # If power.run() stopped the process
                 if not power.is_running:
-                    power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down = resumeGameAfterPower()
+                    power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down =\
+                        resumeGameAfterPower()
 
                 # If player has turned off power
                 if not power_is_active:
                     power.stop()
-                    power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down = resumeGameAfterPower()
+                    power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down =\
+                        resumeGameAfterPower()
 
             if powers_batch.itsTimeForNextPower(solved_rows):
                 if not power.is_available:  # Only give new power when last one is used
@@ -334,7 +337,8 @@ def runGame(load_game=False):
                 if fall_timer / FPS > fall_speed:
                     fall_timer = 0
                     if not down_pressed:
-                        current_block.move(board, y_step=1, autofall=True)
+                        if not current_block.move(board, y_step=1, autofall=True):
+                            autofall_failed += 1
 
             # Check if user wants to move a block
             for event in events:
@@ -399,11 +403,11 @@ def runGame(load_game=False):
             elif left_pressed and key_timer % 10 == 0:
                 if current_block.move(board, x_step=-1):
                     shadow_block.clearShadow(board)
-
+            print(autofall_failed)
             # Is current block placed?
             if current_block.is_placed:
-                # If block hasn't been moved in 250 ms
-                if (pygame.time.get_ticks() - current_block.time_since_movement) > 250:
+                # If block hasn't been moved in 300 ms or autofall has failed 8 times
+                if (pygame.time.get_ticks() - current_block.time_since_movement) > 300 or autofall_failed >= 8:
                     shadow_block.clearShadow(board)  # Clear previous shadow block
                     full_rows = clearFullRows(board)
 
@@ -429,6 +433,7 @@ def runGame(load_game=False):
                     else:
                         current_block = Block(next_block, board)
                     blocks_created += 1
+                    autofall_failed = 0
                     next_block = getNextBlock(blocks_batch.getBlock(), next_block_area)
 
         # Update screen
@@ -490,7 +495,7 @@ def runCountdown(countdown):
         countdown_is_active = True
         game_is_running = False
 
-    return (countdown, countdown_is_active, game_is_running)
+    return countdown, countdown_is_active, game_is_running
 
 
 def resumeGameAfterPower():
@@ -500,7 +505,7 @@ def resumeGameAfterPower():
     countdown_is_active = True
     mouse_btn_is_held_down = False  # Causes UI glitch if not reset
 
-    return (power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down)
+    return power_is_active, game_is_running, down_pressed, countdown_is_active, mouse_btn_is_held_down
 
 
 # MAIN MENU
@@ -626,7 +631,7 @@ def launchMainMenu(tetris_rain=TetrisRain()):
                     run = False
                     if selected_index == 1:
                         BUTTON_ACTIONS[selected_index](game_is_saved)
-                    elif selected_index > 1 and selected_index < 7:
+                    elif 1 < selected_index < 7:
                         BUTTON_ACTIONS[selected_index](tetris_rain)
                     else:
                         BUTTON_ACTIONS[selected_index]()

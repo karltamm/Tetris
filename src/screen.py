@@ -568,8 +568,8 @@ def showSaveConfirmation(resume_game_if_saved):
 
 def isMouseOnGameBoard(mouse_pos):
     # Is cursor on game board?
-    if mouse_pos[0] > BOARD_X and mouse_pos[0] < BOARD_X_END:
-        if mouse_pos[1] > BOARD_Y and mouse_pos[1] < BOARD_Y_END:
+    if BOARD_X < mouse_pos[0] < BOARD_X_END:
+        if BOARD_Y < mouse_pos[1] < BOARD_Y_END:
             return True
     return False
 
@@ -579,13 +579,13 @@ def getPosOnMouse(mouse_pos, shape):
     for index, x_pos in enumerate(range(BOARD_X, BOARD_X_END + BOARD_CELL, BOARD_CELL)):
         if mouse_pos[0] < x_pos:
             position = (index - 2)  # For cursor to grab center of block
-            if (position == -1):  # Edge cases for unique shapes
-                if (shape == SHAPES[1]):  # Shape - O
+            if position == -1:  # Edge cases for unique shapes
+                if shape == SHAPES[1]:  # Shape - O
                     position = -1
                 else:
                     position = 0
-            if (position == 7 or position == 8):
-                if (shape == SHAPES[0]):  # Shape - I
+            if position == 7 or position == 8:
+                if shape == SHAPES[0]:  # Shape - I
                     position = 6
                 else:
                     position = 7
@@ -618,11 +618,11 @@ def drawNavigation(current_page, num_of_pages):
     # Pagination
     drawText("Page " + str(current_page), PAGE_NR_X, PAGE_NR_Y, size=HEADING2_SIZE, font=TITLE_FONT)
 
-    if (current_page == 1):
+    if current_page == 1:
         # First page: prev button grayed out, next colored
         drawObject(PREVIOUS_BTN_BW, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN, NEXT_BTN_X, NEXT_BTN_Y)
-    elif (current_page == num_of_pages):
+    elif current_page == num_of_pages:
         # Last page: prev button colored, next grayed out
         drawObject(PREVIOUS_BTN, PREVIOUS_BTN_X, PREVIOUS_BTN_Y)
         drawObject(NEXT_BTN_BW, NEXT_BTN_X, NEXT_BTN_Y)
@@ -658,8 +658,7 @@ def showOptionsMenu():
     drawText("Powers", POWERS_TEXT_X, POWERS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
     drawOptionsSwitches()
-    drawSliders("music")
-    drawSliders("sound")
+    drawSliders()
 
 
 def drawOptionsSwitches():
@@ -679,7 +678,7 @@ def drawOptionsSwitches():
         drawObject(OFF_SWITCH, POWERS_SWITCH_X, POWERS_SWITCH_Y)
 
 
-def drawSliders(slider):
+def drawSliders():
     music_dragger_x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
     sound_dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
     music_value = round(optionsValues("music") * 100)
@@ -760,7 +759,7 @@ def unlockedTrophies():
 
 # Themes menu
 def themeButtonPos(i):
-    return (THEME_OPTION_X, THEME_OPTION1_Y + i * THEME_OPTION_HEIGHT)
+    return THEME_OPTION_X, THEME_OPTION1_Y + i * THEME_OPTION_HEIGHT
 
 
 def showThemesScreen(themes):
