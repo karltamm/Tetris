@@ -120,8 +120,8 @@ class Power:
         self.row = None
 
         # Is cursor even on game board?
-        if mouse_pos[0] > BOARD_X and mouse_pos[0] < BOARD_X_END:
-            if mouse_pos[1] > BOARD_Y and mouse_pos[1] < BOARD_Y_END:
+        if BOARD_X < mouse_pos[0] < BOARD_X_END:
+            if BOARD_Y < mouse_pos[1] < BOARD_Y_END:
                 # Check on which row cursor currently is
                 for index, y_pos in enumerate(range(BOARD_Y, BOARD_Y_END + BOARD_CELL, BOARD_CELL)):
                     if mouse_pos[1] < y_pos:

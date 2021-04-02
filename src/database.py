@@ -43,13 +43,13 @@ class Score:
         self.current_score = current_score
 
     def fullRow(self, stage, full_rows):
-        if (full_rows == 1):
+        if full_rows == 1:
             self.current_score += SINGLE_ROW_POINTS * stage
             saveStat("rows_1", 1)
-        elif (full_rows == 2):
+        elif full_rows == 2:
             self.current_score += SINGLE_ROW_POINTS * 3 * stage
             saveStat("rows_2", 1)
-        elif (full_rows == 3):
+        elif full_rows == 3:
             self.current_score += SINGLE_ROW_POINTS * 5 * stage
             saveStat("rows_3", 1)
         else:
@@ -59,13 +59,13 @@ class Score:
 
     def perfectClear(self, stage, full_rows):
         saveStat("perfect_clears", 1)
-        if (full_rows == 1):
+        if full_rows == 1:
             self.current_score += SINGLE_ROW_POINTS * 8 * stage
             saveStat("perfect_clears_1", 1)
-        elif (full_rows == 2):
+        elif full_rows == 2:
             self.current_score += SINGLE_ROW_POINTS * 12 * stage
             saveStat("perfect_clears_2", 1)
-        elif (full_rows == 3):
+        elif full_rows == 3:
             self.current_score += SINGLE_ROW_POINTS * 18 * stage
             saveStat("perfect_clears_3", 1)
         else:

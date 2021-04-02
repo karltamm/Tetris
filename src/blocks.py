@@ -13,14 +13,14 @@ class Block:
     def __init__(self, shape, board, x_pos=4):
         self.shape = shape
         self.rotation = 0
-        self.x = x_pos  # In which board column is top-left block cell?
+        self.x = x_pos  # In which board column is mouse pos?
         self.y = 0  # In which board row is top-left block cell?
         self.used_board_cells = []  # [(row, col), (row, col) etc]
         self.is_placed = False
-        self.is_locked = False
         self.time_since_movement = 0
+        self.lowest_y = 0
 
-        if self.updateBoard(board) == False:  # No room for new block
+        if not self.updateBoard(board):  # No room for new block
             pygame.event.post(pygame.event.Event(GAME_OVER))  # Notify program that game is over
 
     def move(self, board, x_step=0, y_step=0, autofall=False):
@@ -35,73 +35,95 @@ class Block:
 
             if x_step == 0:  # Block didn't side collide with any other block
                 self.is_placed = True  # Block can't go any lower, so it's placed
-                self.is_locked = True  # Block can't be moved anymore
-                move_success = True
+
         # Move was successful so play sound
         else:
             move_success = True
-            self.is_locked = False
+            self.is_placed = False
+
         if move_success and not autofall:
             self.time_since_movement = pygame.time.get_ticks()
             playSound(MOVE3_SOUND)
         return move_success
 
-
     def rotate(self, board):
         rotate_success = False
+        blocked_left = False
+        blocked_right = False
 
         if self.rotation == 3:
             self.rotation = -1
         self.rotation += 1
 
         if not self.updateBoard(board):  # Rotate failed
-            # If block on the leftmost side (means rotate was out of bounds)
-            if self.x == -1:
+            if self.x != -1 and self.x != 8:  # If block is not on either side
+                for y in range(3):
+                    if self.y+y < 20:  # If block is not on the bottom
+                        if self.shape[self.rotation-1][y][0] == 0 and self.shape[self.rotation-1][y][1] != 0 \
+                                and board[self.y+y][self.x] != 0:
+                            blocked_left = True
+                            break
+                        elif self.shape[self.rotation-1][y][2] == 0 and self.shape[self.rotation-1][y][1] != 0 \
+                                and board[self.y+y][self.x+2] != 0:
+                            blocked_right = True
+                            break
+
+            # If block on the leftmost side or another block on the left
+            if self.x == -1 or blocked_left:
                 self.x += 1
                 if not self.updateBoard(board):
                     self.x -= 1
                 else:
                     self.rotation += 1
                     rotate_success = True
-            # for I shape to rotate near right edge
-            elif (self.x == 7 and self.shape == SHAPE_I):
+
+            # If I block can't be moved
+            elif self.shape == SHAPE_I:
+                if self.shape[self.rotation-1][0][0] == 0:  # If block is vertical
+                    for i in range(1, 3):
+                        self.x -= i
+                        if not self.updateBoard(board):
+                            self.x += i
+                        else:
+                            self.rotation += 1
+                            rotate_success = True
+                            break
+                elif self.shape[self.rotation-1][0][0] == 1:  # If block is horizontal
+                    for i in range(1, 4):
+                        self.y -= i
+                        if not self.updateBoard(board):
+                            self.y += i
+                        else:
+                            self.rotation += 1
+                            rotate_success = True
+                            break
+
+            # If block on the rightmost side or another block on the right
+            elif self.x == 8 or blocked_right:
                 self.x -= 1
                 if not self.updateBoard(board):
                     self.x += 1
                 else:
                     self.rotation += 1
                     rotate_success = True
-            # If block on the rightmost side
-            elif self.x == 8:
-                if self.shape == SHAPE_I:
-                    self.x -= 1
-                self.x -= 1
+
+            # Else block must be on the bottom
+            if not rotate_success:
+                self.y -= 1
                 if not self.updateBoard(board):
-                    if self.shape == SHAPE_I:
-                        self.x += 1
-                    self.x += 1
+                    self.y += 1
                 else:
                     self.rotation += 1
                     rotate_success = True
-            else:
-                for i in range(1, 4):
-                    self.y -= i
-                    if not self.updateBoard(board):
-                        self.y += i
-                    else:
-                        self.rotation += 1
-                        rotate_success = True
-                        break
             self.rotation -= 1
 
         else:
             rotate_success = True
         # Rotation was successful so play sound
         if rotate_success and self.shape != SHAPE_O:
-            self.is_locked = False
+            self.is_placed = False
             self.time_since_movement = pygame.time.get_ticks()
             playSound(ROTATE_SOUND)
-
 
     def removeCellsFromBoard(self, board):
         for row, col in self.used_board_cells:
@@ -219,10 +241,10 @@ class ShadowBlock(Block):
         return True  # Block placement was successful
 
     def clearShadow(self, board):
-            for row in range(BOARD_HEIGHT):
-                for col in range(BOARD_WIDTH):
-                    if board[row][col] == 8:
-                        board[row][col] = 0
+        for row in range(BOARD_HEIGHT):
+            for col in range(BOARD_WIDTH):
+                if board[row][col] == 8:
+                    board[row][col] = 0
 
 
 class BlocksBatch:
