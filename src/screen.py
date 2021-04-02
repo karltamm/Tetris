@@ -395,7 +395,16 @@ def activateButtonHoverState(button):
     if button is not None:
         btn_x, btn_y = button
         drawObject(HOVER_MASK, btn_x, btn_y - 1)
+        
+def activateSwitchHoverState(button):
+    if button is not None:
+        btn_x, btn_y = button
+        drawObject(SWITCH_MASK, btn_x, btn_y - 1)
 
+def activateSliderHoverState(button):
+    if button is not None:
+        btn_x, btn_y = button
+        drawObject(SLIDER_MASK, btn_x, btn_y - 1)
 
 def activateSelectorClickState(selector, side):
     if selector is not None:
