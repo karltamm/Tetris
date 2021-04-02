@@ -403,7 +403,7 @@ def runGame(load_game=False):
             elif left_pressed and key_timer % 10 == 0:
                 if current_block.move(board, x_step=-1):
                     shadow_block.clearShadow(board)
-            print(autofall_failed)
+
             # Is current block placed?
             if current_block.is_placed:
                 # If block hasn't been moved in 300 ms or autofall has failed 8 times
