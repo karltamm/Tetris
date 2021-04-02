@@ -48,6 +48,9 @@ SWITCH_WIDTH = 100
 SWITCH_CORNER_RAD = round(40 / (
         250 / SWITCH_WIDTH))  # In .ai file, switch is 250 px wide and it's border radius is 40. If the switch is scaled down, makes sure that corner radius is also in right propotion
 
+SWITCH_MASK_OFFSET_X = 5
+SWITCH_MASK_OFFSET_Y = 4
+
 # Slider
 SLIDER_BG_HEIGHT = 30
 SLIDER_BG_WIDTH = 200
@@ -56,6 +59,9 @@ DRAGGER_HEIGHT = 54
 DRAGGER_WIDTH = 33
 DRAGGER_CORNER_RAD = 5
 SLIDING_DISTANCE = SLIDER_BG_WIDTH - DRAGGER_WIDTH - 8
+
+SLIDER_MASK_OFFSET_X = 4
+SLIDER_MASK_OFFSET_Y = 4
 
 # Selector
 SELECTOR_BTN_WIDTH = 50
@@ -395,16 +401,21 @@ def activateButtonHoverState(button):
     if button is not None:
         btn_x, btn_y = button
         drawObject(HOVER_MASK, btn_x, btn_y - 1)
-        
+
+
 def activateSwitchHoverState(button):
     if button is not None:
         btn_x, btn_y = button
-        drawObject(SWITCH_MASK, btn_x, btn_y - 1)
+        drawObject(SWITCH_MASK, btn_x - SWITCH_MASK_OFFSET_X, btn_y - SWITCH_MASK_OFFSET_Y)
+        drawOptionsSwitches()
+
 
 def activateSliderHoverState(button):
     if button is not None:
         btn_x, btn_y = button
-        drawObject(SLIDER_MASK, btn_x, btn_y - 1)
+        drawObject(SLIDER_MASK, btn_x - SLIDER_MASK_OFFSET_X, btn_y - SLIDER_MASK_OFFSET_Y)
+        drawSliders()
+
 
 def activateSelectorClickState(selector, side):
     if selector is not None:
@@ -667,8 +678,8 @@ def showOptionsMenu():
     drawText("Powers", POWERS_TEXT_X, POWERS_TEXT_Y, size=HEADING2_SIZE, font=HEADING_FONT)
 
     drawOptionsSwitches()
-    drawSliders("music")
-    drawSliders("sound")
+    drawSliders()
+    drawSliders()  # 2x because volume text is dim and if slider mask is activated, volume text becomes bright (because mask fn calls drawSliders)
 
 
 def drawOptionsSwitches():
@@ -688,7 +699,7 @@ def drawOptionsSwitches():
         drawObject(OFF_SWITCH, POWERS_SWITCH_X, POWERS_SWITCH_Y)
 
 
-def drawSliders(slider):
+def drawSliders():
     music_dragger_x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
     sound_dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
     music_value = round(optionsValues("music") * 100)
