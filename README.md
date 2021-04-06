@@ -1,8 +1,20 @@
-# Eesmärk
-Projekti eesmärgiks on hiljemalt 12.04.2021 valmis saada tetriselaadne arvutimäng, mis vastab projektitiimi poolt kokkulepitud funktsionaalsusele.
+# Tetris clone
+The game is written in Python and uses Pygame.
 
-# Mõõdikud
-1.	Arvutimängus on täielikult implementeeritud baasfunktsionaalsus.
-2.	Arvutimängus on täielikult implementeeritud lisafunktsionaalsus.
-3.	Projekt valmib hiljemalt tähtajaks.
-4.	Arvutimäng töötab opsüsteemil Windows 10.
+## Features
+In addition to basic Tetris features, the game has:
+* Power-ups
+* Gameplay statistics
+* Trophies
+* Unlockable themes
+* Option to save a game
+
+## Autors
+The game is made by TalTech computer engineering students:
+* Danel Tiitma
+* Kasper Vaus
+* Karl-Heinrich Tamm
+
+## Acknowledgements
+* Sound effects from [Zapsplat](https://www.zapsplat.com).
+* The game uses [Chathura font](https://github.com/appajid/Chathura).
