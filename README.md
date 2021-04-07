@@ -9,7 +9,7 @@ In addition to basic Tetris features, the game has:
 * Unlockable themes
 * Option to save a game
 
-## Autors
+## Authors
 The game is made by TalTech computer engineering students:
 * Danel Tiitma
 * Kasper Vaus
