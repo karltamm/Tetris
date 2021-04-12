@@ -700,8 +700,6 @@ def drawOptionsSwitches():
 
 
 def drawSliders():
-    music_dragger_x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
-    sound_dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
     music_value = round(optionsValues("music") * 100)
     sound_value = round(optionsValues("sound") * 100)
 
@@ -709,10 +707,19 @@ def drawSliders():
     drawText(str(sound_value), SOUND_SLIDER_BG_X - 10, SOUND_VAL_Y, align_right=True)
 
     drawObject(SLIDER_BG, MUSIC_SLIDER_BG_X, MUSIC_SLIDER_BG_Y)
-    drawObject(DRAGGER, music_dragger_x, MUSIC_DRAGGER_Y)
+    drawObject(DRAGGER, getMusicDraggerPos()[0], MUSIC_DRAGGER_Y)
     drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
-    drawObject(DRAGGER, sound_dragger_x, SOUND_DRAGGER_Y)
+    drawObject(DRAGGER, getSoundDraggerPos()[0], SOUND_DRAGGER_Y)
 
+def getMusicDraggerPos():
+    x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
+    y = MUSIC_DRAGGER_Y
+    return x, y
+
+def getSoundDraggerPos():
+    x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
+    y = SOUND_DRAGGER_Y
+    return x, y
 
 # Stats menu
 def showStatsMenu(current_page):
