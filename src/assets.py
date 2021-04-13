@@ -142,6 +142,12 @@ P_KEY_IMG = loadImage("keys", "P_key.png")
 S_KEY_IMG = loadImage("keys", "S_key.png")
 N_KEY_IMG = loadImage("keys", "N_key.png")
 
+UP_KEY_IMG = loadImage("keys", "up_arrow_key.png")
+DOWN_KEY_IMG = loadImage("keys", "down_arrow_key.png")
+RIGHT_KEY_IMG = loadImage("keys", "right_arrow_key.png")
+LEFT_KEY_IMG = loadImage("keys", "left_arrow_key.png")
+SPACE_KEY_IMG = loadImage("keys", "space_key.png")
+
 # SOUNDS
 MOVE_SOUND = loadSound("playing", "move.mp3")
 MOVE3_SOUND = loadSound("playing", "move3.mp3")
