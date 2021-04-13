@@ -206,17 +206,16 @@ PAGE_TITLE_X = BACK_BTN_X
 PAGE_TITLE_Y = BACK_BTN_Y + BTN_HEIGHT + 2 * FAR
 
 # Shortcuts menu
-SC_KEYS = (ESC_KEY_IMG, P_KEY_IMG, S_KEY_IMG, E_KEY_IMG, N_KEY_IMG)
-SC_TXT = ("Pause/unpause", "Activate/deactivate power", "Save game", "End game", "New game (if game is over)")
+GAME_SC_KEYS = (ESC_KEY_IMG, P_KEY_IMG, S_KEY_IMG, E_KEY_IMG, N_KEY_IMG)
+GAME_SC_DESC = ("Pause/unpause", "Activate/deactivate power", "Save game", "End game", "New game (if game is over)")
 
+MENU_SC_KEYS = (UP_KEY_IMG, DOWN_KEY_IMG, RIGHT_KEY_IMG, LEFT_KEY_IMG)
+MENU_SC_DESC = ("Move up", "Move down", "Increase slider or show next page", "Decrease slider or show previous page")
+SPACE_KEY_DESC = "Press button or move switch"
+
+SPACE_KEY_WIDTH = 150
 KEY_WIDTH = 50
 KEY_HEIGHT = 54
-
-# SHORTCUTS_BACKGROUND_SIZE = (412, 432)
-# SHORTCUTS_BACKGROUND = pygame.Surface(SHORTCUTS_BACKGROUND_SIZE, pygame.SRCALPHA)
-# pygame.draw.rect(SHORTCUTS_BACKGROUND, (0, 0, 0, 128), (0, 0, SHORTCUTS_BACKGROUND_SIZE[0], SHORTCUTS_BACKGROUND_SIZE[1]), border_radius = 15)
-# SHORTCUTS_BACKGROUND_X = PAGE_TITLE_X
-# SHORTCUTS_BACKGROUND_Y = PAGE_TITLE_Y
 
 SHORTCUTS_TITLE_X = PAGE_TITLE_X
 SHORTCUTS_TITLE_Y = PAGE_TITLE_Y
@@ -228,6 +227,8 @@ SC_ROW_X = SHORTCUTS_TYPE_X
 SC_ROW_TXT_X = SC_ROW_X + KEY_WIDTH + NEAR
 SC_ROW_HEIGHT = KEY_HEIGHT + NEAR
 SC_ROW1_Y = SHORTCUTS_TYPE_Y + HEADING2_HEIGHT + FAR
+
+SPACE_KEY_DESC_X = SC_ROW_X + SPACE_KEY_WIDTH + NEAR
 
 # Options menu
 OPTIONS_TITLE_X = PAGE_TITLE_X
@@ -653,17 +654,41 @@ def drawNavigation(current_page, num_of_pages):
 
 
 # Shortcuts menu
-def showShortcutsMenu():
-    drawObject(BACK_BTN, BACK_BTN_X, BACK_BTN_Y)
-    # drawObject(SHORTCUTS_BACKGROUND, SHORTCUTS_BACKGROUND_X, SHORTCUTS_BACKGROUND_Y)
-    drawText("Shortcuts", SHORTCUTS_TITLE_X, SHORTCUTS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
-    drawText("In-game", SHORTCUTS_TYPE_X, SHORTCUTS_TYPE_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+def showShortcutsMenu(page, max_pages):
+    drawNavigation(page, max_pages)
 
-    for i in range(len(SC_KEYS)):
-        row_y = SC_ROW1_Y + i * SC_ROW_HEIGHT
-        text_y = row_y + (KEY_HEIGHT - txtArea(SC_TXT[i]).height) / 2
-        drawObject(SC_KEYS[i], SC_ROW_X, row_y)
-        drawText(SC_TXT[i], SC_ROW_TXT_X, text_y)
+    drawText("Shortcuts", SHORTCUTS_TITLE_X, SHORTCUTS_TITLE_Y, size=TITLE_SIZE, font=TITLE_FONT)
+
+    if page == 1:
+        drawText("In-game", SHORTCUTS_TYPE_X, SHORTCUTS_TYPE_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+
+        for i in range(len(GAME_SC_KEYS)):
+            row_y = getShortcutRowY(i)
+            text_y = getShortcutTextY(row_y, GAME_SC_DESC[i])
+            drawObject(GAME_SC_KEYS[i], SC_ROW_X, row_y)
+            drawText(GAME_SC_DESC[i], SC_ROW_TXT_X, text_y)
+    elif page == 2:
+        drawText("Main menu", SHORTCUTS_TYPE_X, SHORTCUTS_TYPE_Y, size=HEADING2_SIZE, font=HEADING_FONT)
+
+        for i in range(len(MENU_SC_KEYS)):
+            row_y = getShortcutRowY(i)
+            text_y = getShortcutTextY(row_y, MENU_SC_DESC[i])
+            drawObject(MENU_SC_KEYS[i], SC_ROW_X, row_y)
+            drawText(MENU_SC_DESC[i], SC_ROW_TXT_X, text_y)
+
+            if (i + 1) == len(MENU_SC_KEYS):
+                row_y = getShortcutRowY(i + 1)
+                text_y = getShortcutTextY(row_y, SPACE_KEY_DESC)
+                drawObject(SPACE_KEY_IMG, SC_ROW_X, row_y)
+                drawText(SPACE_KEY_DESC, SPACE_KEY_DESC_X, text_y)
+
+
+def getShortcutRowY(index):
+    return SC_ROW1_Y + index * SC_ROW_HEIGHT
+
+
+def getShortcutTextY(row_y, text):
+    return row_y + (KEY_HEIGHT - txtArea(text).height) / 2
 
 
 # Options menu
@@ -700,8 +725,6 @@ def drawOptionsSwitches():
 
 
 def drawSliders():
-    music_dragger_x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
-    sound_dragger_x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
     music_value = round(optionsValues("music") * 100)
     sound_value = round(optionsValues("sound") * 100)
 
@@ -709,9 +732,21 @@ def drawSliders():
     drawText(str(sound_value), SOUND_SLIDER_BG_X - 10, SOUND_VAL_Y, align_right=True)
 
     drawObject(SLIDER_BG, MUSIC_SLIDER_BG_X, MUSIC_SLIDER_BG_Y)
-    drawObject(DRAGGER, music_dragger_x, MUSIC_DRAGGER_Y)
+    drawObject(DRAGGER, getMusicDraggerPos()[0], MUSIC_DRAGGER_Y)
     drawObject(SLIDER_BG, SOUND_SLIDER_BG_X, SOUND_SLIDER_BG_Y)
-    drawObject(DRAGGER, sound_dragger_x, SOUND_DRAGGER_Y)
+    drawObject(DRAGGER, getSoundDraggerPos()[0], SOUND_DRAGGER_Y)
+
+
+def getMusicDraggerPos():
+    x = MUSIC_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("music"))
+    y = MUSIC_DRAGGER_Y
+    return x, y
+
+
+def getSoundDraggerPos():
+    x = SOUND_DRAGGER_X + (SLIDING_DISTANCE * optionsValues("sound"))
+    y = SOUND_DRAGGER_Y
+    return x, y
 
 
 # Stats menu
