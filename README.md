@@ -1,5 +1,6 @@
 # Tetris clone
 The game is written in Python and uses Pygame.
+[Screenshots](https://imgur.com/a/pFqTziL)
 
 ## Features
 In addition to basic Tetris features, the game has:
