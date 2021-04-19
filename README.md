@@ -2,6 +2,12 @@
 The game is written in Python and uses Pygame.
 [Screenshots](https://imgur.com/a/pFqTziL)
 
+## How to start the game?
+1. Go to [dist folder](https://github.com/karltamm/Tetris/tree/main/dist)
+2. Download the zip file
+3. Extract it
+4. Launch the game
+
 ## Features
 In addition to basic Tetris features, the game has:
 * Power-ups
